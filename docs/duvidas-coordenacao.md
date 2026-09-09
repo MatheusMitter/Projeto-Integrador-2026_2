@@ -38,7 +38,7 @@ condições que não podem ser satisfeitas simultaneamente:
 - "não serão admitidas equipes com número inferior a 4 integrantes, salvo
   autorização expressa da coordenação do curso mediante justificativa formal".
 
-O material de ADS1253 adota "grupos de 3 a 4 integrantes" em dois pontos distintos.
+O documento de ADS1253 adota "grupos de 3 a 4 integrantes" em dois pontos distintos.
 
 **Solicitamos:** definição de qual é o piso vigente, 3 ou 4 integrantes. E, como a
 própria Seção 3.2 prevê autorização excepcional, qual o procedimento e o prazo para
@@ -51,7 +51,7 @@ retaguarda, tanto o desenvolvimento de interface de programação própria (Spri
 Boot, Node.js, FastAPI ou equivalente) quanto o uso de plataformas de backend como
 serviço (Firebase, Supabase ou equivalentes).
 
-O material de ADS1253, no pilar de Persistência e Integração e na descrição do
+O documento de ADS1253, no pilar de Persistência e Integração e na descrição do
 Checkpoint 2, afirma que a camada de persistência remota é construída com JDBC, DAO
 e transações — conteúdo da disciplina.
 
@@ -73,7 +73,7 @@ tempo.
 ### 1.3 Formalização dos prazos de registro de equipe e submissão de tema
 
 Os dois documentos fixam 14/08/2026 para o registro das equipes e 21/08/2026 para a
-submissão da proposta de tema. O material de ADS1253 registra que o plano de ensino
+submissão da proposta de tema. O documento de ADS1253 registra que o plano de ensino
 foi aprovado em 24/08/2026 e adota, na prática, o critério de que equipe e tema
 estejam definidos antes do Checkpoint 1 de 11/09.
 
@@ -97,7 +97,7 @@ A Seção 7.1 do Documento Norteador descreve o Checkpoint 1 como "verificação
 escopo, protótipo navegável e backlog priorizado". O detalhamento da Semana 6 repete
 esses três itens.
 
-O material de ADS1253 acrescenta o DER do banco de dados aos entregáveis da mesma
+O documento de ADS1253 acrescenta o DER do banco de dados aos entregáveis da mesma
 etapa.
 
 **Solicitamos:** confirmação de que o DER integra os entregáveis do Checkpoint 1.
@@ -111,7 +111,7 @@ A Seção 9 do Documento Norteador determina que todas as entregas ocorram por m
 ambiente virtual de aprendizagem, nos prazos da Seção 7, encerrando-se às 23h59 da
 data limite. O Checkpoint 1 consta da Seção 7. Entretanto, a Seção 7.1 o descreve
 como "verificação", o detalhamento da Semana 6 como "apresentação do protótipo
-navegável", e o material de ADS1253 como acompanhamento presencial de 2 horas.
+navegável", e o documento de ADS1253 como acompanhamento presencial de 2 horas.
 
 **Solicitamos:** esclarecimento sobre se há submissão no ambiente virtual em 11/09,
 sessão presencial, ou ambos.
@@ -133,7 +133,7 @@ Checkpoint 1 constitui essa primeira entrega, para fins de cumprimento do requis
 | Entrega e apresentação da N2 | 07 a 11/12/2026 | 08 a 11/12/2026 |
 
 Em todos os três casos, o segundo documento inicia a janela um dia depois. As semanas
-do Documento Norteador correm de segunda a sexta-feira; o material de ADS1253 desloca
+do Documento Norteador correm de segunda a sexta-feira; o documento de ADS1253 desloca
 o início para terça-feira.
 
 **Solicitamos:** definição de qual data inicia cada janela.
@@ -143,7 +143,7 @@ o início para terça-feira.
 ### 3.2 Relação entre a lista de requisitos técnicos e a Seção 5
 
 A Seção 5 do Documento Norteador estabelece 14 requisitos obrigatórios (R1 a R14). O
-material de ADS1253 apresenta uma lista de verificação com 8 itens, que não contempla:
+documento de ADS1253 apresenta uma lista de verificação com 8 itens, que não contempla:
 
 - o número mínimo de 3 regras de negócio não triviais (R4);
 - as listagens com filtro, ordenação ou busca e a visão consolidada de dados (R9),
@@ -160,7 +160,7 @@ Seção 5 prevalece integralmente na avaliação.
 
 ### 3.3 Classificação do uso de geolocalização
 
-O material de ADS1253 cita geolocalização como exemplo de serviço ou API externa
+O documento de ADS1253 cita geolocalização como exemplo de serviço ou API externa
 (requisito de integração) e também como recurso nativo do dispositivo. No Documento
 Norteador, geolocalização aparece exclusivamente em R8, entre os recursos do
 aparelho, enquanto R7 exige consumo de serviço ou interface de programação externa.
@@ -175,7 +175,7 @@ atendido por serviço externo distinto.
 
 ## Observação menor, sem impacto sobre a execução
 
-O material de ADS1253 afirma que o projeto representa o maior peso individual da
+O documento de ADS1253 afirma que o projeto representa o maior peso individual da
 avaliação do semestre, com 8,0 dos 20,0 pontos das duas etapas. A soma está correta,
 mas as avaliações presenciais totalizam o mesmo valor (P1 + P2 = 8,0), e por etapa
 PP1 equivale a P1. Trata-se, portanto, de equivalência e não de predominância.

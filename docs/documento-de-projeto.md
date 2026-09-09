@@ -1,8 +1,7 @@
 # Documento de Projeto — Projeto Integrador ADS 2026/2
 
 **Aplicação:** sistema móvel de gestão de ordens de serviço para assistência técnica
-**Nome de trabalho:** GOS — Gestão de Ordens de Serviço
-**Instituição:** PUC Goiás — Escola Politécnica e de Artes — Tecnologia em Análise e Desenvolvimento de Sistemas
+**Instituição:** PUC Goiás — Escola Politécnica e de Artes — Análise e Desenvolvimento de Sistemas
 **Repositório:** https://github.com/MatheusMitter/Projeto-Integrador-2026_2
 
 ---
@@ -347,7 +346,7 @@ correspondente no escopo deste projeto.
 interface de programação própria quanto plataforma de backend como serviço. A opção
 por API própria em Java com padrão DAO sobre JDBC decorre de dois fatores. O primeiro
 é de conformidade: essa configuração atende simultaneamente ao norteador e à
-orientação do material de ADS1253, que indica JDBC, DAO e transações como base da
+orientação do documento de ADS1253, que indica JDBC, DAO e transações como base da
 persistência remota, enquanto uma plataforma de backend como serviço atenderia apenas
 ao primeiro documento. O segundo é de controle sobre o comportamento transacional
 exigido pela RN03, cuja verificação de limite e subsequente atualização precisam

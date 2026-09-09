@@ -14,12 +14,20 @@ inclusion: always
 >    por se declarar referência normativa do semestre.
 > 2. `ADS1253 - AED - Projeto Integrador.pdf` — Prof. Welington Júlio, ADS1253.
 >
-> **Relação entre os dois.** A AED (Atividade Externa da Disciplina) é o
-> _continente_: atividade curricular avaliativa de 8 horas-aula, equivalente a 10%
-> da carga de ADS1253, distinta das horas de extensão curricular. O _conteúdo_ dessa
-> atividade neste semestre é o próprio Projeto Integrador do Módulo. Existe **um
-> único projeto**, especificado pelo norteador e canalizado para a nota da disciplina
-> via PP1 e PP2. O material do AED não descreve um trabalho paralelo.
+> **Relação entre os dois.** Os dois documentos tratam do **mesmo projeto**. O
+> segundo é o material da disciplina ADS1253 sobre o Projeto Integrador do Módulo:
+> referencia a AED (Atividade Externa da Disciplina) apenas na abertura — capa,
+> roteiro e slide de definição — para situar sob qual rubrica curricular o projeto é
+> avaliado, e depois usa "AED ·" só como rótulo de cabeçalho e rodapé. As demais 25
+> páginas especificam o Projeto Integrador, nos mesmos termos do norteador.
+>
+> A AED é a **rubrica avaliativa**, não um trabalho separado: atividade curricular de
+> 8 horas-aula, equivalente a 10% da carga de ADS1253, distinta das horas de extensão.
+> É por ela que a nota do projeto entra na disciplina, como PP1 e PP2. Não existe
+> entrega paralela.
+>
+> Ao citar este segundo documento, referir-se a ele como **documento de ADS1253** ou
+> material da disciplina — não como "documento da AED".
 >
 > Onde os dois divergem, ver a seção 9 (pendências de esclarecimento).
 > Onde um exige algo que o outro não menciona, **vale a união** — o requisito conta.
@@ -123,16 +131,16 @@ no-code/low-code sem código autoral.
 Onde as datas divergem entre os dois documentos, adotar a **data mais cedo** até
 que a coordenação esclareça (ver seção 9).
 
-| Marco                      | Data                               | Entregáveis                                                                          |
-| -------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |
-| **Checkpoint 1**           | **11/09/2026**                     | Escopo, protótipo navegável, backlog priorizado **e DER** (o DER é exigido pelo AED) |
-| Entrega e apresentação N1  | 28/09 a 02/10/2026 (AED diz 29/09) | 6 itens pontuados (ver seção 6)                                                      |
-| Avaliação Interdisciplinar | 03/11/2026                         | 1,0 pt na N2, institucional, fora do projeto (só no AED)                             |
-| Checkpoint 2               | 06/11/2026                         | Versão beta com persistência local + remota e API externa                            |
-| Testes com usuários        | 09 a 13/11/2026 (AED diz 10/11)    | Testes funcionais + usabilidade com **5+ usuários externos**                         |
-| Congelamento de escopo     | 27/11/2026                         | Fim do desenvolvimento de novas funcionalidades                                      |
-| Documentação final         | 04/12/2026                         | Relatório técnico, pacote instalável, repositório                                    |
-| Entrega e apresentação N2  | 07 a 11/12/2026 (AED diz 08/12)    | Mostra final com banca e arguição individual                                         |
+| Marco                      | Data                                   | Entregáveis                                                                          |
+| -------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Checkpoint 1**           | **11/09/2026**                         | Escopo, protótipo navegável, backlog priorizado **e DER** (o DER é exigido pelo documento de ADS1253) |
+| Entrega e apresentação N1  | 28/09 a 02/10/2026 (ADS1253 diz 29/09) | 6 itens pontuados (ver seção 6)                                                      |
+| Avaliação Interdisciplinar | 03/11/2026                             | 1,0 pt na N2, institucional, fora do projeto (só no documento de ADS1253)            |
+| Checkpoint 2               | 06/11/2026                             | Versão beta com persistência local + remota e API externa                            |
+| Testes com usuários        | 09 a 13/11/2026 (ADS1253 diz 10/11)    | Testes funcionais + usabilidade com **5+ usuários externos**                         |
+| Congelamento de escopo     | 27/11/2026                             | Fim do desenvolvimento de novas funcionalidades                                      |
+| Documentação final         | 04/12/2026                             | Relatório técnico, pacote instalável, repositório                                    |
+| Entrega e apresentação N2  | 07 a 11/12/2026 (ADS1253 diz 08/12)    | Mostra final com banca e arguição individual                                         |
 
 **O Checkpoint 1 não é a N1.** O checkpoint verifica especificação e não tem
 pontuação própria, mas alimenta o FPI. A N1 é em 28/09 e exige, além dos
@@ -150,7 +158,7 @@ técnicas (5 min), demonstração (6 min), encerramento (2 min).
 
 ### 5.1 Obrigações de processo que só constam no norteador
 
-Estes itens não aparecem no material do AED e são o principal risco de omissão.
+Estes itens não aparecem no documento de ADS1253 e são o principal risco de omissão.
 Vários valem ponto.
 
 **Gestão (Seção 6.1)** — backlog em ferramenta de gestão de tarefas, com itens em
@@ -263,40 +271,40 @@ não houver resposta, adotar a interpretação mais conservadora indicada.
 
 ### Contradições factuais (pedir correção)
 
-**9.1 Datas de três janelas de entrega.** N1: 28/09 (norteador) contra 29/09 (AED).
+**9.1 Datas de três janelas de entrega.** N1: 28/09 (norteador) contra 29/09 (ADS1253).
 Testes: 09/11 contra 10/11. N2: 07/12 contra 08/12. O norteador roda semanas de
-segunda a sexta; o AED desloca o início para terça.
+segunda a sexta; o documento de ADS1253 desloca o início para terça.
 → Interpretação adotada: **data mais cedo**.
 
 **9.2 Piso de integrantes por equipe.** A Seção 3.2 do norteador afirma, em
 marcadores consecutivos, "3 (três) a 4 (quatro) discentes" e "não serão admitidas
-equipes com número inferior a 4 integrantes". Contradição interna. O AED adota 3.
+equipes com número inferior a 4 integrantes". Contradição interna. O documento de ADS1253 adota 3.
 → Pendente. Afeta diretamente a autorização de equipe com 2 integrantes, prevista
 como exceção na própria Seção 3.2.
 
 ### Restrições implícitas (pedir esclarecimento)
 
 **9.3 JDBC/DAO versus backend como serviço.** A Seção 4 do norteador admite
-Firebase, Supabase ou equivalentes. O AED afirma que a persistência remota é
+Firebase, Supabase ou equivalentes. O documento de ADS1253 afirma que a persistência remota é
 construída com JDBC, DAO e transações, o que exclui BaaS na prática e exige
 retaguarda em Java. **Maior impacto arquitetural — resolver antes de escolher a pilha.**
 
-Como o projeto _é_ a AED de ADS1253 (Programação Orientada a Objeto com Banco de
-Dados), há expectativa legítima de que ele exercite o conteúdo da disciplina. Isso
-desloca a probabilidade para a retaguarda em Java.
+Como o projeto é avaliado dentro de ADS1253 — Programação Orientada a Objeto com
+Banco de Dados —, há expectativa legítima de que exercite o conteúdo da disciplina.
+Isso desloca a probabilidade para a retaguarda em Java.
 
 → Interpretação adotada: **retaguarda própria em Java (Spring Boot) com DAO sobre
 JDBC**, porque essa escolha satisfaz os dois documentos simultaneamente — a Seção 4
-do norteador admite expressamente "API própria (Spring Boot)", e o AED tem seu
+do norteador admite expressamente "API própria (Spring Boot)", e o documento de ADS1253 tem seu
 conteúdo contemplado. BaaS satisfaz apenas o norteador e carrega risco normativo.
 Confirmar com o docente; se BaaS for liberado, reavaliar pelo custo de esforço.
 
-**9.4 Checklist de 8 itens do AED versus os 14 requisitos da Seção 5.** O checklist
-do AED omite R4 (número mínimo de 3 regras), **R9 por completo**, os estados de
+**9.4 Checklist de 8 itens do documento de ADS1253 versus os 14 requisitos da Seção 5.** O checklist
+de ADS1253 omite R4 (número mínimo de 3 regras), **R9 por completo**, os estados de
 interface de R10, os critérios objetivos de R11 e parte de R12.
 → Interpretação adotada: **valem os 14 requisitos do norteador**.
 
-**9.5 Geolocalização como API externa.** O AED cita geolocalização como exemplo de
+**9.5 Geolocalização como API externa.** O documento de ADS1253 cita geolocalização como exemplo de
 API externa (R7) e também como recurso nativo (R8). No norteador ela é apenas R8.
 → Interpretação adotada: geolocalização atende **somente R8**. R7 exige um serviço
 externo distinto.
@@ -305,25 +313,25 @@ externo distinto.
 
 **9.6 Conversão da pontuação — resolvido, não é divergência.** O norteador diz que
 cada etapa vale 10,0 pontos "integralmente distribuídos entre itens obrigatórios";
-o AED apresenta N1 = P1 + PP1 + Ex1 e N2 = (P2 + PP2 + Ex2) + AI, com o projeto
+o documento de ADS1253 apresenta N1 = P1 + PP1 + Ex1 e N2 = (P2 + PP2 + Ex2) + AI, com o projeto
 entrando como PP1/PP2 de até 4,0 pontos.
 
 Os dois são compatíveis: os 10,0 do norteador são a **escala interna do projeto**,
-e o AED descreve como essa nota é convertida proporcionalmente para compor até 4,0
-pontos dentro da nota da disciplina. É consequência direta de a AED ser o continente
-avaliativo do Projeto Integrador. Mantido aqui apenas como item de confirmação, não
-como conflito.
+e o documento de ADS1253 descreve como essa nota é convertida proporcionalmente para compor até 4,0
+pontos dentro da nota da disciplina. É consequência direta de a AED ser a rubrica
+pela qual o Projeto Integrador é avaliado em ADS1253. Mantido aqui apenas como item
+de confirmação, não como conflito.
 
 **9.7 Formato do Checkpoint 1.** A Seção 9 determina que todas as entregas sejam
 via AVA até 23h59, e o Checkpoint 1 consta da Seção 7. Mas a Seção 7.1 o descreve
-como "verificação", a Semana 6 como "apresentação", e o AED como acompanhamento
+como "verificação", a Semana 6 como "apresentação", e o documento de ADS1253 como acompanhamento
 presencial de 2 horas.
 → Confirmar se há upload no AVA e se o endereço do repositório deve ser informado
 nesse momento, conforme a exigência da Seção 9 de informá-lo "no ato da primeira
 entrega".
 
 **9.8 Reprogramação dos prazos vencidos.** Registro de equipe (14/08) e submissão de
-tema (21/08) venceram nos dois documentos. O AED reprograma na prática, adotando
+tema (21/08) venceram nos dois documentos. O documento de ADS1253 reprograma na prática, adotando
 como critério que estejam fechados antes do Checkpoint 1. A Seção 7 do norteador
 exige que ajustes de calendário sejam divulgados oficialmente pela coordenação com
 aviso prévio mínimo de 7 dias, e a Seção 3.3 condiciona o desenvolvimento à
@@ -333,6 +341,6 @@ da multa de 20% por dia da Seção 9.
 
 ### Imprecisão menor
 
-**9.9** O AED afirma que o projeto é "o maior peso individual da avaliação". A conta
+**9.9** O documento de ADS1253 afirma que o projeto é "o maior peso individual da avaliação". A conta
 de 8,0 em 20,0 está correta, mas as provas somam o mesmo (P1 + P2 = 8,0). É empate,
 não maioria.
