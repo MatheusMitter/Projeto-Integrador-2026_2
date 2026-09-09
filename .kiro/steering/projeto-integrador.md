@@ -7,12 +7,19 @@ inclusion: always
 > Este arquivo é carregado automaticamente em toda sessão. Leia antes de iniciar
 > qualquer codificação, alteração ou continuidade de desenvolvimento.
 >
-> **Fontes normativas (as duas valem):**
+> **Fontes normativas (as duas valem, e tratam do mesmo projeto):**
 >
 > 1. `Documento Norteador Projeto Integrador ADS 2026-2 (1).pdf` — PUC Goiás,
 >    Escola Politécnica e de Artes, versão 2.0. **Norma superior em caso de conflito**,
 >    por se declarar referência normativa do semestre.
 > 2. `ADS1253 - AED - Projeto Integrador.pdf` — Prof. Welington Júlio, ADS1253.
+>
+> **Relação entre os dois.** A AED (Atividade Externa da Disciplina) é o
+> _continente_: atividade curricular avaliativa de 8 horas-aula, equivalente a 10%
+> da carga de ADS1253, distinta das horas de extensão curricular. O _conteúdo_ dessa
+> atividade neste semestre é o próprio Projeto Integrador do Módulo. Existe **um
+> único projeto**, especificado pelo norteador e canalizado para a nota da disciplina
+> via PP1 e PP2. O material do AED não descreve um trabalho paralelo.
 >
 > Onde os dois divergem, ver a seção 9 (pendências de esclarecimento).
 > Onde um exige algo que o outro não menciona, **vale a união** — o requisito conta.
@@ -205,21 +212,21 @@ gerado precisa ser compreendido pelos integrantes.
 
 Atualizar esta seção conforme as decisões forem tomadas.
 
-| Item                                 | Situação                                        |
-| ------------------------------------ | ----------------------------------------------- |
-| Repositório                          | ✅ criado e público                             |
-| Composição da equipe                 | ⏳ a definir (norteador pede 3 a 4 integrantes) |
-| Nome da equipe                       | ⏳ a definir (necessário para nomear os PDFs)   |
-| Coordenador da equipe                | ⏳ a definir                                    |
-| Responsável técnico pelo repositório | ⏳ a definir                                    |
-| Domínio do problema / tema           | ⏳ a definir — **bloqueia todos os artefatos**  |
-| Pilha tecnológica                    | ⏳ a definir                                    |
-| Ferramenta de backlog                | ⏳ a definir                                    |
-| Ferramenta de protótipo              | ⏳ a definir                                    |
-| Escopo do projeto                    | ⏳ a produzir                                   |
-| Protótipo navegável                  | ⏳ a produzir                                   |
-| Backlog priorizado                   | ⏳ a produzir                                   |
-| Modelagem de dados (DER)             | ⏳ a produzir                                   |
+| Item                                 | Situação                                                                               |
+| ------------------------------------ | -------------------------------------------------------------------------------------- |
+| Repositório                          | ✅ criado e público                                                                    |
+| Composição da equipe                 | ⏳ a definir (norteador pede 3 a 4 integrantes)                                        |
+| Nome da equipe                       | ⏳ a definir (necessário para nomear os PDFs)                                          |
+| Coordenador da equipe                | ⏳ a definir                                                                           |
+| Responsável técnico pelo repositório | ⏳ a definir                                                                           |
+| Domínio do problema / tema           | ⏳ a definir — **bloqueia todos os artefatos**                                         |
+| Pilha tecnológica                    | ⏳ proposta: React Native (Expo) + API Spring Boot com DAO/JDBC + PostgreSQL — ver 9.3 |
+| Ferramenta de backlog                | ⏳ a definir                                                                           |
+| Ferramenta de protótipo              | ⏳ a definir                                                                           |
+| Escopo do projeto                    | ⏳ a produzir                                                                          |
+| Protótipo navegável                  | ⏳ a produzir                                                                          |
+| Backlog priorizado                   | ⏳ a produzir                                                                          |
+| Modelagem de dados (DER)             | ⏳ a produzir                                                                          |
 
 Observação de cronograma: a equipe informou que o cronograma está sendo adaptado
 pelo docente e que os itens previstos para as semanas anteriores podem ser
@@ -273,7 +280,16 @@ como exceção na própria Seção 3.2.
 Firebase, Supabase ou equivalentes. O AED afirma que a persistência remota é
 construída com JDBC, DAO e transações, o que exclui BaaS na prática e exige
 retaguarda em Java. **Maior impacto arquitetural — resolver antes de escolher a pilha.**
-→ Interpretação adotada: nenhuma. Bloqueia a decisão de pilha.
+
+Como o projeto _é_ a AED de ADS1253 (Programação Orientada a Objeto com Banco de
+Dados), há expectativa legítima de que ele exercite o conteúdo da disciplina. Isso
+desloca a probabilidade para a retaguarda em Java.
+
+→ Interpretação adotada: **retaguarda própria em Java (Spring Boot) com DAO sobre
+JDBC**, porque essa escolha satisfaz os dois documentos simultaneamente — a Seção 4
+do norteador admite expressamente "API própria (Spring Boot)", e o AED tem seu
+conteúdo contemplado. BaaS satisfaz apenas o norteador e carrega risco normativo.
+Confirmar com o docente; se BaaS for liberado, reavaliar pelo custo de esforço.
 
 **9.4 Checklist de 8 itens do AED versus os 14 requisitos da Seção 5.** O checklist
 do AED omite R4 (número mínimo de 3 regras), **R9 por completo**, os estados de
@@ -287,11 +303,16 @@ externo distinto.
 
 ### Ambiguidades (pedir esclarecimento)
 
-**9.6 Conversão da pontuação.** O norteador diz que cada etapa vale 10,0 pontos
-"integralmente distribuídos entre itens obrigatórios". O AED apresenta
-N1 = P1 + PP1 + Ex1 e N2 = (P2 + PP2 + Ex2) + AI, com o projeto entrando como
-PP1/PP2 de até 4,0 pontos, e afirma conversão proporcional dos 10,0 para 4,0.
-→ Confirmar que a escala de 10,0 é interna ao projeto.
+**9.6 Conversão da pontuação — resolvido, não é divergência.** O norteador diz que
+cada etapa vale 10,0 pontos "integralmente distribuídos entre itens obrigatórios";
+o AED apresenta N1 = P1 + PP1 + Ex1 e N2 = (P2 + PP2 + Ex2) + AI, com o projeto
+entrando como PP1/PP2 de até 4,0 pontos.
+
+Os dois são compatíveis: os 10,0 do norteador são a **escala interna do projeto**,
+e o AED descreve como essa nota é convertida proporcionalmente para compor até 4,0
+pontos dentro da nota da disciplina. É consequência direta de a AED ser o continente
+avaliativo do Projeto Integrador. Mantido aqui apenas como item de confirmação, não
+como conflito.
 
 **9.7 Formato do Checkpoint 1.** A Seção 9 determina que todas as entregas sejam
 via AVA até 23h59, e o Checkpoint 1 consta da Seção 7. Mas a Seção 7.1 o descreve
