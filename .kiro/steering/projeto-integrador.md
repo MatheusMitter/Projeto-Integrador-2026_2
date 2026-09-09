@@ -131,16 +131,16 @@ no-code/low-code sem código autoral.
 Onde as datas divergem entre os dois documentos, adotar a **data mais cedo** até
 que a coordenação esclareça (ver seção 9).
 
-| Marco                      | Data                                   | Entregáveis                                                                          |
-| -------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------ |
+| Marco                      | Data                                   | Entregáveis                                                                                           |
+| -------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | **Checkpoint 1**           | **11/09/2026**                         | Escopo, protótipo navegável, backlog priorizado **e DER** (o DER é exigido pelo documento de ADS1253) |
-| Entrega e apresentação N1  | 28/09 a 02/10/2026 (ADS1253 diz 29/09) | 6 itens pontuados (ver seção 6)                                                      |
-| Avaliação Interdisciplinar | 03/11/2026                             | 1,0 pt na N2, institucional, fora do projeto (só no documento de ADS1253)            |
-| Checkpoint 2               | 06/11/2026                             | Versão beta com persistência local + remota e API externa                            |
-| Testes com usuários        | 09 a 13/11/2026 (ADS1253 diz 10/11)    | Testes funcionais + usabilidade com **5+ usuários externos**                         |
-| Congelamento de escopo     | 27/11/2026                             | Fim do desenvolvimento de novas funcionalidades                                      |
-| Documentação final         | 04/12/2026                             | Relatório técnico, pacote instalável, repositório                                    |
-| Entrega e apresentação N2  | 07 a 11/12/2026 (ADS1253 diz 08/12)    | Mostra final com banca e arguição individual                                         |
+| Entrega e apresentação N1  | 28/09 a 02/10/2026 (ADS1253 diz 29/09) | 6 itens pontuados (ver seção 6)                                                                       |
+| Avaliação Interdisciplinar | 03/11/2026                             | 1,0 pt na N2, institucional, fora do projeto (só no documento de ADS1253)                             |
+| Checkpoint 2               | 06/11/2026                             | Versão beta com persistência local + remota e API externa                                             |
+| Testes com usuários        | 09 a 13/11/2026 (ADS1253 diz 10/11)    | Testes funcionais + usabilidade com **5+ usuários externos**                                          |
+| Congelamento de escopo     | 27/11/2026                             | Fim do desenvolvimento de novas funcionalidades                                                       |
+| Documentação final         | 04/12/2026                             | Relatório técnico, pacote instalável, repositório                                                     |
+| Entrega e apresentação N2  | 07 a 11/12/2026 (ADS1253 diz 08/12)    | Mostra final com banca e arguição individual                                                          |
 
 **O Checkpoint 1 não é a N1.** O checkpoint verifica especificação e não tem
 pontuação própria, mas alimenta o FPI. A N1 é em 28/09 e exige, além dos
@@ -220,21 +220,21 @@ gerado precisa ser compreendido pelos integrantes.
 
 Atualizar esta seção conforme as decisões forem tomadas.
 
-| Item                                 | Situação                                                                               |
-| ------------------------------------ | -------------------------------------------------------------------------------------- |
-| Repositório                          | ✅ criado e público                                                                    |
-| Composição da equipe                 | ⏳ a definir (norteador pede 3 a 4 integrantes)                                        |
-| Nome da equipe                       | ⏳ a definir (necessário para nomear os PDFs)                                          |
-| Coordenador da equipe                | ⏳ a definir                                                                           |
-| Responsável técnico pelo repositório | ⏳ a definir                                                                           |
-| Domínio do problema / tema           | ⏳ a definir — **bloqueia todos os artefatos**                                         |
-| Pilha tecnológica                    | ⏳ proposta: React Native (Expo) + API Spring Boot com DAO/JDBC + PostgreSQL — ver 9.3 |
-| Ferramenta de backlog                | ⏳ a definir                                                                           |
-| Ferramenta de protótipo              | ⏳ a definir                                                                           |
-| Escopo do projeto                    | ⏳ a produzir                                                                          |
-| Protótipo navegável                  | ⏳ a produzir                                                                          |
-| Backlog priorizado                   | ⏳ a produzir                                                                          |
-| Modelagem de dados (DER)             | ⏳ a produzir                                                                          |
+| Item                                 | Situação                                             |
+| ------------------------------------ | ---------------------------------------------------- |
+| Repositório                          | ✅ criado e público                                  |
+| Composição da equipe                 | ⏳ a definir (norteador pede 3 a 4 integrantes)      |
+| Nome da equipe                       | ⏳ a definir (necessário para nomear os PDFs)        |
+| Coordenador da equipe                | ⏳ a definir                                         |
+| Responsável técnico pelo repositório | ⏳ a definir                                         |
+| Domínio do problema / tema           | ⏳ a definir — **bloqueia todos os artefatos**       |
+| Pilha tecnológica                    | ⏳ a definir — depende do esclarecimento do item 9.3 |
+| Ferramenta de backlog                | ⏳ a definir                                         |
+| Ferramenta de protótipo              | ⏳ a definir                                         |
+| Escopo do projeto                    | ⏳ a produzir                                        |
+| Protótipo navegável                  | ⏳ a produzir                                        |
+| Backlog priorizado                   | ⏳ a produzir                                        |
+| Modelagem de dados (DER)             | ⏳ a produzir                                        |
 
 Observação de cronograma: a equipe informou que o cronograma está sendo adaptado
 pelo docente e que os itens previstos para as semanas anteriores podem ser

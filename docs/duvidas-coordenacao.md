@@ -5,9 +5,9 @@ Projeto Integrador
 
 **Documentos analisados**
 
-1. *Documento Norteador — Projeto Integrador ADS, semestre 2026/2, versão 2.0* —
+1. _Documento Norteador — Projeto Integrador ADS, semestre 2026/2, versão 2.0_ —
    Escola Politécnica e de Artes, PUC Goiás
-2. *ADS1253 — AED · Projeto Integrador do Módulo* — Prof. Welington Júlio
+2. _ADS1253 — AED · Projeto Integrador do Módulo_ — Prof. Welington Júlio
 
 **Data:** 09/09/2026
 
@@ -66,9 +66,10 @@ acesso a dados por JDBC e padrão DAO.
 **Impacto:** este é o ponto de maior consequência arquitetural. Define a pilha
 tecnológica, a modelagem de dados e a distribuição de esforço no cronograma interno.
 
-**Interpretação provisória adotada:** retaguarda própria em Spring Boot com DAO
-sobre JDBC, por ser a única configuração que atende aos dois documentos ao mesmo
-tempo.
+**Observação:** a equipe ainda não definiu a pilha tecnológica, justamente porque a
+resposta a esta questão a condiciona. Registramos que uma retaguarda própria em Java
+com DAO sobre JDBC parece ser a única configuração que atende aos dois documentos
+simultaneamente, e que a definição aguarda o esclarecimento.
 
 ### 1.3 Formalização dos prazos de registro de equipe e submissão de tema
 
@@ -126,11 +127,11 @@ Checkpoint 1 constitui essa primeira entrega, para fins de cumprimento do requis
 
 ### 3.1 Datas de três janelas de entrega
 
-| Marco | Documento Norteador | Material de ADS1253 |
-| --- | --- | --- |
-| Entrega e apresentação da N1 | 28/09 a 02/10/2026 | 29/09 a 02/10/2026 |
-| Testes com usuários | 09 a 13/11/2026 | 10 a 13/11/2026 |
-| Entrega e apresentação da N2 | 07 a 11/12/2026 | 08 a 11/12/2026 |
+| Marco                        | Documento Norteador | Material de ADS1253 |
+| ---------------------------- | ------------------- | ------------------- |
+| Entrega e apresentação da N1 | 28/09 a 02/10/2026  | 29/09 a 02/10/2026  |
+| Testes com usuários          | 09 a 13/11/2026     | 10 a 13/11/2026     |
+| Entrega e apresentação da N2 | 07 a 11/12/2026     | 08 a 11/12/2026     |
 
 Em todos os três casos, o segundo documento inicia a janela um dia depois. As semanas
 do Documento Norteador correm de segunda a sexta-feira; o documento de ADS1253 desloca
@@ -188,17 +189,17 @@ Registramos apenas para eventual ajuste do material.
 
 Enquanto aguardamos resposta, a equipe seguirá com:
 
-| Item | Interpretação adotada |
-| --- | --- |
-| Datas divergentes | A mais cedo |
-| Requisitos técnicos | Os 14 da Seção 5 |
-| Retaguarda | Spring Boot com DAO sobre JDBC |
-| Geolocalização | Atende apenas R8 |
-| DER no Checkpoint 1 | Será apresentado |
-| Piso de integrantes | Pendente de definição |
+| Item                | Interpretação adotada          |
+| ------------------- | ------------------------------ |
+| Datas divergentes   | A mais cedo                    |
+| Requisitos técnicos | Os 14 da Seção 5               |
+| Retaguarda          | Pendente — condicionada à resposta do item 1.2 |
+| Geolocalização      | Atende apenas R8               |
+| DER no Checkpoint 1 | Será apresentado               |
+| Piso de integrantes | Pendente de definição          |
 
 ---
 
-**Equipe:** *a preencher*
-**Integrantes:** *a preencher*
+**Equipe:** _a preencher_
+**Integrantes:** _a preencher_
 **Repositório:** https://github.com/MatheusMitter/Projeto-Integrador-2026_2
