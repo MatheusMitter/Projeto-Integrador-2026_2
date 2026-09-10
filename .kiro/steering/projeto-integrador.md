@@ -74,6 +74,20 @@ tipo ∈ docs | feat | fix | refactor | chore | test
 
 Exemplo: `docs: adiciona requisitos funcionais e regras de negócio ao escopo`
 
+**Tamanho.** Assunto em uma linha, até cerca de 70 caracteres. Corpo é opcional e
+só entra quando o motivo não é óbvio pelo assunto — nesse caso, uma ou duas frases
+curtas, no máximo três linhas.
+
+Mensagem descritiva é diferente de mensagem longa. Descrever objetivamente o que
+mudou e, se necessário, por quê. **Não** escrever texto corrido em vários
+parágrafos, nem listas de tópicos detalhando cada arquivo alterado: isso não
+melhora o histórico e destoa de um commit escrito por pessoa.
+
+Bom: `docs: separa entregas e normas em dois arquivos`
+Bom: `fix: corrige hierarquia de títulos que aninhava o DER no backlog`
+Ruim: mensagem de cinco parágrafos explicando a motivação em detalhes.
+Ruim: `update`, `ajustes`, `wip` — vedadas pelo norteador.
+
 ---
 
 ## 3. Regras de código não negociáveis
