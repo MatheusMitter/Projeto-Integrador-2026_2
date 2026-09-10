@@ -156,11 +156,78 @@ R9 é o requisito mais esquecido.
 
 Conforme a Seção 6.1:
 
-- [ ] Mantido em ferramenta de gestão de tarefas — não basta lista em documento
-- [ ] Itens em formato de história de usuário ou requisito funcional
-- [ ] Priorizados
-- [ ] Atribuídos a responsáveis nominalmente
-- [ ] Quadro acessível ao docente
+**O que é.** Uma lista ordenada de tudo que o aplicativo precisa ter, quebrada em
+itens pequenos, cada um escrito da perspectiva de quem vai usar. Ordenada porque a
+ordem informa o que será construído primeiro. É o instrumento pelo qual a equipe
+planeja e o docente acompanha o andamento.
+
+**Onde vive.** Em ferramenta de quadro de tarefas, não em documento. A Seção 6.1 exige
+que o quadro esteja acessível ao docente durante todo o semestre — um arquivo entregue
+uma vez não cumpre isso.
+
+Recomendação: **GitHub Projects**, porque fica no mesmo lugar do repositório, é público
+junto com ele e vincula cada item aos commits que o implementam. Trello e Jira também
+atendem.
+
+#### Como escrever cada item
+
+Dois formatos são aceitos. O de história de usuário é preferível, porque carrega o
+motivo e ajuda na arguição.
+
+_História de usuário_ — `Como <perfil>, quero <ação> para <benefício>`
+
+> Como técnico, quero ver apenas os chamados atribuídos a mim, para saber o que
+> atender hoje sem procurar na lista inteira.
+
+_Requisito funcional_ — referência ao código do escopo
+
+> RF15 — O sistema deve listar os registros filtrados por situação e prioridade.
+
+Cada item precisa ser pequeno o suficiente para caber em um ciclo e resultar em algo
+demonstrável. "Fazer o aplicativo" não é um item. "Cadastrar cliente com validação dos
+campos obrigatórios" é.
+
+#### O que "priorizado" significa
+
+Não é ordenar por gosto. Cada item recebe uma prioridade explícita — um campo ou
+etiqueta com Alta, Média e Baixa, ou a própria posição na coluna — e a ordem precisa ser
+**justificável**. Um dos eixos da arguição individual é exatamente "os critérios
+utilizados na priorização do backlog e no replanejamento entre ciclos".
+
+Critério que se sustenta neste projeto: primeiro o que os requisitos R1 a R14 obrigam,
+ordenado por dependência técnica. Autenticação antes de CRUD, porque o CRUD depende de
+saber quem é o usuário. CRUD antes de regras de negócio, porque as regras operam sobre
+os dados. Persistência local antes de sincronização. O que é desejável e não pontua
+fica no fim.
+
+#### Quantos itens
+
+As normas não fixam mínimo. O tamanho decorre da cobertura: o backlog precisa
+contemplar os requisitos funcionais do escopo. Um aplicativo com 6 telas, 2 entidades
+com manutenção completa e 3 regras de negócio costuma render entre 20 e 30 itens.
+
+#### Passo a passo
+
+- [ ] Escolher a ferramenta e criar o quadro
+- [ ] Criar as colunas de fluxo — por exemplo: Backlog, A fazer, Em andamento, Concluído
+- [ ] Lançar um item por requisito funcional do escopo, em formato de história de
+      usuário ou requisito
+- [ ] Marcar a prioridade de cada item
+- [ ] Atribuir cada item a um integrante, nominalmente
+- [ ] Ordenar o quadro de modo que a prioridade seja visível
+- [ ] Tornar o quadro acessível ao docente e registrar o endereço junto com o do
+      repositório
+
+#### Onde isso reaparece
+
+Na N1, item 5, valendo 1,0 ponto, avaliado junto com a distribuição de
+responsabilidades e a regularidade do histórico de versionamento. E ao fim de cada
+ciclo é preciso registrar o que foi concluído, o que foi replanejado e quais
+impedimentos apareceram — o quadro é onde esse registro se sustenta.
+
+> **Depende do tema.** Os itens do backlog descrevem funcionalidades, e as
+> funcionalidades vêm do domínio escolhido. Sem o tema definido, o quadro pode ser
+> criado e as colunas configuradas, mas os itens não podem ser escritos.
 
 #### 3.4 DER do banco de dados
 
