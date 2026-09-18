@@ -144,21 +144,27 @@ sobre existir submissão no ambiente virtual — ver item 2.2 do documento de d�
 
 ## 3.1 Escopo do projeto
 
+✅ **CONCLUÍDO** — Arquivo: `checkpoint1-respostas-formulario.md`
+
 **O que é.** O documento que descreve o que o aplicativo faz, para quem, e sob quais
 regras. É a base dos outros três: protótipo, DER e backlog todos derivam dele. Cobre os
 itens 2 a 7 do Apêndice A.1.
 
-### Entregar
+### Entregue
 
-- [ ] **Contexto e caracterização do domínio** — que área é essa, como as pessoas
-      resolvem esse problema hoje
-- [ ] **Descrição do problema e justificativa** — o que está errado hoje, e por que um
-      app resolve
-- [ ] **Objetivo geral e objetivos específicos** — uma frase dizendo o que o app faz, e
-      uma lista do que ele precisa entregar para isso
-- [ ] **Público-alvo e personas** — quem usa
-- [ ] **Requisitos funcionais e não funcionais**, identificados e priorizados
-- [ ] **Regras de negócio** — mínimo de 3 não triviais (R4)
+- [x] **Contexto e caracterização do domínio** — controle de estoque para pequenos comércios
+- [x] **Descrição do problema e justificativa** — comerciantes perdem vendas por falta de controle adequado
+- [x] **Objetivo geral e objetivos específicos** — app móvel para gestão de estoque com alertas automáticos
+- [x] **Público-alvo** — proprietários de mercearias, padarias, minimercados e lojas de conveniência
+- [x] **Requisitos funcionais e não funcionais**, identificados — 15 funcionalidades especificadas
+- [x] **Regras de negócio** — 9 regras codificadas (RN01-RN09), mínimo de 3 atendido
+
+**Tema:** StockEasy — Sistema de Controle de Estoque Inteligente  
+**Equipe:**
+
+- Matheus Oliveira Mitter - 2025.1.0120.0128-3 (Backend)
+- Vitor Leal dos Santos - 2025.1.0120.0071-6 (Frontend móvel)
+- Felipe Milhomem Rocha - 2025.1.0120.0024-4 (Integração e recursos nativos)
 
 ### Os termos que costumam gerar dúvida
 
@@ -199,6 +205,9 @@ toma.
 
 ## 3.2 Protótipo navegável
 
+⏳ **Especificação completa entregue** — Arquivo: `checkpoint1-prototipo-especificacao.md`  
+**Próximo passo:** Implementar no Figma
+
 **O que é.** O desenho das telas do app, ligadas entre si, em que dá para clicar e
 percorrer o fluxo como se fosse o aplicativo de verdade. **"Navegável" é a palavra que
 importa:** imagens soltas das telas não atendem — os botões precisam levar de uma tela
@@ -207,14 +216,18 @@ importa:** imagens soltas das telas não atendem — os botões precisam levar d
 Não exige código. Ferramenta de prototipação como Figma atende, conforme orientação de
 ADS1253.
 
-### Entregar
+### Especificação entregue
 
-- [ ] **Mínimo de 6 telas** funcionais distintas, com navegação estruturada (R1)
-- [ ] **Fluxo de autenticação e as duas visões de perfil** (R2)
-- [ ] **Telas de manutenção de dados** das entidades principais — cadastrar, consultar,
-      alterar e excluir (R3)
-- [ ] **Listagem com filtro, ordenação ou busca, e a visão consolidada** (R9)
-- [ ] **Estados de carregamento e de lista vazia** (R10)
+- [x] **6 telas principais + 3 telas extras** — navegação completa especificada
+- [x] **Fluxo de autenticação e as duas visões de perfil** (R2) — Login, Cadastro, Proprietário e Operador
+- [x] **Telas de manutenção de dados** — Produtos com CRUD completo (R3)
+- [x] **Listagem com filtros e visão consolidada** (R9) — Dashboard com cards e gráficos
+- [x] **Estados de carregamento e de lista vazia** (R10) — Especificados em cada tela
+- [x] **Design system básico** — Cores, tipografia, componentes reutilizáveis
+- [x] **4 fluxos completos demonstráveis** — Primeiro uso, venda, alerta, relatório
+
+A especificação de 9 telas está pronta para implementação no Figma, com todos os elementos visuais,
+comportamentos, estados e fluxos de navegação detalhados.
 
 ### Os termos que costumam gerar dúvida
 
@@ -238,6 +251,9 @@ R10 os exige explicitamente.
 
 ## 3.3 Backlog priorizado
 
+✅ **CONCLUÍDO** — Arquivo: `checkpoint1-backlog.md`  
+**Próximo passo:** Criar GitHub Projects e popular com as histórias
+
 **O que é.** A lista ordenada de tudo que o aplicativo precisa ter, quebrada em itens
 pequenos, cada um escrito da perspectiva de quem vai usar. A ordem informa o que será
 construído primeiro. É por ele que a equipe planeja e o docente acompanha o andamento.
@@ -248,15 +264,18 @@ uma vez não cumpre isso. Recomendação: **GitHub Projects**, porque fica no me
 do repositório e vincula cada item aos commits que o implementam. Trello e Jira também
 atendem.
 
-### Entregar
+### Backlog entregue
 
-- [ ] Quadro criado na ferramenta, com colunas de fluxo — por exemplo Backlog, A fazer,
-      Em andamento, Concluído
-- [ ] Um item por requisito funcional do escopo
-- [ ] Prioridade marcada em cada item
-- [ ] Um responsável nominal em cada item
-- [ ] Quadro ordenado de modo que a prioridade fique visível
-- [ ] Quadro acessível ao docente, com o endereço registrado junto ao do repositório
+- [x] **29 histórias de usuário** (US01-US29) em formato completo
+- [x] **10 épicos organizados:** Autenticação, Produtos, Estoque, Alertas, Fornecedores, Relatórios, Recursos Nativos, Persistência, Configurações, Testes
+- [x] **Prioridade marcada** em cada história (ALTA/MÉDIA/BAIXA)
+- [x] **Estimativa** em cada história (P/M/G/XG)
+- [x] **Critérios de aceite** detalhados
+- [x] **Dependências** mapeadas entre histórias
+- [x] **9 regras de negócio** codificadas (RN01-RN09)
+- [x] **Mapeamento para R1-R14** — cada requisito obrigatório vinculado às histórias correspondentes
+- [x] **Priorização para N1 e N2** definida
+- [x] **Distribuição sugerida** entre os 3 integrantes
 
 ### Como escrever cada item
 
@@ -302,6 +321,8 @@ manutenção completa e 3 regras de negócio costuma render entre 20 e 30 itens.
 
 ## 3.4 DER do banco de dados
 
+✅ **CONCLUÍDO** — Arquivo: `checkpoint1-der-modelagem.md`
+
 **O que é.** DER é diagrama entidade-relacionamento: o desenho das tabelas do banco de
 dados e de como elas se ligam. Mostra o que o sistema guarda e como as informações se
 referenciam.
@@ -310,13 +331,21 @@ Exigido pelo documento de ADS1253, que o vincula ao conteúdo da aula técnica �
 modelagem relacional, normalização e integridade. Ou seja, será lido como banco de
 dados, não como desenho.
 
-### Entregar
+### DER entregue
 
-- [ ] **Entidades com seus atributos** — cada tabela e seus campos
-- [ ] **Chaves primárias e estrangeiras** explícitas
-- [ ] **Cardinalidades** nos relacionamentos
-- [ ] **Normalizado**
-- [ ] Mínimo de **2 entidades principais** relacionadas (Seção 3.3)
+- [x] **5 entidades:** USUARIO, FORNECEDOR, PRODUTO, MOVIMENTACAO, ALERTA
+- [x] **Atributos detalhados** com tipos de dados PostgreSQL, restrições (NOT NULL, UNIQUE, CHECK), descrições
+- [x] **Chaves primárias e estrangeiras** explícitas com comportamento ON DELETE definido
+- [x] **Cardinalidades** corretas nos relacionamentos (1:N)
+- [x] **Normalizado até 3FN** com desnormalização intencional documentada (coluna `saldo_apos`)
+- [x] **Scripts SQL completos** de criação para PostgreSQL, testáveis
+- [x] **Índices estratégicos** para otimizar consultas frequentes
+- [x] **Triggers** para automação de alertas de estoque crítico
+- [x] **Estratégia de persistência local** (SQLite) com sincronização
+- [x] **Consultas SQL importantes** documentadas (produtos críticos, mais vendidos, valor do estoque)
+- [x] **9 regras de negócio** mapeadas para implementação no banco
+
+Modelo completo e pronto para implementação, atendendo aos requisitos R3, R4, R5 e R6.
 
 ### Os termos que costumam gerar dúvida
 
