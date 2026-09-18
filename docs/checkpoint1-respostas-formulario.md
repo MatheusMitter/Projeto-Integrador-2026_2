@@ -28,6 +28,7 @@ O **StockEasy** é um aplicativo móvel que resolve o problema de **falta de con
 **Problema:** Pequenos comerciantes (mercearias, lojas de conveniência, minimercados, farmácias) geralmente controlam estoque de forma manual (cadernos, planilhas desatualizadas) ou não controlam, resultando em perda de vendas por falta de produtos, compras desnecessárias e dificuldade em identificar produtos de baixo giro.
 
 **Público-alvo:**
+
 - Proprietários de pequenos comércios (mercearias, padarias, minimercados)
 - Gerentes de lojas de conveniência
 - Empreendedores iniciantes no varejo
@@ -42,22 +43,26 @@ O aplicativo será usado no dia a dia da operação para registrar entradas, sa�
 ### Funcionalidades principais previstas:
 
 **Gestão de Produtos**
+
 - Cadastro completo de produtos (nome, código de barras, categoria, preço de custo e venda, estoque mínimo, fornecedor)
 - Busca e filtros por categoria, fornecedor ou status de estoque
 - Edição e exclusão de produtos com validação
 
 **Controle de Estoque**
+
 - Registro de entrada de mercadorias (compra de fornecedor)
 - Registro de saída (venda, perda, vencimento, devolução)
 - Visualização do estoque atual com indicadores visuais (crítico, baixo, normal, excesso)
 - Histórico de movimentações por produto
 
 **Alertas e Notificações**
+
 - Alertas automáticos de produtos abaixo do estoque mínimo
 - Notificações de produtos próximos ao vencimento
 - Lembretes de reposição baseados no histórico de vendas
 
 **Relatórios e Visões Consolidadas**
+
 - Produtos mais vendidos (ranking)
 - Produtos com baixo giro (candidatos a promoção)
 - Valor total do estoque
@@ -65,17 +70,20 @@ O aplicativo será usado no dia a dia da operação para registrar entradas, sa�
 - Resumo financeiro (valor investido em estoque)
 
 **Gestão de Fornecedores**
+
 - Cadastro de fornecedores (nome, contato, produtos fornecidos)
 - Consulta de produtos por fornecedor
 - Histórico de compras por fornecedor
 
 **Autenticação e Perfis de Usuário**
+
 - Cadastro e login seguro
 - Perfil Proprietário: acesso completo, relatórios financeiros, cadastro de usuários
 - Perfil Operador: registro de entradas/saídas, consultas de estoque, sem acesso a relatórios financeiros
 - Recuperação de senha
 
 **Recursos Nativos e Integração**
+
 - Leitura de código de barras via câmera (agiliza cadastro e registro de movimentações)
 - Sincronização com servidor remoto (backup automático)
 - Funcionalidade offline com sincronização posterior
@@ -85,9 +93,12 @@ O aplicativo será usado no dia a dia da operação para registrar entradas, sa�
 
 ## 5. Insira o link para o protótipo navegável
 
-**Link do Figma:** [a ser preenchido após montagem do protótipo]
+**Link do protótipo navegável:**  
+https://matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/
 
-⚠️ **Instrução para a equipe:** Usar a especificação completa das telas no arquivo `checkpoint1-prototipo-especificacao.md` para montar o protótipo no Figma. Configurar permissão de visualização para os professores antes de colar o link aqui.
+O protótipo foi desenvolvido em HTML/CSS e está hospedado no GitHub Pages. É totalmente navegável — os botões são clicáveis e a navegação entre telas funciona como no aplicativo real.
+
+**Alternativa:** O protótipo também pode ser acessado localmente abrindo o arquivo `/prototipo/index.html` no navegador.
 
 ---
 
@@ -148,12 +159,14 @@ O aplicativo será usado no dia a dia da operação para registrar entradas, sa�
 Conforme o item 1.2 de `docs/duvidas-coordenacao.md`, há divergência entre os documentos normativos quanto à pilha tecnológica. O documento de ADS1253 indica persistência com JDBC e DAO, o que sugere retaguarda em Java (Spring Boot). Estamos adotando essa interpretação para garantir compatibilidade com o conteúdo da disciplina de Programação Orientada a Objetos com Banco de Dados.
 
 **Pilha prevista:**
+
 - **Mobile:** React Native (Expo) — atende ao requisito de plataforma móvel nativa/híbrida
 - **Backend:** Spring Boot (Java) com API RESTful
 - **Banco de dados:** PostgreSQL (remoto) + SQLite (persistência local para modo offline)
 - **Integração externa:** API de consulta de produtos por código de barras (Open Food Facts ou Cosmos API)
 
 **Justificativa técnica:**
+
 - React Native permite desenvolvimento ágil com código compartilhado e empacotamento nativo (APK/AAB)
 - Spring Boot + JDBC/DAO atende à exigência de ADS1253 e garante controle fino das transações
 - Persistência local (SQLite) viabiliza operação offline, requisito crítico para comércios em áreas com conectividade instável
@@ -161,16 +174,19 @@ Conforme o item 1.2 de `docs/duvidas-coordenacao.md`, há divergência entre os 
 
 **Pendências normativas:**
 Aguardamos esclarecimento formal da coordenação sobre:
+
 - Confirmação da pilha tecnológica (item 1.2 de `docs/duvidas-coordenacao.md`)
 - Reprogramação oficial das datas de registro de equipe e tema (item 1.5)
 - Tamanho mínimo de equipe — norteador tem contradição interna entre "3 a 4" e "não inferior a 4" (item 1.1)
 
 **Distribuição inicial de responsabilidades:**
+
 - **Matheus Oliveira Mitter:** Backend (Spring Boot, API REST, modelagem do banco)
 - **Vitor Leal dos Santos:** Frontend móvel (React Native, telas, navegação)
 - **Felipe Milhomem Rocha:** Integração (API externa, sincronização, recursos nativos, testes)
 
 **Gestão do projeto:**
+
 - **Backlog:** GitHub Projects (integrado ao repositório)
 - **Prototipação:** Figma
 - **Versionamento:** Git com estratégia de branches e pull requests revisados

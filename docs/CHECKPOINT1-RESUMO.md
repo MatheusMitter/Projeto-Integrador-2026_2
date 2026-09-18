@@ -8,12 +8,12 @@
 
 ## 🎯 STATUS GERAL
 
-| Artefato | Status | Arquivo |
-|----------|--------|---------|
-| **Escopo** | ✅ Concluído | `checkpoint1-respostas-formulario.md` |
+| Artefato      | Status                                           | Arquivo                                  |
+| ------------- | ------------------------------------------------ | ---------------------------------------- |
+| **Escopo**    | ✅ Concluído                                     | `checkpoint1-respostas-formulario.md`    |
 | **Protótipo** | ⚠️ Especificação completa → Implementar no Figma | `checkpoint1-prototipo-especificacao.md` |
-| **Backlog** | ✅ Concluído → Criar GitHub Projects | `checkpoint1-backlog.md` |
-| **DER** | ✅ Concluído | `checkpoint1-der-modelagem.md` |
+| **Backlog**   | ✅ Concluído → Criar GitHub Projects             | `checkpoint1-backlog.md`                 |
+| **DER**       | ✅ Concluído                                     | `checkpoint1-der-modelagem.md`           |
 
 ---
 
@@ -100,14 +100,10 @@ RECURSOS NATIVOS E INTEGRAÇÃO
 ### 5. Link do protótipo navegável
 
 ```
-[PREENCHER APÓS IMPLEMENTAÇÃO NO FIGMA]
+https://matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/
 
-Instruções:
-1. Abrir o Figma
-2. Criar novo projeto
-3. Seguir a especificação completa em checkpoint1-prototipo-especificacao.md
-4. Configurar permissão: "Anyone with the link can view"
-5. Copiar o link e colar aqui
+Protótipo HTML/CSS totalmente navegável hospedado no GitHub Pages.
+Botões clicáveis, navegação real entre telas, 8 telas completas + 4 fluxos demonstráveis.
 ```
 
 ### 6. Telas e fluxos visualizáveis no protótipo
@@ -177,12 +173,15 @@ Gestão do projeto:
 ## 📦 ARTEFATOS PRODUZIDOS
 
 ### 1. Respostas do Formulário
+
 **Arquivo:** `checkpoint1-respostas-formulario.md`  
 **Conteúdo:** As 7 respostas do formulário prontas para copiar e colar
 
 ### 2. Especificação do Protótipo
+
 **Arquivo:** `checkpoint1-prototipo-especificacao.md`  
 **Conteúdo:**
+
 - 9 telas detalhadas (layout, elementos, comportamentos, estados)
 - 4 fluxos navegáveis completos
 - Design system básico (cores, tipografia, componentes)
@@ -191,8 +190,10 @@ Gestão do projeto:
 **Próximo passo:** Implementar no Figma seguindo a especificação
 
 ### 3. Backlog Priorizado
+
 **Arquivo:** `checkpoint1-backlog.md`  
 **Conteúdo:**
+
 - 29 histórias de usuário (US01-US29)
 - 10 épicos organizados
 - Prioridades, estimativas, critérios de aceite, dependências
@@ -202,8 +203,10 @@ Gestão do projeto:
 **Próximo passo:** Criar GitHub Projects e popular com as histórias como issues
 
 ### 4. Modelagem de Dados
+
 **Arquivo:** `checkpoint1-der-modelagem.md`  
 **Conteúdo:**
+
 - DER completo com 5 entidades
 - Scripts SQL prontos para executar (PostgreSQL)
 - Estratégia de sincronização (SQLite ↔ PostgreSQL)
@@ -241,22 +244,22 @@ Gestão do projeto:
 
 ### Requisitos obrigatórios (R1-R14) já cobertos:
 
-| Req | Descrição | Cobertura no Checkpoint 1 |
-|-----|-----------|---------------------------|
-| R1 | 6+ telas | ✅ 9 telas especificadas no protótipo |
-| R2 | Autenticação e perfis | ✅ US01-US04 + telas de login no protótipo |
-| R3 | CRUD em 2+ entidades | ✅ Produtos e Fornecedores no backlog + DER |
-| R4 | 3+ regras de negócio | ✅ 9 regras (RN01-RN09) documentadas |
-| R5 | Persistência local | ✅ SQLite no DER + US24 no backlog |
-| R6 | Persistência remota | ✅ PostgreSQL no DER + US25 no backlog |
-| R7 | API externa | ✅ US23 (API de produtos) no backlog |
-| R8 | Recurso nativo | ✅ US21 (câmera/scanner) + US22 (notificações) |
-| R9 | Filtro + visão consolidada | ✅ US06 (filtros) + US17-US18 (dashboard e ranking) |
-| R10 | Erros e estados | ✅ Especificado em todas as telas do protótipo |
-| R11 | Usabilidade e acessibilidade | ✅ Design system no protótipo + US29 (testes) |
-| R12 | Organização do código | ⏳ Será implementado (arquitetura em camadas definida) |
-| R13 | Versionamento | ✅ Repositório Git criado e público |
-| R14 | Distribuição (APK) | ⏳ Sprint final antes da N2 |
+| Req | Descrição                    | Cobertura no Checkpoint 1                              |
+| --- | ---------------------------- | ------------------------------------------------------ |
+| R1  | 6+ telas                     | ✅ 9 telas especificadas no protótipo                  |
+| R2  | Autenticação e perfis        | ✅ US01-US04 + telas de login no protótipo             |
+| R3  | CRUD em 2+ entidades         | ✅ Produtos e Fornecedores no backlog + DER            |
+| R4  | 3+ regras de negócio         | ✅ 9 regras (RN01-RN09) documentadas                   |
+| R5  | Persistência local           | ✅ SQLite no DER + US24 no backlog                     |
+| R6  | Persistência remota          | ✅ PostgreSQL no DER + US25 no backlog                 |
+| R7  | API externa                  | ✅ US23 (API de produtos) no backlog                   |
+| R8  | Recurso nativo               | ✅ US21 (câmera/scanner) + US22 (notificações)         |
+| R9  | Filtro + visão consolidada   | ✅ US06 (filtros) + US17-US18 (dashboard e ranking)    |
+| R10 | Erros e estados              | ✅ Especificado em todas as telas do protótipo         |
+| R11 | Usabilidade e acessibilidade | ✅ Design system no protótipo + US29 (testes)          |
+| R12 | Organização do código        | ⏳ Será implementado (arquitetura em camadas definida) |
+| R13 | Versionamento                | ✅ Repositório Git criado e público                    |
+| R14 | Distribuição (APK)           | ⏳ Sprint final antes da N2                            |
 
 **10 de 14 requisitos já cobertos na especificação do Checkpoint 1.**
 
@@ -265,17 +268,20 @@ Gestão do projeto:
 ## 🎯 PRÓXIMOS PASSOS (pós-Checkpoint 1)
 
 ### Semana 1 (pós-11/09):
+
 1. Criar GitHub Projects
 2. Popular com as 29 histórias como issues
 3. Definir sprint 1 (histórias de prioridade ALTA para a N1)
 4. Iniciar desenvolvimento: US01, US02 (Autenticação)
 
 ### Semana 2-3:
+
 5. US05, US06, US07 (Produtos: cadastro, listagem, detalhes)
 6. US10 ou US11 (Movimentação básica)
 7. US24 (Persistência local)
 
 ### Até 28-29/09 (N1):
+
 8. Aplicação parcial em execução (item 4 da N1 = 2,0 pontos)
 9. Revisar documento de projeto (item 1 da N1 = 2,5 pontos)
 10. Preparar apresentação (item 6 da N1 = 1,0 ponto)

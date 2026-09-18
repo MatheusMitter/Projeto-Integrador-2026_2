@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <div>
+        <h1 class="header-title">Olá, Matheus</h1>
+      </div>
+      <div style="display: flex; gap: 16px;">
+        <div style="position: relative;">
+          <span class="header-icon">🔔</span>
+          <span class="badge">8</span>
+        </div>
+        <span class="header-icon">👤</span>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- Cards de Resumo -->
+      <div class="card-grid">
+        <div class="card-stat">
+          <div class="card-stat-icon">📦</div>
+          <div class="card-stat-number">247</div>
+          <div class="card-stat-label">produtos cadastrados</div>
+        </div>
+        
+        <div class="card-stat">
+          <div class="card-stat-icon">💰</div>
+          <div class="card-stat-number">R$ 12,4k</div>
+          <div class="card-stat-label">valor em estoque</div>
+        </div>
+        
+        <a href="produtos.html?filtro=critico" class="card-stat" style="text-decoration: none;">
+          <div class="card-stat-icon">⚠️</div>
+          <div class="card-stat-number critical">8</div>
+          <div class="card-stat-label">produtos críticos</div>
+        </a>
+        
+        <div class="card-stat">
+          <div class="card-stat-icon">📅</div>
+          <div class="card-stat-number warning">3</div>
+          <div class="card-stat-label">próx. ao vencimento</div>
+        </div>
+      </div>
+      
+      <!-- Produtos Mais Vendidos -->
+      <h2 class="section-title">Produtos Mais Vendidos</h2>
+      <div class="chart">
+        <div class="chart-bar">
+          <div class="chart-label">Arroz Tipo 1 5kg</div>
+          <div class="chart-bar-fill" style="width: 85%;">
+            <span class="chart-value">42 un</span>
+          </div>
+        </div>
+        <div class="chart-bar">
+          <div class="chart-label">Feijão Preto 1kg</div>
+          <div class="chart-bar-fill" style="width: 70%;">
+            <span class="chart-value">35 un</span>
+          </div>
+        </div>
+        <div class="chart-bar">
+          <div class="chart-label">Refrigerante Cola 2L</div>
+          <div class="chart-bar-fill" style="width: 55%;">
+            <span class="chart-value">27 un</span>
+          </div>
+        </div>
+        <div class="chart-bar">
+          <div class="chart-label">Detergente 500ml</div>
+          <div class="chart-bar-fill" style="width: 40%;">
+            <span class="chart-value">20 un</span>
+          </div>
+        </div>
+        <div class="chart-bar">
+          <div class="chart-label">Sabonete 90g</div>
+          <div class="chart-bar-fill" style="width: 30%;">
+            <span class="chart-value">15 un</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="alert('Ações rápidas:\n• Registrar Venda\n• Registrar Entrada\n• Cadastrar Produto')">+</button>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+      </a>
+      <a href="produtos.html" class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span>Produtos</span>
+      </a>
+      <a href="movimentacao.html" class="nav-item">
+        <span class="nav-icon">🔄</span>
+        <span>Movimentação</span>
+      </a>
+      <a href="relatorios.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Relatórios</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>Mais</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>
