@@ -15,17 +15,6 @@ Cada item segue o formato:
 ID | História de Usuário | Prioridade | Estimativa | Critérios de Aceite
 ```
 
-**Prioridades:**
-- **ALTA:** Obrigatório para a primeira versão (N1)
-- **MÉDIA:** Importante, mas pode ser postergado para a N2
-- **BAIXA:** Desejável, pode ficar para versões futuras
-
-**Estimativa:**
-- P (Pequena): 1-2 dias
-- M (Média): 3-5 dias
-- G (Grande): 6-10 dias
-- XG (Extra Grande): 10+ dias
-
 ---
 
 ## ÉPICO 1: Autenticação e Gestão de Usuários

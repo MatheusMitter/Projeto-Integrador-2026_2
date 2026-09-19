@@ -109,7 +109,7 @@ Botões clicáveis, navegação real entre telas, 8 telas completas + 4 fluxos d
 ### 6. Telas e fluxos visualizáveis no protótipo
 
 ```
-TELAS COMPLETAS (9 telas):
+TELAS COMPLETAS (8 telas):
 1. Login e Cadastro — Login, cadastro de novo usuário, recuperação de senha
 2. Dashboard — Resumo visual do estoque, cards de alerta, gráfico de produtos mais vendidos
 3. Listagem de Produtos — Lista com busca, filtros, ordenação
@@ -118,7 +118,7 @@ TELAS COMPLETAS (9 telas):
 6. Relatórios — Produtos mais vendidos, baixo giro, valor total, histórico
 7. Detalhes do Produto — Informações completas e histórico de movimentações
 8. Configurações — Perfil do usuário e configurações do app
-9. Gestão de Fornecedores
+
 
 FLUXOS NAVEGÁVEIS COMPLETOS:
 - Fluxo de primeiro uso: Cadastro → Login → Dashboard → Cadastro do primeiro produto
