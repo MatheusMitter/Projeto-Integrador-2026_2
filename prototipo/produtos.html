@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Produtos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <h1 class="header-title">Produtos</h1>
+      <div style="display: flex; gap: 16px;">
+        <span class="header-icon">📷</span>
+        <span class="header-icon">⚙️</span>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Buscar por nome ou código...">
+      </div>
+      
+      <!-- Filters -->
+      <div class="filter-chips">
+        <span class="chip active">Todos</span>
+        <span class="chip">Crítico</span>
+        <span class="chip">Baixo</span>
+        <span class="chip">Normal</span>
+        <span class="chip">Alimentos</span>
+        <span class="chip">Bebidas</span>
+        <span class="chip">Limpeza</span>
+      </div>
+      
+      <!-- Product List -->
+      <a href="produto-detalhes.html" class="product-item" style="text-decoration: none;">
+        <div class="product-image">🍚</div>
+        <div class="product-info">
+          <div class="product-name">Arroz Tipo 1 5kg</div>
+          <div class="product-code">7891234567890</div>
+        </div>
+        <div class="product-stock">
+          <div class="product-quantity">50 <span class="product-status status-normal"></span></div>
+          <div style="font-size: 12px; color: #9E9E9E;">R$ 22,00</div>
+        </div>
+      </a>
+      
+      <a href="produto-detalhes.html" class="product-item" style="text-decoration: none;">
+        <div class="product-image">🫘</div>
+        <div class="product-info">
+          <div class="product-name">Feijão Preto 1kg</div>
+          <div class="product-code">7891234567891</div>
+        </div>
+        <div class="product-stock">
+          <div class="product-quantity">30 <span class="product-status status-normal"></span></div>
+          <div style="font-size: 12px; color: #9E9E9E;">R$ 10,00</div>
+        </div>
+      </a>
+      
+      <a href="produto-detalhes.html" class="product-item" style="text-decoration: none;">
+        <div class="product-image">🥤</div>
+        <div class="product-info">
+          <div class="product-name">Refrigerante Cola 2L</div>
+          <div class="product-code">7891234567892</div>
+        </div>
+        <div class="product-stock">
+          <div class="product-quantity">5 <span class="product-status status-critical"></span></div>
+          <div style="font-size: 12px; color: #9E9E9E;">R$ 7,50</div>
+        </div>
+      </a>
+      
+      <a href="produto-detalhes.html" class="product-item" style="text-decoration: none;">
+        <div class="product-image">🧴</div>
+        <div class="product-info">
+          <div class="product-name">Detergente Líquido 500ml</div>
+          <div class="product-code">7891234567893</div>
+        </div>
+        <div class="product-stock">
+          <div class="product-quantity">40 <span class="product-status status-normal"></span></div>
+          <div style="font-size: 12px; color: #9E9E9E;">R$ 3,50</div>
+        </div>
+      </a>
+      
+      <a href="produto-detalhes.html" class="product-item" style="text-decoration: none;">
+        <div class="product-image">🧼</div>
+        <div class="product-info">
+          <div class="product-name">Sabonete 90g</div>
+          <div class="product-code">7891234567894</div>
+        </div>
+        <div class="product-stock">
+          <div class="product-quantity">8 <span class="product-status status-critical"></span></div>
+          <div style="font-size: 12px; color: #9E9E9E;">R$ 2,50</div>
+        </div>
+      </a>
+    </div>
+    
+    <!-- Floating Action Button -->
+    <a href="produto-cadastro.html" class="fab">+</a>
+    
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span>Início</span>
+      </a>
+      <a href="produtos.html" class="nav-item active">
+        <span class="nav-icon">📦</span>
+        <span>Produtos</span>
+      </a>
+      <a href="movimentacao.html" class="nav-item">
+        <span class="nav-icon">🔄</span>
+        <span>Movimentação</span>
+      </a>
+      <a href="relatorios.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Relatórios</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span>
+        <span>Mais</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

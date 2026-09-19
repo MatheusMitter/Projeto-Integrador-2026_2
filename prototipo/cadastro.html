@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Cadastro</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <a href="index.html" class="header-icon">←</a>
+      <h1 class="header-title">Criar Conta</h1>
+      <div></div>
+    </div>
+    
+    <div class="content">
+      <div class="input-group">
+        <label class="input-label">Nome Completo</label>
+        <input type="text" class="input-field" placeholder="Seu nome">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">E-mail</label>
+        <input type="email" class="input-field" placeholder="seu@email.com">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Senha</label>
+        <input type="password" class="input-field" placeholder="Mínimo 8 caracteres">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Confirmar Senha</label>
+        <input type="password" class="input-field" placeholder="Digite a senha novamente">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Perfil de Usuário</label>
+        <select class="select-field">
+          <option value="proprietario">Proprietário - Acesso completo</option>
+          <option value="operador">Operador - Acesso limitado</option>
+        </select>
+      </div>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="terms" class="checkbox">
+        <label for="terms" style="font-size: 14px;">Aceito os termos de uso</label>
+      </div>
+      
+      <a href="dashboard.html" class="btn btn-primary">Criar Conta</a>
+      
+      <a href="index.html" class="link">Já tenho conta - Fazer login</a>
+    </div>
+  </div>
+</body>
+</html>

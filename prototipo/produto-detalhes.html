@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Detalhes do Produto</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <a href="produtos.html" class="header-icon">←</a>
+      <h1 class="header-title">Detalhes</h1>
+      <div style="display: flex; gap: 16px;">
+        <span class="header-icon">✏️</span>
+        <span class="header-icon" style="color: #F44336;" onclick="if(confirm('Tem certeza? Esta ação excluirá o produto e todo o histórico.')) { alert('Produto excluído'); window.location='produtos.html'; }">🗑️</span>
+      </div>
+    </div>
+    
+    <div class="content">
+      <!-- Foto e Info Principal -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 120px; height: 120px; margin: 0 auto 16px; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 64px;">
+          🍚
+        </div>
+        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">Arroz Tipo 1 5kg</h2>
+        <div style="font-size: 14px; color: #9E9E9E; margin-bottom: 8px;">7891234567890</div>
+        <span class="chip active">Normal</span>
+      </div>
+      
+      <!-- Cards de Info -->
+      <div class="card-grid" style="margin-bottom: 24px;">
+        <div class="card">
+          <div style="font-size: 12px; color: #757575; margin-bottom: 4px;">Estoque Atual</div>
+          <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">50 unidades</div>
+          <div style="font-size: 12px; color: #757575; margin-top: 4px;">Mínimo: 10 un</div>
+          <div style="width: 100%; height: 4px; background: #E0E0E0; border-radius: 2px; margin-top: 8px;">
+            <div style="width: 80%; height: 100%; background: #4CAF50; border-radius: 2px;"></div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div style="font-size: 12px; color: #757575; margin-bottom: 4px;">Categoria</div>
+          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Alimentos</div>
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; width: 100%;">Ver outros</button>
+        </div>
+      </div>
+      
+      <!-- Preços -->
+      <div class="card" style="margin-bottom: 16px;">
+        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Precificação</h3>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: #757575;">Preço de custo</span>
+          <span style="font-weight: 600;">R$ 15,00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: #757575;">Preço de venda</span>
+          <span style="font-weight: 600;">R$ 22,00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #E0E0E0;">
+          <span style="color: #4CAF50; font-weight: 600;">Margem de lucro</span>
+          <span style="color: #4CAF50; font-weight: 600;">R$ 7,00 (46,7%)</span>
+        </div>
+      </div>
+      
+      <!-- Fornecedor -->
+      <div class="card" style="margin-bottom: 16px;">
+        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Fornecedor</h3>
+        <div style="font-weight: 600; margin-bottom: 4px;">Distribuidora ABC Ltda</div>
+        <div style="font-size: 14px; color: #757575; margin-bottom: 8px;">(62) 3333-4444</div>
+        <button class="btn btn-secondary" style="padding: 8px; font-size: 12px;">Ver outros produtos deste fornecedor</button>
+      </div>
+      
+      <!-- Histórico -->
+      <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Últimas Movimentações</h3>
+      
+      <div class="card" style="margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">Venda</div>
+            <div style="font-size: 12px; color: #757575;">18/09/2026 14:32</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="color: #F44336; font-weight: 600;">-5 un</div>
+            <div style="font-size: 12px; color: #757575;">Saldo: 50</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">Compra</div>
+            <div style="font-size: 12px; color: #757575;">15/09/2026 09:15</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="color: #4CAF50; font-weight: 600;">+30 un</div>
+            <div style="font-size: 12px; color: #757575;">Saldo: 55</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="font-weight: 600; margin-bottom: 4px;">Venda</div>
+            <div style="font-size: 12px; color: #757575;">12/09/2026 16:20</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="color: #F44336; font-weight: 600;">-8 un</div>
+            <div style="font-size: 12px; color: #757575;">Saldo: 25</div>
+          </div>
+        </div>
+      </div>
+      
+      <a href="#" class="link">Ver histórico completo</a>
+      
+      <!-- Botões de Ação -->
+      <div style="position: sticky; bottom: 0; background: white; padding: 16px 0; margin-top: 24px; border-top: 1px solid #E0E0E0; display: flex; gap: 8px;">
+        <a href="movimentacao.html" class="btn btn-primary" style="flex: 1;">Registrar Entrada</a>
+        <a href="movimentacao.html" class="btn btn-danger" style="flex: 1;">Registrar Saída</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
