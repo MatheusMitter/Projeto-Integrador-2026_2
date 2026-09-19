@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Novo Produto</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <a href="produtos.html" class="header-icon">←</a>
+      <h1 class="header-title">Novo Produto</h1>
+      <span class="header-icon" onclick="alert('Produto salvo com sucesso!'); window.location='produtos.html';">✓</span>
+    </div>
+    
+    <div class="content">
+      <!-- Foto do Produto -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="width: 120px; height: 120px; margin: 0 auto; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 48px; cursor: pointer;" onclick="alert('Tirar foto ou escolher da galeria')">
+          📷
+        </div>
+        <button class="btn btn-secondary mt-md" style="max-width: 200px; margin: 0 auto;" onclick="alert('Tirar foto ou escolher da galeria')">Adicionar Foto</button>
+      </div>
+      
+      <!-- Código de Barras -->
+      <div class="input-group">
+        <label class="input-label">Código de Barras</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" class="input-field" placeholder="7891234567890" style="flex: 1;">
+          <button class="btn btn-secondary" style="width: 48px; padding: 0; flex-shrink: 0;" onclick="alert('Scanner de código de barras ativado')">📷</button>
+        </div>
+      </div>
+      
+      <!-- Nome -->
+      <div class="input-group">
+        <label class="input-label">Nome do Produto *</label>
+        <input type="text" class="input-field" placeholder="Ex: Arroz Tipo 1 5kg">
+      </div>
+      
+      <!-- Categoria -->
+      <div class="input-group">
+        <label class="input-label">Categoria *</label>
+        <select class="select-field">
+          <option value="">Selecione...</option>
+          <option value="alimentos">Alimentos</option>
+          <option value="bebidas">Bebidas</option>
+          <option value="limpeza">Limpeza</option>
+          <option value="higiene">Higiene</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+      
+      <!-- Fornecedor -->
+      <div class="input-group">
+        <label class="input-label">Fornecedor</label>
+        <select class="select-field">
+          <option value="">Selecione...</option>
+          <option value="1">Distribuidora ABC Ltda</option>
+          <option value="2">Comercial XYZ</option>
+        </select>
+        <a href="#" class="link" style="margin-top: 8px; font-size: 12px;">+ Cadastrar novo fornecedor</a>
+      </div>
+      
+      <!-- Preços -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="input-group">
+          <label class="input-label">Preço de Custo *</label>
+          <input type="number" class="input-field" placeholder="R$ 0,00" step="0.01">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Preço de Venda *</label>
+          <input type="number" class="input-field" placeholder="R$ 0,00" step="0.01">
+        </div>
+      </div>
+      
+      <div class="alert alert-success" style="font-size: 12px;">
+        💡 Margem de lucro: será calculada automaticamente
+      </div>
+      
+      <!-- Estoque -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="input-group">
+          <label class="input-label">Quantidade Inicial *</label>
+          <input type="number" class="input-field" placeholder="0" min="0">
+        </div>
+        <div class="input-group">
+          <label class="input-label">Estoque Mínimo *</label>
+          <input type="number" class="input-field" placeholder="0" min="0">
+        </div>
+      </div>
+      
+      <div style="font-size: 12px; color: #757575; margin-top: -8px; margin-bottom: 16px;">
+        Você será alertado quando o estoque ficar abaixo do mínimo
+      </div>
+      
+      <!-- Data de Validade -->
+      <div class="input-group">
+        <label class="input-label">Data de Validade (opcional)</label>
+        <input type="date" class="input-field">
+      </div>
+      
+      <!-- Botões -->
+      <div style="display: flex; gap: 8px; margin-top: 24px; margin-bottom: 24px;">
+        <a href="produtos.html" class="btn btn-secondary" style="flex: 1;">Cancelar</a>
+        <button class="btn btn-primary" style="flex: 1;" onclick="alert('Produto cadastrado com sucesso!'); window.location='produtos.html';">Salvar Produto</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockEasy - Movimentação</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div class="header">
+      <a href="dashboard.html" class="header-icon">←</a>
+      <h1 class="header-title">Movimentação de Estoque</h1>
+      <div></div>
+    </div>
+    
+    <div class="content">
+      <!-- Seleção de Produto -->
+      <div class="input-group">
+        <label class="input-label">Produto</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" class="input-field" placeholder="Buscar produto..." style="flex: 1;" value="Arroz Tipo 1 5kg">
+          <button class="btn btn-secondary" style="width: 48px; padding: 0; flex-shrink: 0;" onclick="alert('Scanner ativado')">📷</button>
+        </div>
+      </div>
+      
+      <!-- Produto Selecionado -->
+      <div class="card" style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <div style="width: 60px; height: 60px; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
+          🍚
+        </div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; margin-bottom: 2px;">Arroz Tipo 1 5kg</div>
+          <div style="font-size: 12px; color: #757575;">Estoque atual: 50 unidades</div>
+        </div>
+      </div>
+      
+      <!-- Tabs: Entrada/Saída -->
+      <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+        <button class="btn btn-primary" style="flex: 1;" onclick="document.getElementById('tipo-entrada').style.display='block'; document.getElementById('tipo-saida').style.display='none'; this.classList.add('btn-primary'); this.classList.remove('btn-secondary'); document.querySelector('.btn-danger').classList.add('btn-secondary'); document.querySelector('.btn-danger').classList.remove('btn-danger');">
+          ✅ Entrada
+        </button>
+        <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('tipo-entrada').style.display='none'; document.getElementById('tipo-saida').style.display='block'; this.classList.add('btn-danger'); this.classList.remove('btn-secondary'); document.querySelector('.btn-primary').classList.add('btn-secondary'); document.querySelector('.btn-primary').classList.remove('btn-primary');">
+          ❌ Saída
+        </button>
+      </div>
+      
+      <!-- Quantidade -->
+      <div class="input-group">
+        <label class="input-label">Quantidade *</label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-secondary" style="width: 40px; padding: 0; font-size: 20px;" onclick="let input = this.nextElementSibling; input.value = Math.max(0, parseInt(input.value || 0) - 1); updatePreview();">−</button>
+          <input type="number" class="input-field" placeholder="0" min="0" value="5" style="flex: 1; text-align: center;" oninput="updatePreview()">
+          <button class="btn btn-secondary" style="width: 40px; padding: 0; font-size: 20px;" onclick="let input = this.previousElementSibling; input.value = parseInt(input.value || 0) + 1; updatePreview();">+</button>
+        </div>
+      </div>
+      
+      <!-- Tipo de Movimentação (Entrada) -->
+      <div class="input-group" id="tipo-entrada">
+        <label class="input-label">Tipo de Entrada</label>
+        <select class="select-field">
+          <option value="compra">Compra de fornecedor</option>
+          <option value="devolucao_cliente">Devolução de cliente</option>
+          <option value="ajuste_entrada">Ajuste de inventário</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+      
+      <!-- Tipo de Movimentação (Saída) - Inicialmente oculto -->
+      <div class="input-group" id="tipo-saida" style="display: none;">
+        <label class="input-label">Tipo de Saída</label>
+        <select class="select-field">
+          <option value="venda">Venda</option>
+          <option value="perda">Perda</option>
+          <option value="vencimento">Vencimento</option>
+          <option value="devolucao_fornecedor">Devolução a fornecedor</option>
+          <option value="ajuste_saida">Ajuste de inventário</option>
+          <option value="outros">Outros</option>
+        </select>
+      </div>
+      
+      <!-- Data e Hora -->
+      <div class="input-group">
+        <label class="input-label">Data e Hora *</label>
+        <input type="datetime-local" class="input-field" value="2026-09-18T14:30">
+      </div>
+      
+      <!-- Observações -->
+      <div class="input-group">
+        <label class="input-label">Observações (opcional)</label>
+        <textarea class="input-field" rows="3" placeholder="Adicione detalhes sobre esta movimentação..."></textarea>
+      </div>
+      
+      <!-- Previsão -->
+      <div class="alert alert-success" id="preview">
+        <div style="font-weight: 600; margin-bottom: 4px;">Previsão após movimentação</div>
+        <div style="font-size: 14px;">Estoque atual: <strong>50 unidades</strong></div>
+        <div style="font-size: 14px;">Após esta movimentação: <strong>55 unidades</strong></div>
+      </div>
+      
+      <!-- Botões -->
+      <div style="display: flex; gap: 8px; margin-top: 24px; margin-bottom: 24px;">
+        <a href="dashboard.html" class="btn btn-secondary" style="flex: 1;">Cancelar</a>
+        <button class="btn btn-primary" style="flex: 1;" onclick="alert('Movimentação registrada com sucesso!'); window.location='dashboard.html';">Confirmar Movimentação</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function updatePreview() {
+      const qtd = parseInt(document.querySelector('input[type=number]').value) || 0;
+      const estoqueAtual = 50;
+      const novoEstoque = estoqueAtual + qtd;
+      const preview = document.getElementById('preview');
+      preview.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 4px;">Previsão após movimentação</div>
+        <div style="font-size: 14px;">Estoque atual: <strong>${estoqueAtual} unidades</strong></div>
+        <div style="font-size: 14px;">Após esta movimentação: <strong>${novoEstoque} unidades</strong></div>
+      `;
+      
+      if (novoEstoque <= 10) {
+        preview.className = 'alert alert-danger';
+        preview.innerHTML += '<div style="font-size: 14px; margin-top: 8px;">⚠️ <strong>Atenção:</strong> Estoque ficará crítico!</div>';
+      } else {
+        preview.className = 'alert alert-success';
+      }
+    }
+  </script>
+</body>
+</html>
