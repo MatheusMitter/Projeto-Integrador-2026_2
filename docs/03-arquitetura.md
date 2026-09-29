@@ -9,7 +9,76 @@ Atende ao item 2 da composição da N1: modelagem de dados e definição arquite
 
 ---
 
-## 1. Visão geral
+## 1. A arquitetura escolhida
+
+### 1.1 Nome
+
+**Arquitetura em camadas (layered architecture), distribuída em cliente-servidor, com estratégia de dados offline-first e sincronização.**
+
+São quatro decisões empilhadas, e cada uma tem nome próprio:
+
+| Decisão                       | Nome do padrão                                                           | Onde aparece                                            |
+| ----------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Organização interna do código | **Arquitetura em camadas** — apresentação, negócio e persistência        | Nos dois lados: aplicativo e retaguarda                 |
+| Distribuição entre máquinas   | **Cliente-servidor**                                                     | Aplicativo no aparelho, retaguarda em servidor próprio  |
+| Estratégia de dados           | **Offline-first com sincronização**                                      | Base local completa no aparelho, consolidação posterior |
+| Acesso a dados                | **DAO** (Data Access Object) na retaguarda, **Repository** no aplicativo | Camada de persistência                                  |
+
+O padrão principal é o de camadas. Os outros três descrevem, respectivamente, como o sistema se distribui, como os dados fluem e como o banco é acessado.
+
+### 1.2 Por que camadas
+
+**Porque é exigência do projeto.** O requisito R12 pede "separação de responsabilidades em camadas". Não é escolha livre.
+
+**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 21 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
+
+**Porque isola a mudança.** Trocar de banco de dados afeta apenas a camada de persistência. Nenhuma regra, nenhuma tela e nenhum teste precisariam ser alterados. Isso não é hipótese no nosso caso: já convivemos com dois bancos, SQLite no aparelho e PostgreSQL no servidor, com o mesmo modelo relacional.
+
+**Porque é o princípio arquitetural tratado na disciplina**, o que torna a defesa técnica coerente com o conteúdo avaliado.
+
+A regra que sustenta o desenho: **a dependência aponta sempre para dentro.** A tela chama o serviço, o serviço chama o repositório. O inverso nunca acontece. A tela não conhece SQL e o banco não conhece regra de negócio.
+
+### 1.3 Por que offline-first
+
+Esta decisão não vem de preferência técnica, e sim de uma característica do lugar onde o aplicativo vai rodar.
+
+O comerciante registra entrada de mercadoria no depósito, que é justamente onde o sinal de celular falha. Se o aplicativo dependesse de conexão para gravar, ele não funcionaria no momento de maior necessidade.
+
+Então o aplicativo grava primeiro no banco local e continua operando. O servidor recebe depois, quando houver rede. A base local **não é cache**: é uma réplica funcional que aceita escrita, com o mesmo modelo relacional do servidor.
+
+### 1.4 Alternativas de arquitetura consideradas e descartadas
+
+As alternativas de _tecnologia_ estão na seção 8. Estas são as de _arquitetura_.
+
+**Código sem separação em camadas, com a lógica dentro das telas.**
+Seria mais rápido de escrever no começo. Descartada por dois motivos: o requisito R12 proíbe, e tornaria impossível testar regra de negócio sem montar a interface. Também produziria duplicação — a mesma validação reescrita em cada tela que precisasse dela.
+
+**Clean Architecture ou arquitetura hexagonal.**
+Acrescentariam camadas de casos de uso, entidades e adaptadores, com inversão de dependência por interfaces. São padrões sólidos, mas para sete entidades e um fluxo principal o custo de indireção não se paga: cada operação simples atravessaria quatro ou cinco arquivos. Descartada por excesso de estrutura para o tamanho do problema.
+
+**Cliente magro, com toda a lógica no servidor (online-first).**
+É o desenho mais comum em sistema web. Descartada porque quebra o requisito de operação sem conectividade: sem rede, o aplicativo não faria nada. Contraria diretamente a característica do ambiente de uso.
+
+**Cache local apenas para leitura.**
+Uma versão intermediária: guardar dados lidos para acelerar a consulta, mas exigir rede para gravar. Descartada porque o problema não é lentidão de leitura, é impossibilidade de escrita. O comerciante precisa registrar a movimentação offline, não apenas consultar.
+
+**Microsserviços.**
+Descartada sem hesitação: o sistema tem um único domínio coeso e uma equipe de três pessoas. Separar em serviços independentes traria complexidade de rede, implantação e observabilidade sem nenhum benefício correspondente.
+
+### 1.5 O custo que assumimos
+
+Nenhuma arquitetura é de graça. As contrapartidas desta:
+
+| Custo                                                                 | Por que aceitamos                                                                           |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Mais arquivos e mais indireção que escrever tudo junto                | É o preço de poder testar a regra isolada                                                   |
+| A validação existe no aplicativo e no servidor                        | No aplicativo responde rápido; no servidor é a garantia real quando dois aparelhos divergem |
+| A sincronização exige controle de idempotência e de instante de corte | Consequência inevitável de aceitar escrita offline                                          |
+| Dois bancos para manter em sincronia estrutural                       | O mesmo modelo relacional nos dois lados reduz o problema a manter um esquema espelhado     |
+
+---
+
+## 2. Visão geral
 
 O StockEasy é uma aplicação móvel com retaguarda própria, organizada em três camadas lógicas replicadas nos dois lados da fronteira de rede. O aplicativo mantém uma base local completa e opera de forma autônoma; o servidor é a fonte consolidada e o ponto de convergência entre dispositivos.
 
@@ -47,7 +116,7 @@ A separação em camadas atende ao requisito R12 e reproduz o princípio arquite
 
 ---
 
-## 2. Onde cada regra é aplicada
+## 3. Onde cada regra é aplicada
 
 Validações como RN06, que impede saída superior ao estoque disponível, existem no aplicativo e no servidor. Não é redundância acidental, mas também não é a lógica inteira duplicada.
 
@@ -67,7 +136,7 @@ A validação no aplicativo é conveniência de interface: responde rápido e ev
 
 ---
 
-## 3. Camadas da aplicação móvel
+## 4. Camadas da aplicação móvel
 
 | Camada       | Responsabilidade                                                          | Não faz                                        |
 | ------------ | ------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -92,7 +161,7 @@ src/
 
 ---
 
-## 4. Camadas da retaguarda
+## 5. Camadas da retaguarda
 
 | Camada       | Componente             | Responsabilidade                                                          |
 | ------------ | ---------------------- | ------------------------------------------------------------------------- |
@@ -118,7 +187,7 @@ Consultas são sempre parametrizadas. Concatenação de valor em SQL fica vedada
 
 ---
 
-## 4.1 Escopo da retaguarda: serviço de sincronização, não API de CRUD
+## 5.1 Escopo da retaguarda: serviço de sincronização, não API de CRUD
 
 A retaguarda **não** expõe um conjunto de endpoints de manutenção por entidade. Ela expõe autenticação e sincronização. São quatro endpoints:
 
@@ -158,7 +227,7 @@ A camada DAO com JDBC permanece: é ela que persiste o lote. O que desaparece é
 
 ---
 
-## 5. Transação da movimentação de estoque
+## 6. Transação da movimentação de estoque
 
 É a operação mais sensível do sistema. Atualizar o saldo e gravar o histórico são duas escritas que precisam ser indivisíveis: se a primeira ocorrer e a segunda falhar, o saldo passa a divergir do histórico e a auditoria exigida por RN05 se perde.
 
@@ -178,7 +247,7 @@ Este é o cenário de transações, isolamento e concorrência tratado na discip
 
 ---
 
-## 6. Sincronização entre dispositivo e servidor
+## 7. Sincronização entre dispositivo e servidor
 
 A base local não é cache: é uma réplica funcional com o mesmo modelo relacional. O aplicativo lê e escreve sempre localmente, e a sincronização acontece em segundo plano.
 
@@ -192,9 +261,9 @@ A base local não é cache: é uma réplica funcional com o mesmo modelo relacio
 
 ---
 
-## 7. Justificativa da pilha tecnológica
+## 8. Justificativa da pilha tecnológica
 
-### 7.1 Aplicação móvel — React Native com Expo
+### 8.1 Aplicação móvel — React Native com Expo
 
 Admitida explicitamente pela Seção 4 do documento norteador.
 
@@ -212,12 +281,12 @@ _Android nativo com Kotlin._ Melhor desempenho e acesso direto à plataforma, ma
 
 _Flutter._ Tecnicamente adequado e com bom ferramental, mas exigiria aprender Dart. Sem vantagem decisiva sobre React Native para este domínio.
 
-### 7.2 Retaguarda — Spring Boot com Java
+### 8.2 Retaguarda — Spring Boot com Java
 
 | Critério                   | Avaliação                                                                 |
 | -------------------------- | ------------------------------------------------------------------------- |
 | Alinhamento com a ADS1253  | Exercita diretamente POO, JDBC, DAO e transações                          |
-| Controle transacional      | `@Transactional` com nível de isolamento explícito, essencial na seção 5  |
+| Controle transacional      | `@Transactional` com isolamento explícito, essencial na seção 6           |
 | Preparação para a arguição | Permite explicar o fluxo de dados e o tratamento de exceção linha a linha |
 | Autorização por perfil     | Spring Security aplica RN01 na camada de serviço, não apenas na tela      |
 
@@ -229,13 +298,13 @@ _Node.js._ Permitiria uma única linguagem no projeto. Descartada pelo mesmo mot
 
 Registra-se que o documento norteador não impõe Java. A Seção 4 admite Spring Boot, Node.js, FastAPI ou plataforma gerenciada, desde que a escolha seja justificada. A opção por Java é decisão da equipe, motivada pela aderência ao conteúdo avaliado e pelo ganho na arguição — não uma obrigação normativa.
 
-### 7.3 Banco de dados
+### 8.3 Banco de dados
 
 **PostgreSQL** no servidor: restrições de verificação, gatilhos e integridade referencial permitem que parte das regras seja garantida no próprio banco, e não apenas na aplicação. Também é o banco usado nas aulas.
 
 **SQLite** no dispositivo: embarcado, sem servidor, com o mesmo modelo relacional. Mantém a linguagem de consulta consistente entre os dois lados.
 
-### 7.4 Serviço externo — Open Food Facts
+### 8.4 Serviço externo — Open Food Facts
 
 Requisito R7 pede pelo menos um serviço externo pertinente ao domínio.
 
@@ -243,7 +312,7 @@ Escolhido por três razões: base colaborativa com ampla cobertura de produtos d
 
 Tratamento de indisponibilidade: tempo limite de cinco segundos e retorno ao cadastro manual sem interromper o fluxo, conforme RF42 e RNF08. A alternativa avaliada, a API Cosmos, foi descartada por exigir chave com cota restrita.
 
-### 7.5 Recursos nativos
+### 8.5 Recursos nativos
 
 | Recurso             | Uso                                       | Por que agrega                                               |
 | ------------------- | ----------------------------------------- | ------------------------------------------------------------ |
@@ -254,7 +323,7 @@ Ambos respondem a necessidades das personas, não a demonstração técnica isol
 
 ---
 
-## 8. Segurança
+## 9. Segurança
 
 | Aspecto        | Decisão                                                                                              |
 | -------------- | ---------------------------------------------------------------------------------------------------- |
@@ -269,7 +338,7 @@ Ponto de atenção que a equipe assume explicitamente: a API de retaguarda preci
 
 ---
 
-## 9. Tratamento de erros e estados
+## 10. Tratamento de erros e estados
 
 Requisitos R10, RF38 e RNF02.
 
@@ -288,7 +357,7 @@ Mensagem de autenticação inválida é sempre genérica, para não revelar se u
 
 ---
 
-## 10. Ambientes
+## 11. Ambientes
 
 | Ambiente        | Aplicativo                    | Retaguarda                     | Banco                         |
 | --------------- | ----------------------------- | ------------------------------ | ----------------------------- |
@@ -300,7 +369,7 @@ Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Cic
 
 ---
 
-## 11. Rastreabilidade entre requisitos e arquitetura
+## 12. Rastreabilidade entre requisitos e arquitetura
 
 | Req | Onde é atendido na arquitetura                                                 |
 | --- | ------------------------------------------------------------------------------ |
@@ -321,7 +390,7 @@ Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Cic
 
 ---
 
-## 12. Decisões arquiteturais registradas
+## 13. Decisões arquiteturais registradas
 
 Formato resumido de registro de decisão. Cada entrada indica a decisão, o motivo e o custo assumido.
 
@@ -360,7 +429,7 @@ Revisão: decisão tomada na revisão de 29/09/2026, substituindo o desenho ante
 
 ---
 
-## 13. Diagramas e artefatos complementares
+## 14. Diagramas e artefatos complementares
 
 Modelagem de dados, diagrama entidade-relacionamento, scripts e consultas: [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md).
 Requisitos e regras de negócio: [`01-documento-de-projeto.md`](01-documento-de-projeto.md).
