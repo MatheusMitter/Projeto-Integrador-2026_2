@@ -1,13 +1,4 @@
-/**
- * Manutenção de fornecedores.
- *
- * Esta tela existe para atender ao requisito R3, que exige operações
- * completas de inclusão, consulta, alteração e exclusão sobre no mínimo
- * duas entidades. Produto é a primeira; fornecedor é a segunda.
- *
- * É também onde a regra RN13 aparece: fornecedor com produtos vinculados
- * não pode ser excluído.
- */
+// Manutenção de fornecedores.
 
 import React, { useCallback, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";

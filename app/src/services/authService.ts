@@ -1,14 +1,5 @@
-/**
- * Autenticação e sessão — camada de negócio.
- *
- * Aviso honesto sobre esta etapa: a senha é comparada em texto puro, o que
- * NÃO é aceitável em produção. O requisito RNF11 exige resumo criptográfico
- * com BCrypt, e isso entra no Ciclo 3, junto com a retaguarda — que é onde
- * a senha passa a ser verificada de fato.
- *
- * Deixar explícito aqui é melhor que esconder: a limitação está declarada
- * na apresentação e no relatório de revisão.
- */
+// Autenticação e sessão.
+// A senha ainda é comparada em texto puro; o hash entra com o servidor.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
 import { TipoPerfil, Usuario } from "../domain/tipos";
@@ -47,8 +38,7 @@ export async function entrar(
     email.trim().toLowerCase(),
   ]);
 
-  // Mensagem genérica de propósito: dizer "e-mail não existe" revelaria
-  // quais endereços estão cadastrados.
+  // mensagem genérica de propósito, para não revelar quais e-mails existem
   const erroPadrao = {
     sucesso: false,
     mensagem: "E-mail ou senha inválidos.",
@@ -76,7 +66,7 @@ export interface DadosCadastro {
   tipoPerfil: TipoPerfil;
 }
 
-/** Validações de entrada antes de tocar o banco. */
+
 export function validarCadastro(d: DadosCadastro): string | null {
   if (d.nome.trim().length < 3) return "Informe o nome completo.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim()))
@@ -99,8 +89,7 @@ export async function cadastrar(
   const db = await obterBanco();
   const email = d.email.trim().toLowerCase();
 
-  // RN02 — e-mail único. Verificado aqui para dar mensagem clara, e
-  // garantido pela restrição UNIQUE no banco.
+  // RN02
   const existe = await db.getFirstAsync<{ id: number }>(
     "SELECT id FROM usuario WHERE email = ?",
     [email],

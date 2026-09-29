@@ -1,15 +1,5 @@
-/**
- * Serviço de estoque — camada de negócio.
- *
- * É aqui que a movimentação acontece. O ponto importante deste arquivo é a
- * transação: atualizar o saldo do produto e gravar o histórico precisam
- * ocorrer de forma indivisível.
- *
- * Se a primeira escrita acontecer e a segunda falhar, o saldo passa a
- * divergir do histórico e a auditoria exigida por RN05 se perde — o estoque
- * diria 45 e a soma dos lançamentos diria 50, sem nada explicando a
- * diferença.
- */
+// Movimentação de estoque. O saldo do produto e o histórico são gravados
+// na mesma transação, senão os dois ficam diferentes.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
 import { Movimentacao, TipoMovimentacao } from "../domain/tipos";
@@ -30,22 +20,9 @@ export interface ResultadoMovimentacao {
   saldoResultante?: number;
 }
 
-/**
- * Registra uma movimentação de estoque.
- *
- * Sequência dentro da transação:
- *   1. lê o saldo atual do produto
- *   2. valida RN06 contra o saldo lido
- *   3. calcula o saldo resultante
- *   4. atualiza o produto
- *   5. grava a movimentação com o saldo resultante
- *   6. confirma, ou desfaz tudo em caso de erro
- *
- * Sobre concorrência: no servidor o passo 1 usa SELECT ... FOR UPDATE para
- * bloquear a linha, impedindo que duas movimentações simultâneas leiam o
- * mesmo saldo. O SQLite serializa as escritas por natureza, então aqui a
- * transação já garante o mesmo efeito.
- */
+// Lê o saldo, valida, atualiza o produto e grava o histórico — tudo numa
+// transação. No servidor o SELECT vai usar FOR UPDATE para travar a linha;
+// aqui o SQLite já serializa as escritas.
 export async function registrarMovimentacao(
   pedido: PedidoMovimentacao,
 ): Promise<ResultadoMovimentacao> {
@@ -83,7 +60,7 @@ export async function registrarMovimentacao(
 
       if (!validacao.valido) {
         resultado = { sucesso: false, mensagem: validacao.mensagem };
-        // Sair da função sem gravar nada desfaz a transação.
+        // sair sem gravar desfaz a transação
         return;
       }
 
@@ -121,8 +98,7 @@ export async function registrarMovimentacao(
 
     return resultado;
   } catch (erro) {
-    // A restrição CHECK do banco é a última barreira. Se chegou aqui, algum
-    // caminho de código tentou gravar saldo negativo apesar da validação.
+    // se caiu aqui, o CHECK do banco pegou algo que passou da validação
     const texto = erro instanceof Error ? erro.message : String(erro);
     if (texto.includes("CHECK") || texto.includes("constraint")) {
       return {
@@ -168,7 +144,7 @@ function paraMovimentacao(l: LinhaMovimentacao): Movimentacao {
   };
 }
 
-/** Histórico de um produto, do mais recente para o mais antigo. */
+
 export async function historicoDoProduto(
   produtoId: number,
   limite = 10,
@@ -186,7 +162,7 @@ export async function historicoDoProduto(
   return linhas.map(paraMovimentacao);
 }
 
-/** Histórico geral, usado na tela de movimentações. */
+
 export async function historicoGeral(limite = 50): Promise<Movimentacao[]> {
   const db = await obterBanco();
   const linhas = await db.getAllAsync<LinhaMovimentacao>(
@@ -201,13 +177,8 @@ export async function historicoGeral(limite = 50): Promise<Movimentacao[]> {
   return linhas.map(paraMovimentacao);
 }
 
-/**
- * Quantos registros aguardam envio ao servidor.
- *
- * A sincronização em si entra no Ciclo 3. A marcação já existe desde agora
- * porque acrescentar a coluna depois exigiria migração do banco de quem já
- * estivesse usando o aplicativo.
- */
+// A sincronização em si ainda não existe, mas a coluna já está no esquema
+// para não precisar migrar o banco depois.
 export async function pendentesDeSincronizacao(): Promise<number> {
   const db = await obterBanco();
   const l = await db.getFirstAsync<{ total: number }>(

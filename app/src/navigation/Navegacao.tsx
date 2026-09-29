@@ -1,16 +1,4 @@
-/**
- * Navegação da aplicação — camada de apresentação.
- *
- * Duas estruturas combinadas, como o requisito R1 pede ("fluxo de navegação
- * estruturado e coerente com as tarefas do usuário"):
- *
- *   - abas na parte de baixo, para as quatro áreas principais, alcançáveis
- *     de qualquer lugar em um toque
- *   - pilha dentro da aba de produtos, para entrar em detalhe e voltar
- *
- * A escolha não é estética: o operador registra saída durante o atendimento,
- * e a movimentação precisa estar a um toque de distância em qualquer tela.
- */
+// Navegação: abas na parte de baixo, com pilha dentro da aba de produtos.
 
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
@@ -35,7 +23,7 @@ const cabecalho = {
   headerTitleStyle: { fontWeight: "700" as const },
 };
 
-/** Pilha da área de produtos: lista, formulário e detalhes. */
+
 function PilhaProdutos() {
   return (
     <Pilha.Navigator screenOptions={cabecalho}>
@@ -54,10 +42,8 @@ function PilhaProdutos() {
               : "Novo produto",
         })}
       />
-      {/* O cast é necessário porque a tela declara parâmetros obrigatórios
-          de rota, e o tipo genérico do navegador espera propriedades
-          opcionais. Tipar a lista de rotas resolveria de forma mais limpa,
-          e está previsto para o Ciclo 2. */}
+      {/* cast porque a tela exige params e o tipo do navigator espera
+          opcionais; tipar a lista de rotas resolve melhor, fica para depois */}
       <Pilha.Screen
         name="ProdutoDetalhes"
         component={ProdutoDetalhesScreen as React.ComponentType}
@@ -67,11 +53,7 @@ function PilhaProdutos() {
   );
 }
 
-/**
- * Rótulo da aba. Usamos texto em vez de ícone: o rótulo já é o nome
- * acessível, e não há risco de o símbolo ser lido de forma estranha pelo
- * leitor de tela.
- */
+// texto em vez de ícone, para o leitor de tela não ler símbolo estranho
 function abaIcone(texto: string) {
   return ({ color }: { color: string }) => (
     <Text style={{ color, fontSize: 18, fontWeight: "700" }}>{texto}</Text>

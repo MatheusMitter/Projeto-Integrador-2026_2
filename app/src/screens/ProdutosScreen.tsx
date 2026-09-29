@@ -33,7 +33,6 @@ export default function ProdutosScreen({ navigation }: Props) {
   return (
     <View style={e.tela}>
       <View style={e.barraBusca}>
-        {/* Requisito R9: busca por nome ou código de barras */}
         <TextInput
           value={termo}
           onChangeText={(t) => {

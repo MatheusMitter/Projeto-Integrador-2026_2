@@ -1,9 +1,4 @@
-/**
- * Ponto de entrada da aplicação.
- *
- * Decide entre a área autenticada e as telas de acesso, e garante que o
- * banco local esteja criado antes de qualquer tela tentar consultar.
- */
+// Ponto de entrada. Decide entre as telas de acesso e a área autenticada.
 
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -24,15 +19,12 @@ export default function App() {
   const [tela, setTela] = useState<Tela>("carregando");
   const [erro, setErro] = useState<string | null>(null);
 
-  // Abrir o banco cria o esquema e a carga inicial na primeira execução.
-  // Se falhar, a aplicação avisa em vez de abrir uma tela quebrada.
+  // abrir o banco cria o esquema e a carga inicial na primeira vez
   useEffect(() => {
     let cancelado = false;
 
-    // O expo-sqlite não tem implementação para navegador: a versão web do
-    // módulo lança "Unimplemented". Como toda a persistência depende dele,
-    // o aplicativo precisa de um aparelho ou emulador. Avisamos de forma
-    // explícita em vez de mostrar erro de banco, que pareceria defeito.
+    // expo-sqlite não funciona no navegador, então avisa em vez de
+    // deixar estourar erro de banco
     if (Platform.OS === "web") {
       setTela("semBanco");
       return;

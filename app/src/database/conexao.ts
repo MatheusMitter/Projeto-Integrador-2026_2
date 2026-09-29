@@ -1,9 +1,4 @@
-/**
- * Abertura e preparação do banco local.
- *
- * Uma conexão só, reaproveitada. Abrir conexão por consulta desperdiça
- * tempo e, no SQLite, aumenta a chance de bloqueio de escrita.
- */
+// Abertura do banco local. Uma conexão só, reaproveitada.
 
 import * as SQLite from "expo-sqlite";
 import { CARGA_INICIAL, ENTRADAS_INICIAIS, ESQUEMA } from "./esquema";
@@ -17,9 +12,7 @@ export async function obterBanco(): Promise<SQLite.SQLiteDatabase> {
 
   banco = await SQLite.openDatabaseAsync(NOME_BANCO);
 
-  // No SQLite a integridade referencial vem desligada por conexão.
-  // Sem esta linha as chaves estrangeiras são ignoradas em silêncio, e a
-  // proteção do histórico (RN12) simplesmente não existiria.
+  // no SQLite isso vem desligado por conexão
   await banco.execAsync("PRAGMA foreign_keys = ON;");
 
   await banco.execAsync(ESQUEMA);
@@ -36,13 +29,8 @@ async function popularSeVazio(db: SQLite.SQLiteDatabase): Promise<void> {
 
   await db.execAsync(CARGA_INICIAL);
 
-  // As entradas iniciais são gravadas aqui, no mesmo formato que o serviço
-  // de estoque usa: atualiza o saldo e grava o histórico na mesma
-  // transação, para os dois nascerem coerentes.
-  //
-  // O código está repetido em vez de importar o serviço porque o serviço
-  // depende desta função para obter a conexão. Importar de volta criaria
-  // dependência circular entre as camadas.
+  // repetido aqui em vez de chamar o estoqueService: ele depende desta
+  // função para pegar a conexão, e importar de volta daria ciclo
   for (const entrada of ENTRADAS_INICIAIS) {
     await db.withTransactionAsync(async () => {
       await db.runAsync(
@@ -69,7 +57,7 @@ async function popularSeVazio(db: SQLite.SQLiteDatabase): Promise<void> {
   }
 }
 
-/** Usado ao sair da conta, para a próxima sessão reabrir limpa. */
+
 export async function fecharBanco(): Promise<void> {
   if (banco) {
     await banco.closeAsync();
@@ -77,7 +65,7 @@ export async function fecharBanco(): Promise<void> {
   }
 }
 
-/** Identificador gerado no aparelho, base da idempotência na sincronização. */
+// id gerado no aparelho, para não duplicar no reenvio ao servidor
 export function gerarUuid(): string {
   const aleatorio = () => Math.random().toString(16).slice(2, 10);
   return `${Date.now().toString(16)}-${aleatorio()}-${aleatorio()}`;

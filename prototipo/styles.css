@@ -1,29 +1,9 @@
 /* StockEasy - Design System */
 
 :root {
-  /* ==========================================================================
-     PALETA ACESSÍVEL — ajustada para atender WCAG 2.1 AA (mínimo 4.5:1)
-     Requisito R11: contraste adequado e aderência às heurísticas de usabilidade.
-
-     Razões de contraste medidas contra BRANCO (#FFFFFF):
-       --primary      #2E7D32  ->  5,13:1  (antes #4CAF50 = 2,78:1 — reprovado)
-       --primary-dark #1B5E20  ->  7,57:1
-       --secondary    #1565C0  ->  5,40:1  (antes #2196F3 = 3,13:1 — reprovado)
-       --danger       #C62828  ->  5,90:1  (antes #F44336 = 3,58:1 — reprovado)
-       --warning      #E65100  ->  4,80:1  (antes #FF9800 = 2,16:1 — reprovado)
-       --success      #2E7D32  ->  5,13:1  (antes #8BC34A = 1,87:1 — reprovado)
-       --gray-600     #757575  ->  4,60:1  (menor cinza válido para TEXTO)
-       --gray-700     #616161  ->  6,23:1
-       --gray-900     #212121  -> 16,10:1
-
-     Os tokens *-light são fundos suaves; sempre combinar com texto no tom
-     escuro correspondente (ex.: --primary-light + --primary-dark).
-
-     ATENÇÃO: --gray-300/400/500 têm contraste < 3:1 e por isso são usados
-     APENAS em bordas, divisores e elementos decorativos — nunca como texto.
-     ========================================================================== */
-
-  /* Cores */
+  /* Cores escolhidas para passar no contraste mínimo de 4,5:1 com branco.
+     Os tons -light são para fundo, combinados com texto no tom escuro.
+     Cinzas 300 a 500 só em borda e divisória, nunca em texto. */
   --primary: #2e7d32;
   --primary-light: #e8f5e9;
   --primary-dark: #1b5e20;
@@ -91,7 +71,7 @@ body {
 }
 
 /* ==========================================================================
-   Foco de teclado visível — WCAG 2.4.7 Focus Visible
+   Foco de teclado visível
    Antes não existia nenhum indicador de foco no protótipo.
    ========================================================================== */
 a:focus-visible,
@@ -159,8 +139,7 @@ textarea:focus {
   color: var(--gray-900);
 }
 
-/* Ícone do header: serve para <a> e <button>.
-   Dimensionado para atender a área mínima de toque de 44px. */
+/* serve para <a> e <button> */
 .header-icon {
   width: var(--touch-target);
   height: var(--touch-target);
@@ -281,7 +260,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
 }
 
-/* gray-600 = 4,6:1 — placeholder ainda é texto e precisa de contraste */
+/* placeholder é texto, precisa de contraste */
 .input-field::placeholder {
   color: var(--gray-600);
 }
@@ -470,7 +449,7 @@ textarea:focus {
   margin-bottom: 2px;
 }
 
-/* gray-600 (4,6:1) — era gray-500 (2,8:1), reprovado como texto */
+
 .product-code {
   display: block;
   font-size: var(--caption);
@@ -490,15 +469,14 @@ textarea:focus {
   color: var(--gray-900);
 }
 
-/* Preço na listagem: gray-600 = 4,6:1 (antes #9E9E9E = 2,8:1, reprovado) */
+
 .product-price {
   display: block;
   font-size: var(--caption);
   color: var(--gray-600);
 }
 
-/* Lista semântica (<ul>) sem marcadores — mantém a leitura por leitor de tela
-   ("lista com N itens") sem alterar o visual dos cards. */
+/* <ul> sem marcador, mantendo o visual dos cards */
 .plain-list {
   list-style: none;
   margin: 0;
@@ -546,7 +524,7 @@ textarea:focus {
   color: var(--gray-600);
 }
 
-/* Ícone decorativo (aria-hidden no HTML): o campo já tem <label> */
+
 .search-icon {
   position: absolute;
   left: 14px;
@@ -721,8 +699,7 @@ textarea:focus {
   white-space: nowrap;
 }
 
-/* opacity removida: com 0.8 o verde clareava e o texto branco caía para
-   ~3.4:1. Agora branco sobre --primary = 5,13:1 (AA). */
+/* sem opacity: clareava o verde e o texto branco perdia contraste */
 .chart-bar-fill {
   flex: 1;
   height: 24px;
@@ -926,8 +903,7 @@ textarea:focus {
    Relatórios — visão consolidada, sparkline e tags de movimentação
    ========================================================================== */
 
-/* Cartão destacado: fundo sólido --primary-dark garante 7,57:1 com branco.
-   O gradiente anterior clareava até ~3,1:1 na extremidade. */
+/* fundo sólido; o gradiente anterior perdia contraste na ponta */
 .card-highlight {
   text-align: center;
   margin-bottom: var(--space-lg);
@@ -1036,7 +1012,7 @@ code {
   margin-bottom: var(--space-xs);
 }
 
-/* Tag com texto explícito ENTRADA/SAÍDA: o tipo não é comunicado só por cor */
+/* texto além da cor */
 .mov-tag {
   font-size: 11px;
   font-weight: 700;
@@ -1085,8 +1061,7 @@ code {
   transition: all 0.2s;
 }
 
-/* Estado ativo indicado por cor + borda + peso da fonte, e exposto por
-   aria-pressed — não depende apenas da cor (WCAG 1.4.1). */
+/* cor, borda e peso da fonte, para não depender só da cor */
 .tab-entrada.is-active {
   background: var(--primary);
   border-color: var(--primary);
@@ -1122,8 +1097,7 @@ code {
    Formulários — agrupamento semântico
    ========================================================================== */
 
-/* fieldset/legend agrupam campos relacionados para leitores de tela
-   sem introduzir moldura visual. */
+/* agrupa campos sem moldura visual */
 .fieldset {
   border: none;
   padding: 0;
@@ -1183,8 +1157,7 @@ code {
   margin-bottom: var(--space-sm);
 }
 
-/* Chip de status como texto + símbolo: a cor não é o único indicador
-   (WCAG 1.4.1 — não depender apenas de cor) */
+/* texto e símbolo além da cor */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -1272,7 +1245,7 @@ code {
   margin-bottom: 0;
 }
 
-/* Barra de progresso de estoque (tem aria-label no HTML) */
+
 .progress {
   width: 100%;
   height: 6px;
@@ -1288,7 +1261,7 @@ code {
   border-radius: var(--radius-full);
 }
 
-/* Botão compacto — mantém 44px de área de toque */
+
 .btn-sm {
   padding: 8px var(--space-md);
   font-size: var(--caption);
@@ -1395,7 +1368,7 @@ code {
   font-weight: 400;
 }
 
-/* Respeita preferência de movimento reduzido (WCAG 2.3.3) */
+/* respeita quem prefere menos animação */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

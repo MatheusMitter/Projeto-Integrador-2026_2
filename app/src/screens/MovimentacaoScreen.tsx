@@ -1,10 +1,4 @@
-/**
- * Tela de movimentação de estoque.
- *
- * É aqui que as regras RN06 e RN07 aparecem para o usuário. A previsão de
- * saldo é recalculada a cada digitação, então ele vê a consequência da
- * operação antes de confirmar — e o erro é explicado, não apenas recusado.
- */
+// Registro de entrada e saída de estoque.
 
 import React, { useCallback, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -60,9 +54,7 @@ export default function MovimentacaoScreen({ route, navigation }: Props) {
     [produtos, produtoId],
   );
 
-  // A previsão usa a MESMA função que valida na gravação. Se usasse uma
-  // conta própria, a tela poderia mostrar um resultado e o serviço decidir
-  // outro.
+  // usa a mesma função que valida na gravação, para não divergir
   const previsao = useMemo(() => {
     if (!produto) return null;
     const qtd = parseInt(quantidade, 10);

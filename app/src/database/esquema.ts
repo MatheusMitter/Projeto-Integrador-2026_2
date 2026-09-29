@@ -1,17 +1,6 @@
-/**
- * Camada de persistência: esquema do banco local.
- *
- * É o mesmo modelo relacional do PostgreSQL (docs/checkpoint1-der-modelagem.md),
- * adaptado aos tipos do SQLite. Manter as duas estruturas iguais é o que
- * permite sincronizar sem converter formato.
- *
- * Diferenças obrigatórias em relação ao PostgreSQL:
- *   - SERIAL          -> INTEGER PRIMARY KEY AUTOINCREMENT
- *   - DECIMAL(10,2)   -> REAL
- *   - TIMESTAMPTZ     -> TEXT no formato ISO 8601
- *   - BOOLEAN         -> INTEGER com 0 ou 1
- *   - chave estrangeira precisa ser habilitada por conexão
- */
+// Esquema do SQLite. Mesmo modelo do PostgreSQL, adaptado aos tipos daqui:
+// SERIAL vira INTEGER AUTOINCREMENT, DECIMAL vira REAL, TIMESTAMP vira TEXT,
+// BOOLEAN vira 0 ou 1, e a chave estrangeira precisa ser habilitada por conexão.
 
 export const ESQUEMA = `
 PRAGMA foreign_keys = ON;
@@ -73,8 +62,7 @@ CREATE TABLE IF NOT EXISTS produto (
   fornecedor_id  INTEGER REFERENCES fornecedor(id),
   preco_custo    REAL    NOT NULL CHECK (preco_custo >= 0),
   preco_venda    REAL    NOT NULL CHECK (preco_venda >= 0),
-  -- a restrição abaixo é a última barreira de RN06: nem um erro de código
-  -- consegue deixar o saldo negativo
+  -- CHECK garante RN06 mesmo se passar erro no código
   estoque_atual  INTEGER NOT NULL DEFAULT 0 CHECK (estoque_atual >= 0),
   estoque_minimo INTEGER NOT NULL DEFAULT 0 CHECK (estoque_minimo >= 0),
   data_validade  TEXT,
@@ -87,11 +75,9 @@ CREATE TABLE IF NOT EXISTS produto (
 
 CREATE TABLE IF NOT EXISTS movimentacao (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
-  -- gerado no aparelho: é o que evita duplicar o registro se o envio ao
-  -- servidor falhar e for repetido
+  -- gerado no aparelho, evita duplicar no reenvio
   uuid          TEXT    NOT NULL UNIQUE,
-  -- RESTRICT por omissão no SQLite: apagar produto com histórico falha,
-  -- preservando a auditoria de RN05
+  -- apagar produto com histórico falha, e é isso que queremos
   produto_id    INTEGER NOT NULL REFERENCES produto(id),
   usuario_id    INTEGER NOT NULL REFERENCES usuario(id),
   tipo          TEXT    NOT NULL CHECK (tipo IN (
@@ -110,14 +96,8 @@ CREATE INDEX IF NOT EXISTS idx_mov_produto_data  ON movimentacao(produto_id, dat
 CREATE INDEX IF NOT EXISTS idx_mov_pendente      ON movimentacao(sincronizado);
 `;
 
-/**
- * Carga inicial. Cria a loja, os dois perfis de usuário e as categorias
- * padrão, além de alguns produtos para a aplicação não abrir vazia.
- *
- * Os produtos entram com saldo zero de propósito: o saldo é construído
- * pelas movimentações, como acontece no uso real. Gravar o saldo direto
- * produziria histórico que não fecha com o estoque.
- */
+// Carga inicial. Produtos entram com saldo zero: o saldo é construído
+// pelas movimentações, senão o histórico não fecha.
 export const CARGA_INICIAL = `
 INSERT INTO loja (uuid, nome, documento) VALUES
   ('loja-0001', 'Mercearia Modelo', '12.345.678/0001-90');
@@ -148,7 +128,7 @@ INSERT INTO produto
   ('prod-0005', 1, 'Sabonete 90g',             '7891234567894', 4, 1,  1.20,  2.50, 0, 15, '2026-10-10');
 `;
 
-/** Entradas iniciais, registradas pelo serviço para o saldo ficar coerente. */
+// entradas iniciais
 export const ENTRADAS_INICIAIS: {
   produtoId: number;
   quantidade: number;

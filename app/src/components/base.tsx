@@ -1,11 +1,4 @@
-/**
- * Componentes de interface reaproveitados — camada de apresentação.
- *
- * Nenhum deles conhece banco ou regra de negócio: recebem dados por
- * propriedade e desenham. Concentrar os estilos aqui é o que mantém as
- * telas consistentes e garante que a área mínima de toque não seja
- * esquecida em uma tela nova.
- */
+// Componentes reaproveitados nas telas.
 
 import React from "react";
 import {
@@ -99,8 +92,7 @@ export function Campo({
 }: CampoProps) {
   return (
     <View style={e.campoGrupo}>
-      {/* O rótulo é o nome acessível do campo: sem ele o leitor de tela
-          anuncia apenas "campo de edição" (requisito RNF05). */}
+
       <Text style={e.campoRotulo}>
         {rotulo}
         {obrigatorio ? " *" : ""}
@@ -141,11 +133,7 @@ export function Cartao({
 
 // ------------------------------------------------- etiqueta de situação
 
-/**
- * Situação do estoque com texto, não apenas cor.
- * A WCAG exige que a informação não dependa só de cor, e num aplicativo de
- * estoque o estado é naturalmente representado por semáforo (RNF06).
- */
+// mostra texto além da cor, para não depender só dela
 export function EtiquetaSituacao({
   situacao,
 }: {
@@ -187,7 +175,7 @@ export function Aviso({
   );
 }
 
-/** Estado de lista vazia: mostra o que fazer, não uma tela em branco (R10). */
+
 export function ListaVazia({
   texto,
   acao,

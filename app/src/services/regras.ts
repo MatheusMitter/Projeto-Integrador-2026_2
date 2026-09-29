@@ -1,34 +1,21 @@
-/**
- * Camada de negócio: as regras do domínio.
- *
- * Estas funções não conhecem tela nem banco. Recebem número, devolvem
- * decisão. É isso que permite testá-las sem abrir o aplicativo, e é o
- * motivo de a camada existir separada.
- *
- * As regras estão descritas em docs/N1-documento-de-projeto.md.
- */
+// Regras de negócio. Funções puras, sem acesso a tela ou banco.
 
-import { SituacaoEstoque, TipoMovimentacao, TIPOS_ENTRADA } from "../domain/tipos";
+import {
+  SituacaoEstoque,
+  TipoMovimentacao,
+  TIPOS_ENTRADA,
+} from "../domain/tipos";
 
-/** Uma movimentação soma ou subtrai do saldo? */
 export function ehEntrada(tipo: TipoMovimentacao): boolean {
   return (TIPOS_ENTRADA as readonly string[]).includes(tipo);
 }
 
-/**
- * RN07 — classifica o produto em relação ao estoque mínimo que o usuário
- * definiu.
- *
- * A faixa é relativa, não absoluta: 8 unidades pode ser excesso para um
- * item que sai uma vez por mês e falta para um que sai todo dia. Por isso
- * a comparação é sempre contra o mínimo.
- */
+// RN07
 export function classificarEstoque(
   saldo: number,
   minimo: number,
 ): SituacaoEstoque {
-  // Sem mínimo definido não há como classificar; trata como normal para
-  // não marcar todo produto novo como crítico.
+  // sem mínimo definido não dá para classificar
   if (minimo <= 0) return saldo > 0 ? "NORMAL" : "CRITICO";
 
   if (saldo <= minimo) return "CRITICO";
@@ -39,21 +26,12 @@ export function classificarEstoque(
 
 export interface ResultadoValidacao {
   valido: boolean;
-  /** Mensagem para o usuário. Diz o que fazer, não apenas que deu errado. */
   mensagem?: string;
-  /** Aviso que não impede a gravação. */
   aviso?: string;
   saldoResultante: number;
 }
 
-/**
- * RN06 — a saída não pode exceder o estoque disponível.
- *
- * Validar aqui é conveniência: responde na hora e evita registro errado.
- * A garantia real é do servidor, porque dois aparelhos offline podem
- * registrar saídas que, somadas, estouram o saldo — e isso só aparece na
- * consolidação.
- */
+// RN06
 export function validarMovimentacao(
   tipo: TipoMovimentacao,
   quantidade: number,
@@ -78,13 +56,12 @@ export function validarMovimentacao(
       valido: false,
       mensagem:
         `Não é possível registrar esta saída. A quantidade informada ` +
-        `(${quantidade}) é maior que o estoque disponível (${saldoAtual}). ` +
-        `Regra RN06.`,
+        `(${quantidade}) é maior que o estoque disponível (${saldoAtual}).`,
       saldoResultante: saldoAtual,
     };
   }
 
-  // Passa, mas avisa: o produto vai entrar em situação crítica (RN07).
+  // deixa passar, mas avisa que vai ficar crítico
   const situacao = classificarEstoque(saldoResultante, estoqueMinimo);
   if (!entrada && situacao === "CRITICO") {
     return {
@@ -99,10 +76,7 @@ export function validarMovimentacao(
   return { valido: true, saldoResultante };
 }
 
-/**
- * RN10 — margem de lucro sobre o preço de venda.
- * Devolve nulo quando não há preço de venda, em vez de dividir por zero.
- */
+// RN10
 export function calcularMargem(
   precoCusto: number,
   precoVenda: number,
@@ -112,10 +86,7 @@ export function calcularMargem(
   return { valor, percentual: (valor / precoVenda) * 100 };
 }
 
-/**
- * RN03 — preço de venda abaixo do custo gera advertência, não bloqueio.
- * Liquidação e queima de estoque próximo ao vencimento são legítimas.
- */
+// RN03 — avisa, mas não impede de salvar
 export function avisoPreco(
   precoCusto: number,
   precoVenda: number,
@@ -126,17 +97,12 @@ export function avisoPreco(
   return null;
 }
 
-/**
- * RN01 — o perfil Operador não vê informação financeira.
- *
- * Aqui só decide; quem oculta é a tela. Centralizar a decisão evita que
- * uma tela nova esqueça a regra.
- */
+// RN01
 export function podeVerFinanceiro(perfil: string): boolean {
   return perfil === "PROPRIETARIO";
 }
 
-/** RN08 — valor do estoque usa o preço de CUSTO: é capital imobilizado. */
+// RN08 — usa o preço de custo, não o de venda
 export function valorEmEstoque(
   itens: { estoqueAtual: number; precoCusto: number }[],
 ): number {

@@ -1,10 +1,4 @@
-/**
- * Repositório de categorias e fornecedores — camada de persistência.
- *
- * Fornecedor tem manutenção completa: inclusão, consulta, alteração e
- * exclusão. É a segunda entidade exigida pelo requisito R3, junto com
- * produto.
- */
+// Acesso a dados de categoria e fornecedor.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
 import { Categoria, Fornecedor } from "../domain/tipos";
@@ -63,7 +57,7 @@ export async function listarFornecedores(lojaId = 1): Promise<Fornecedor[]> {
   return linhas.map(paraFornecedor);
 }
 
-/** Quantos produtos ativos estão vinculados — usado pela regra RN13. */
+// usado pela RN13
 export async function contarProdutosDoFornecedor(
   fornecedorId: number,
 ): Promise<number> {
@@ -112,14 +106,8 @@ export async function atualizarFornecedor(
   );
 }
 
-/**
- * RN13 — só exclui fornecedor sem produtos vinculados.
- *
- * A verificação acontece aqui e também no banco, pela chave estrangeira.
- * A daqui existe para produzir mensagem útil, dizendo quantos produtos
- * impedem a operação; a do banco existe para garantir que nenhum caminho
- * de código consiga violar a regra.
- */
+// RN13. Checa aqui para dar mensagem melhor, mas a chave estrangeira
+// no banco também impede.
 export async function excluirFornecedor(
   id: number,
 ): Promise<{ sucesso: boolean; mensagem?: string }> {

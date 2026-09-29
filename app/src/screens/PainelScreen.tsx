@@ -61,7 +61,6 @@ export default function PainelScreen() {
         {usuario?.tipoPerfil === "PROPRIETARIO" ? "Proprietário" : "Operador"}
       </Text>
 
-      {/* Requisito R10: a situação de conectividade é informada ao usuário */}
       {pendentes > 0 && (
         <View style={e.faixaPendente}>
           <Text style={e.faixaTexto}>

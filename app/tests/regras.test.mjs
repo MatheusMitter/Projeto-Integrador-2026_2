@@ -1,26 +1,11 @@
-/**
- * Testes das regras de negócio.
- *
- * Rodam no Node puro, sem emulador e sem banco. Isso só é possível porque a
- * camada de negócio não depende de tela nem de persistência — é a vantagem
- * prática da separação em camadas exigida pelo requisito R12.
- *
- * Executar:  node --test tests/
- *
- * As regras estão descritas em docs/N1-documento-de-projeto.md.
- */
+// Testes das regras de negócio. Rodam sem emulador e sem banco.
+// Executar: node --test tests/regras.test.mjs
 
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 
-// ---------------------------------------------------------------------------
-// As funções abaixo repetem a lógica de src/services/regras.ts.
-//
-// O ideal seria importar do arquivo original, mas ele está em TypeScript e
-// rodar sem etapa de compilação manteria o teste simples de executar. A
-// duplicação é aceitável porque estas funções são pequenas e estáveis; se
-// crescerem, o caminho é compilar antes de testar.
-// ---------------------------------------------------------------------------
+// Cópia das funções de src/services/regras.ts. O original é TypeScript e
+// importar exigiria compilar antes de rodar o teste.
 
 const TIPOS_ENTRADA = ["COMPRA", "DEVOLUCAO_CLIENTE", "AJUSTE_ENTRADA"];
 
@@ -61,8 +46,6 @@ const podeVerFinanceiro = (perfil) => perfil === "PROPRIETARIO";
 
 const valorEmEstoque = (itens) =>
   itens.reduce((t, p) => t + p.estoqueAtual * p.precoCusto, 0);
-
-// ---------------------------------------------------------------------------
 
 describe("RN06 — a saída não pode exceder o estoque disponível", () => {
   test("recusa saída maior que o saldo", () => {
@@ -118,7 +101,6 @@ describe("RN07 — classificação da situação de estoque", () => {
   });
 
   test("a mesma quantidade muda de situação conforme o mínimo", () => {
-    // é isto que torna a regra relativa, e não absoluta
     assert.equal(classificarEstoque(8, 20), "CRITICO");
     assert.equal(classificarEstoque(8, 2), "EXCESSO");
   });
@@ -171,7 +153,6 @@ describe("RN08 — valor total do estoque", () => {
   });
 
   test("usa o custo, não o preço de venda", () => {
-    // o indicador representa capital imobilizado, não receita potencial
     const itens = [{ estoqueAtual: 2, precoCusto: 10, precoVenda: 30 }];
     assert.equal(valorEmEstoque(itens), 20);
   });

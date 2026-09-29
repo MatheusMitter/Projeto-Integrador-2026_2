@@ -92,7 +92,6 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
             accessibilityLabel={`${op.titulo}. ${op.desc}`}
             style={[e.opcao, ativo && e.opcaoAtiva]}
           >
-            {/* O estado não depende só da cor: há marca e negrito (RNF06) */}
             <Text style={[e.opcaoTitulo, ativo && e.opcaoTituloAtivo]}>
               {ativo ? "\u25CF " : "\u25CB "}
               {op.titulo}

@@ -1,13 +1,4 @@
-/**
- * Repositório de produtos — camada de persistência.
- *
- * Só executa SQL e converte o resultado em objeto de domínio. Não decide
- * o que é válido: quem decide é a camada de negócio. Essa separação é o
- * que o requisito R12 pede.
- *
- * Todas as consultas são parametrizadas. Concatenar valor em SQL abriria
- * injeção e impediria o reaproveitamento do plano de execução.
- */
+// Acesso a dados de produto. Consultas sempre parametrizadas.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
 import { Produto, ResumoEstoque } from "../domain/tipos";
@@ -55,11 +46,7 @@ const SELECAO = `
     LEFT JOIN fornecedor f ON f.id = p.fornecedor_id
 `;
 
-/**
- * Lista os produtos ativos, com busca opcional por nome ou código.
- * O filtro de ativo implementa RN12: produto desativado sai das listagens
- * mas continua no banco, sustentando o histórico.
- */
+// ativo = 1 por causa da RN12: desativado sai da lista mas fica no banco
 export async function listar(termo = ""): Promise<Produto[]> {
   const db = await obterBanco();
   const busca = termo.trim();
@@ -112,10 +99,7 @@ export interface DadosProduto {
   dataValidade: string | null;
 }
 
-/**
- * Insere o produto com saldo zero. A quantidade inicial entra por
- * movimentação, para o histórico explicar de onde veio o estoque.
- */
+// entra com saldo zero; a quantidade inicial vem por movimentação
 export async function inserir(
   dados: DadosProduto,
   lojaId = 1,
@@ -170,7 +154,7 @@ export async function atualizar(
   );
 }
 
-/** RN12 — desativa em vez de excluir, preservando o histórico. */
+// RN12
 export async function desativar(id: number): Promise<void> {
   const db = await obterBanco();
   await db.runAsync(
@@ -181,7 +165,7 @@ export async function desativar(id: number): Promise<void> {
   );
 }
 
-/** Indicadores do painel. Uma consulta em vez de somar em memória. */
+// indicadores do painel, numa consulta só
 export async function resumo(lojaId = 1): Promise<ResumoEstoque> {
   const db = await obterBanco();
   const l = await db.getFirstAsync<{
@@ -209,7 +193,7 @@ export async function resumo(lojaId = 1): Promise<ResumoEstoque> {
   };
 }
 
-/** Ranking de saídas do tipo VENDA — visão consolidada do requisito R9. */
+// ranking de mais vendidos
 export async function maisVendidos(
   limite = 5,
 ): Promise<{ nome: string; total: number }[]> {

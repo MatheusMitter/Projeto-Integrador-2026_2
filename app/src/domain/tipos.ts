@@ -1,9 +1,4 @@
-/**
- * Camada de domínio: os tipos que representam as entidades do problema.
- *
- * Fica separada de propósito. Nem a tela nem o banco definem o que é um
- * produto — quem define é esta camada, e as outras duas dependem dela.
- */
+// Tipos das entidades do domínio.
 
 export type TipoPerfil = "PROPRIETARIO" | "OPERADOR";
 

@@ -1,10 +1,4 @@
-/**
- * Cadastro e edição de produto.
- *
- * O produto é criado com saldo zero e a quantidade inicial entra como
- * movimentação de entrada. Assim o histórico explica de onde veio o
- * estoque, em vez de ele simplesmente aparecer.
- */
+// Cadastro e edição de produto.
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -114,8 +108,7 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
       } else {
         const novoId = await produtoRepo.inserir(dados);
         const inicial = parseInt(quantidadeInicial, 10);
-        // A quantidade inicial entra como movimentação, não como saldo
-        // gravado direto: é o que mantém saldo e histórico coerentes.
+        // entra como movimentação para o histórico ficar coerente
         if (inicial > 0) {
           await registrarMovimentacao({
             produtoId: novoId,
