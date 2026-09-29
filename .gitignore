@@ -33,5 +33,5 @@ Thumbs.db
 *.pdf
 
 
-# Material interno de preparação da apresentação (não versionado)
-docs/APOIO-apresentacao.md
+# Material interno de preparação das entregas (não versionado)
+entregas/
