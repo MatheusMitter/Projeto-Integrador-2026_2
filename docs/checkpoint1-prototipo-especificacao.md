@@ -1,37 +1,52 @@
 # Especificação do Protótipo Navegável — StockEasy
 
-**Projeto:** StockEasy — Controle de Estoque Inteligente  
-**Checkpoint 1:** 11/09/2026  
-**Ferramenta:** Figma (protótipo de alta fidelidade navegável)
+**Projeto:** StockEasy — Controle de Estoque Inteligente
+**Artefato do Checkpoint 1 (11/09/2026), revisado para a entrega N1**
+**Implementação:** HTML5 e CSS3, publicado em GitHub Pages
+**Versão:** 2.0 — 28/09/2026
+
+---
+
+## Nota sobre a ferramenta
+
+A versão 1.0 desta especificação previa implementação em Figma. O protótipo foi construído em HTML e CSS, e esta especificação foi atualizada para refletir o que existe.
+
+A decisão e suas razões estão registradas em [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md). Em resumo: HTML e CSS entregam navegação real no navegador, sem conta nem permissão de compartilhamento, permitem demonstrar regras de negócio com poucas linhas de JavaScript e reaproveitam o sistema de design na implementação em React Native.
+
+O protótipo entregue tem **11 telas**, e não as 6 previstas originalmente. As telas acrescentadas foram recuperação de senha, configurações e fornecedores — esta última necessária porque o requisito R3 exige manutenção completa de dados sobre pelo menos duas entidades, e o protótipo inicial só demonstrava Produtos.
 
 ---
 
 ## Objetivo do Protótipo
 
-Demonstrar a navegação completa entre as 6 telas principais e validar os fluxos de uso mais importantes do aplicativo. O protótipo deve ser interativo (com botões e links clicáveis) e representar fielmente a estrutura de navegação prevista.
+Demonstrar a navegação entre as telas principais, validar os fluxos de uso mais importantes e tornar verificáveis as regras de negócio centrais do domínio. O protótipo é interativo, com botões e links funcionais, e representa a estrutura de navegação prevista para a aplicação.
 
 ---
 
 ## Estrutura de Navegação
 
 ```
-Login/Cadastro
-    ↓
-Dashboard (Home)
-    ├→ Produtos (Lista)
-    │   ├→ Detalhes do Produto
-    │   ├→ Cadastrar Novo Produto
-    │   └→ Editar Produto
-    ├→ Movimentação (Entrada/Saída)
+Login ──┬── Cadastro de conta
+        └── Recuperação de senha
+           ↓
+Painel (Dashboard)
+    ├→ Produtos (lista, busca, filtros)
+    │   ├→ Detalhes do produto
+    │   └→ Cadastro e edição de produto
+    ├→ Movimentação (entrada e saída)
     ├→ Relatórios
-    └→ Configurações/Perfil
+    └→ Configurações e perfil
+        └→ Fornecedores (lista, cadastro, edição, exclusão)
 ```
+
+A navegação inferior dá acesso direto a Painel, Produtos, Movimentação, Relatórios e Configurações em qualquer ponto do aplicativo.
 
 ---
 
 ## Tela 1: Login e Cadastro
 
 ### Variantes:
+
 - **1.1 — Tela de Login**
 - **1.2 — Tela de Cadastro**
 - **1.3 — Tela de Recuperação de Senha**
@@ -39,6 +54,7 @@ Dashboard (Home)
 ### 1.1 — Login
 
 **Elementos visuais:**
+
 - Logotipo do StockEasy no topo
 - Campo de entrada: E-mail (ícone de envelope)
 - Campo de entrada: Senha (ícone de cadeado, toggle para mostrar/ocultar)
@@ -47,11 +63,13 @@ Dashboard (Home)
 - Link: "Criar nova conta"
 
 **Comportamento:**
+
 - Botão "Entrar" → Validação → Dashboard
 - Link "Criar nova conta" → Tela de Cadastro (1.2)
 - Link "Esqueci minha senha" → Tela de Recuperação (1.3)
 
 **Estados:**
+
 - Estado padrão
 - Estado de erro (e-mail ou senha inválidos)
 - Estado de carregamento (spinner no botão)
@@ -59,6 +77,7 @@ Dashboard (Home)
 ### 1.2 — Cadastro
 
 **Elementos visuais:**
+
 - Título: "Criar Conta"
 - Campo: Nome completo
 - Campo: E-mail
@@ -70,6 +89,7 @@ Dashboard (Home)
 - Link: "Já tenho conta — Fazer login"
 
 **Comportamento:**
+
 - Validação em tempo real (e-mail válido, senhas coincidem, força da senha)
 - Botão "Criar conta" → Validação → Login automático → Dashboard
 - Link "Fazer login" → Tela de Login (1.1)
@@ -77,6 +97,7 @@ Dashboard (Home)
 ### 1.3 — Recuperação de Senha
 
 **Elementos visuais:**
+
 - Título: "Recuperar Senha"
 - Descrição: "Enviaremos um link de recuperação para o seu e-mail"
 - Campo: E-mail cadastrado
@@ -84,6 +105,7 @@ Dashboard (Home)
 - Link: "Voltar para login"
 
 **Comportamento:**
+
 - Botão "Enviar link" → Confirmação visual → Voltar para Login
 
 ---
@@ -93,11 +115,13 @@ Dashboard (Home)
 ### Layout:
 
 **Cabeçalho:**
+
 - Saudação: "Olá, [Nome do usuário]"
 - Ícone de notificações (badge com número de alertas)
 - Ícone de perfil/configurações
 
 **Cards de Resumo (Grid 2x2):**
+
 1. **Total de Produtos**
    - Número grande: ex. "247"
    - Subtítulo: "produtos cadastrados"
@@ -121,16 +145,19 @@ Dashboard (Home)
    - Botão: "Ver produtos"
 
 **Seção: Produtos Mais Vendidos**
+
 - Gráfico de barras horizontal (top 5 produtos)
 - Cada barra mostra: nome do produto e quantidade vendida no período
 
 **Ações Rápidas (Botões flutuantes):**
+
 - Botão principal (FAB): "+" → Menu com opções:
   - "Registrar Venda"
   - "Registrar Entrada"
   - "Cadastrar Produto"
 
 **Menu de Navegação Inferior (Tab Bar):**
+
 - Home (ativo)
 - Produtos
 - Movimentação
@@ -138,6 +165,7 @@ Dashboard (Home)
 - Mais
 
 **Comportamento:**
+
 - Toque em "Produtos Críticos" → Tela de Produtos (filtro automático: críticos)
 - Toque no gráfico → Tela de Relatórios
 - Botão FAB → Expandir opções → Redirecionar para tela correspondente
@@ -150,12 +178,14 @@ Dashboard (Home)
 ### Layout:
 
 **Cabeçalho:**
+
 - Título: "Produtos"
 - Barra de busca: "Buscar por nome ou código..."
 - Ícone: Scanner de código de barras
 - Ícone: Filtros
 
 **Filtros (modal ou barra expansível):**
+
 - Categoria: Dropdown (Todos, Alimentos, Bebidas, Limpeza, Higiene, Outros)
 - Fornecedor: Dropdown (lista de fornecedores cadastrados)
 - Status de Estoque: Chips selecionáveis (Crítico, Baixo, Normal, Excesso)
@@ -163,6 +193,7 @@ Dashboard (Home)
 
 **Lista de Produtos (cards verticais):**
 Cada card contém:
+
 - Foto do produto (miniatura)
 - Nome do produto
 - Código de barras (pequeno, abaixo do nome)
@@ -173,14 +204,17 @@ Cada card contém:
 - Ícone: Detalhes (seta para a direita)
 
 **Estados da lista:**
+
 - Estado vazio: "Nenhum produto cadastrado. Cadastre o primeiro produto!"
 - Estado de carregamento: Skeleton screens
 - Estado de busca sem resultados: "Nenhum produto encontrado"
 
 **Botão flutuante (FAB):**
+
 - "+" → Cadastrar novo produto
 
 **Comportamento:**
+
 - Toque no card → Tela de Detalhes do Produto
 - Ícone "Editar" → Tela de Edição de Produto
 - Ícone "Scanner" → Ativar câmera → Buscar produto pelo código
@@ -191,12 +225,14 @@ Cada card contém:
 ## Tela 4: Cadastro/Edição de Produto
 
 ### Variantes:
+
 - **4.1 — Cadastrar Novo Produto**
 - **4.2 — Editar Produto Existente**
 
 ### Layout (ambos compartilham estrutura):
 
 **Cabeçalho:**
+
 - Título: "Novo Produto" ou "Editar Produto"
 - Botão: "Voltar" (← seta)
 - Botão: "Salvar" (check ou texto)
@@ -212,28 +248,28 @@ Cada card contém:
    - Botão ao lado: Ícone de scanner → Ativar câmera para leitura
    - Após leitura bem-sucedida: preenchimento automático de outros campos via API (se disponível)
 
-3. **Nome do Produto***
+3. **Nome do Produto\***
    - Campo de texto obrigatório
 
-4. **Categoria***
+4. **Categoria\***
    - Dropdown: Alimentos, Bebidas, Limpeza, Higiene, Outros
 
 5. **Fornecedor**
    - Dropdown com lista de fornecedores cadastrados
    - Link: "+ Cadastrar novo fornecedor" (abre modal)
 
-6. **Preço de Custo***
+6. **Preço de Custo\***
    - Campo numérico (R$)
    - Máscara de moeda
 
-7. **Preço de Venda***
+7. **Preço de Venda\***
    - Campo numérico (R$)
    - Indicador visual: margem de lucro (calculado automaticamente)
 
-8. **Quantidade Inicial***
+8. **Quantidade Inicial\***
    - Campo numérico (unidades)
 
-9. **Estoque Mínimo***
+9. **Estoque Mínimo\***
    - Campo numérico (unidades)
    - Descrição: "Você será alertado quando o estoque ficar abaixo deste valor"
 
@@ -241,15 +277,18 @@ Cada card contém:
     - Seletor de data
 
 **Botões inferiores:**
+
 - Botão secundário: "Cancelar"
 - Botão primário: "Salvar Produto"
 
 **Validações:**
-- Campos obrigatórios indicados com asterisco (*)
+
+- Campos obrigatórios indicados com asterisco (\*)
 - Erro em tempo real: campos vazios, preço de venda menor que custo
 - Confirmação ao salvar: "Produto cadastrado com sucesso!" (toast)
 
 **Comportamento:**
+
 - Botão "Salvar" → Validação → Salvar no banco → Voltar para Lista de Produtos
 - Botão "Cancelar" → Confirmar descarte de alterações → Voltar
 - Scanner bem-sucedido → Buscar dados na API → Preencher nome, categoria e foto automaticamente
@@ -261,21 +300,24 @@ Cada card contém:
 ### Layout:
 
 **Cabeçalho:**
+
 - Título: "Movimentação de Estoque"
 - Botão: "Voltar"
 
 **Seleção de Produto:**
+
 - Campo de busca: "Buscar produto..."
 - Botão: Ícone de scanner → Ativar câmera para leitura de código de barras
 - Após seleção: Card do produto aparece (foto, nome, estoque atual)
 
 **Tipo de Movimentação (tabs ou botões toggle):**
+
 - **Entrada** (cor verde)
 - **Saída** (cor vermelha)
 
 **Formulário:**
 
-1. **Quantidade***
+1. **Quantidade\***
    - Campo numérico
    - Incrementadores: botões +/− para ajuste rápido
 
@@ -283,23 +325,26 @@ Cada card contém:
    - **Se Entrada:** Compra de fornecedor, Devolução de cliente, Ajuste de inventário, Outros
    - **Se Saída:** Venda, Perda, Vencimento, Devolução a fornecedor, Ajuste de inventário, Outros
 
-3. **Data e Hora***
+3. **Data e Hora\***
    - Campo de data/hora (padrão: data e hora atuais)
 
 4. **Observações** (opcional)
    - Campo de texto livre
 
 **Previsão após movimentação:**
+
 - Card de alerta visual:
   - "Estoque atual: 50 unidades"
   - "Após esta movimentação: 35 unidades"
   - Se ficar abaixo do mínimo: alerta em vermelho "Atenção: estoque ficará crítico!"
 
 **Botões inferiores:**
+
 - Botão secundário: "Cancelar"
 - Botão primário: "Confirmar Movimentação"
 
 **Comportamento:**
+
 - Scanner bem-sucedido → Selecionar produto automaticamente
 - Botão "Confirmar" → Validação → Atualizar estoque → Registrar histórico → Voltar para Dashboard
 - Toast de confirmação: "Movimentação registrada com sucesso!"
@@ -311,6 +356,7 @@ Cada card contém:
 ### Layout:
 
 **Cabeçalho:**
+
 - Título: "Relatórios"
 - Seletor de período: Dropdown (Última semana, Último mês, Último trimestre, Personalizado)
 - Ícone: Compartilhar/Exportar
@@ -335,14 +381,17 @@ Cada card contém:
    - Filtros: Tipo de movimentação, Produto específico, Usuário
 
 **Gráfico de Evolução do Estoque:**
+
 - Gráfico de linha mostrando valor total do estoque ao longo do período selecionado
 - Eixo X: datas
 - Eixo Y: valor em R$
 
 **Botão de ação:**
+
 - "Exportar Relatório" → Opções: PDF, Compartilhar via WhatsApp/E-mail
 
 **Comportamento:**
+
 - Toque em produto do ranking → Tela de Detalhes do Produto
 - Toque em item do histórico → Modal com detalhes completos da movimentação
 - Seletor de período → Atualizar todos os dados da tela
@@ -355,11 +404,13 @@ Cada card contém:
 ### Layout:
 
 **Cabeçalho:**
+
 - Botão: "Voltar"
 - Botão: "Editar" (ícone de lápis)
 - Botão: "Excluir" (ícone de lixeira)
 
 **Seção Superior:**
+
 - Foto do produto (grande)
 - Nome do produto (título)
 - Código de barras
@@ -387,15 +438,18 @@ Cada card contém:
    - Botão: "Ver outros produtos desta categoria"
 
 **Histórico de Movimentações deste Produto:**
+
 - Lista cronológica das últimas 10 movimentações
 - Cada item: data, tipo, quantidade, saldo após movimentação
 - Link: "Ver histórico completo"
 
 **Botões de ação rápida (fixos no rodapé):**
+
 - Botão: "Registrar Entrada"
 - Botão: "Registrar Saída"
 
 **Comportamento:**
+
 - Botão "Editar" → Tela de Edição (4.2)
 - Botão "Excluir" → Modal de confirmação → Excluir → Voltar para Lista
 - Botões de ação rápida → Tela de Movimentação (5) com produto pré-selecionado
@@ -407,9 +461,11 @@ Cada card contém:
 ### Layout:
 
 **Cabeçalho:**
+
 - Título: "Configurações"
 
 **Seção: Perfil do Usuário**
+
 - Foto de perfil (editável)
 - Nome do usuário
 - E-mail
@@ -417,6 +473,7 @@ Cada card contém:
 - Botão: "Editar perfil"
 
 **Seção: Configurações do App**
+
 - Toggle: Notificações ativadas
 - Toggle: Sincronização automática
 - Seletor: Intervalo de alerta de vencimento (7, 15, 30 dias)
@@ -424,16 +481,19 @@ Cada card contém:
 - Botão: "Gerenciar fornecedores"
 
 **Seção: Dados e Segurança**
+
 - Botão: "Alterar senha"
 - Botão: "Backup manual" (forçar sincronização)
 - Botão: "Exportar todos os dados"
 
 **Seção: Sobre**
+
 - Versão do app
 - Botão: "Termos de uso"
 - Botão: "Política de privacidade"
 
 **Seção: Conta**
+
 - Botão: "Sair da conta" (vermelho)
 
 ---
@@ -441,6 +501,7 @@ Cada card contém:
 ## Fluxos de Navegação Demonstráveis no Protótipo
 
 ### Fluxo 1: Primeiro Uso Completo
+
 1. Tela de Cadastro (1.2)
 2. Preencher dados → Criar conta
 3. Dashboard (2) — tour visual com tooltips explicativos
@@ -450,6 +511,7 @@ Cada card contém:
 7. Voltar ao Dashboard → Ver card "1 produto cadastrado"
 
 ### Fluxo 2: Registrar Venda (Operação do Dia a Dia)
+
 1. Dashboard (2)
 2. Botão FAB → "Registrar Venda"
 3. Tela de Movimentação (5) — Aba "Saída" ativa
@@ -459,6 +521,7 @@ Cada card contém:
 7. Voltar ao Dashboard → Card "Valor em Estoque" atualizado
 
 ### Fluxo 3: Responder a Alerta de Produto em Falta
+
 1. Dashboard (2) → Notificação "8 produtos críticos"
 2. Tocar em "Produtos Críticos"
 3. Tela de Produtos (3) — Filtro automático: apenas produtos críticos
@@ -469,6 +532,7 @@ Cada card contém:
 8. Voltar → Produto sai da lista de críticos
 
 ### Fluxo 4: Consulta e Análise de Desempenho
+
 1. Dashboard (2)
 2. Tab Bar → "Relatórios"
 3. Tela de Relatórios (6)
@@ -481,30 +545,37 @@ Cada card contém:
 
 ---
 
-## Requisitos de Implementação do Protótipo no Figma
+## Sistema de Design
 
-### Design System Básico:
+### Cores
 
-**Cores:**
-- Primária: Verde (#4CAF50) — ações positivas, entradas
-- Secundária: Azul (#2196F3) — navegação, informações
-- Alerta: Vermelho (#F44336) — saídas, críticos, exclusões
-- Aviso: Laranja (#FF9800) — avisos, produtos próximos ao vencimento
-- Sucesso: Verde claro (#8BC34A)
-- Neutro: Cinzas (escala de #FAFAFA a #212121)
+A paleta abaixo é a implementada em `prototipo/styles.css`. As cores originalmente previstas reprovavam no contraste mínimo de 4,5:1 quando aplicadas com texto branco, e foram substituídas por tons mais escuros da mesma família. A medição de cada uma está no memorial do protótipo.
+
+| Uso                                    | Cor       | Contraste com branco |
+| -------------------------------------- | --------- | -------------------- |
+| Primária — ações positivas e entradas  | `#2E7D32` | 5,13:1               |
+| Primária escura — estados pressionados | `#1B5E20` | 7,57:1               |
+| Secundária — navegação e informação    | `#1565C0` | 5,40:1               |
+| Alerta — saídas, críticos, exclusões   | `#C62828` | 5,90:1               |
+| Aviso — vencimento próximo             | `#E65100` | 4,80:1               |
+
+Fundos suaves usam as variações claras `#E8F5E9`, `#E3F2FD`, `#FFEBEE` e `#FFF3E0`, sempre combinadas com texto no tom escuro correspondente. Na escala de cinzas, `#757575` é o tom mais claro admitido para texto; tons acima disso ficam restritos a bordas e divisores.
 
 **Tipografia:**
+
 - Título grande: 24px, bold
 - Título de seção: 18px, semibold
 - Corpo: 14px, regular
 - Caption/Label: 12px, regular
 
 **Espaçamento:**
+
 - Padding de cards: 16px
 - Espaçamento entre elementos: 8px, 16px, 24px
 - Margem lateral: 16px
 
 **Componentes Reutilizáveis:**
+
 - Botões primários, secundários e de alerta
 - Cards de informação
 - Campos de formulário (input, dropdown, date picker)
@@ -520,34 +591,45 @@ Cada card contém:
 - Inputs devem ter estados: vazio, preenchido, com erro
 - Animações de transição entre telas (opcional, mas recomendado)
 
-### Acessibilidade:
+### Acessibilidade
 
-- Contraste mínimo WCAG AA (4.5:1 para texto normal)
-- Áreas de toque mínimas: 44x44px
-- Ícones sempre acompanhados de labels ou tooltips
+- Contraste mínimo de 4,5:1 entre texto e fundo
+- Área de toque mínima de 44 por 44 pixels, aplicada por token único no CSS
+- Campos de formulário com `id` e `<label for>` associado
+- Ícones interativos com rótulo acessível; ícones decorativos ocultos ao leitor de tela
+- Foco de teclado visível em todos os elementos interativos
+- Informação nunca transmitida apenas por cor
+- Gráficos com alternativa textual descrevendo os dados
+
+O detalhamento e a justificativa de cada decisão estão em [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md).
 
 ---
 
-## Checklist de Validação do Protótipo
+## Validação do Protótipo
 
-Antes de enviar o link para o formulário, verificar:
+A verificação abaixo foi executada em 28/09/2026 por inspeção automatizada dos arquivos.
 
-- [ ] 6 telas principais completas e navegáveis
-- [ ] 4 fluxos principais demonstráveis do início ao fim
-- [ ] Todos os botões e links estão funcionais (conectados às telas corretas)
-- [ ] Estados visuais representados (erro, sucesso, carregamento, vazio)
-- [ ] Permissão de visualização configurada como "Anyone with the link can view"
-- [ ] Link do Figma testado em navegador anônimo
-- [ ] Design responsivo para telas de smartphones (375px a 428px de largura)
+| Verificação                                                        | Resultado                |
+| ------------------------------------------------------------------ | ------------------------ |
+| Telas completas e navegáveis                                       | 11, acima do mínimo de 6 |
+| Fluxos demonstráveis do início ao fim                              | 5                        |
+| Links apontando para destino inexistente                           | Nenhum                   |
+| Destinos de navegação que não correspondem a arquivo               | Nenhum                   |
+| Campos de formulário sem rótulo associado                          | Nenhum, de 35 campos     |
+| Cores fora do contraste mínimo remanescentes no código             | Nenhuma                  |
+| Estados visuais representados (erro, sucesso, vazio, carregamento) | Presentes                |
+| Largura de referência para smartphones                             | 375px a 428px            |
+| Regras de negócio verificáveis por interação                       | 3 — RN06, RN07 e RN13    |
 
 ---
 
 ## Observação Final
 
-Este protótipo será usado como referência para:
-1. Validação com stakeholders (professores e potenciais usuários)
-2. Base para o desenvolvimento das telas reais no React Native
-3. Documentação visual dos requisitos de interface (R1)
-4. Demonstração na apresentação da N1
+Este protótipo serve como:
 
-A navegação deve ser fluida e representar com fidelidade a experiência de uso real do aplicativo.
+1. Validação da interface antes da implementação
+2. Base direta para as telas em React Native, com o sistema de design reaproveitado
+3. Documentação visual dos requisitos de interface (R1)
+4. Material de demonstração na apresentação da N1
+
+Conformidade plena com a WCAG exige teste manual com leitores de tela e revisão por especialista, previstos para as sessões de usabilidade da Semana 15.

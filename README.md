@@ -1,4 +1,188 @@
-# Projeto-Integrador-2026_2
-Repositório oficial do Projeto Integrador - 2026/2 (PUC Goiás)
+# StockEasy — Controle de Estoque Inteligente
 
-- https://github.com/MatheusMitter/Projeto-Integrador-2026_2
+Aplicação móvel de controle de estoque para pequenos comércios, desenvolvida como Projeto Integrador do Curso Superior de Tecnologia em Análise e Desenvolvimento de Sistemas da PUC Goiás, semestre 2026/2.
+
+**Disciplina:** ADS1253 — Programação Orientada a Objeto com Banco de Dados
+**Equipe:** StockEasy
+**Repositório:** https://github.com/MatheusMitter/Projeto-Integrador-2026_2
+
+---
+
+## O problema
+
+Pequenos comerciantes — mercearias, minimercados, padarias, lojas de conveniência — controlam estoque em cadernos ou planilhas desatualizadas, quando controlam. O resultado são perdas por ruptura de produtos de alto giro, capital imobilizado em itens de baixa saída e desperdício por vencimento.
+
+O StockEasy resolve isso com registro de movimentações no celular, alerta automático de estoque mínimo e de vencimento, e visões consolidadas que mostram para onde o dinheiro do estoque está indo.
+
+---
+
+## Equipe e atribuições
+
+| Integrante              | Matrícula          | Atribuição técnica                                            |
+| ----------------------- | ------------------ | ------------------------------------------------------------- |
+| Matheus Oliveira Mitter | 2025.1.0120.0128-3 | Retaguarda: API REST, modelagem, JDBC/DAO, autenticação       |
+| Vitor Leal dos Santos   | 2025.1.0120.0071-6 | Aplicação móvel: telas, navegação, formulários e validações   |
+| Felipe Milhomem Rocha   | 2025.1.0120.0024-4 | Integração: API externa, recursos nativos, persistência local |
+
+A distribuição de responsabilidades por ciclo está em [`docs/N1-gestao-projeto.md`](docs/N1-gestao-projeto.md).
+
+---
+
+## Pilha tecnológica
+
+| Camada             | Tecnologia                         | Justificativa resumida                                                       |
+| ------------------ | ---------------------------------- | ---------------------------------------------------------------------------- |
+| Aplicação móvel    | React Native com Expo (TypeScript) | Admitida pela Seção 4 do documento norteador; ciclo de desenvolvimento curto |
+| Persistência local | SQLite (`expo-sqlite`)             | Operação offline com o mesmo modelo relacional do servidor                   |
+| Retaguarda         | Spring Boot (Java) com API REST    | Exercita JDBC, DAO e transações, conteúdo central da ADS1253                 |
+| Banco remoto       | PostgreSQL                         | Integridade referencial, _constraints_ e _triggers_                          |
+| Integração externa | Open Food Facts                    | Consulta de produto por código de barras, sem chave de acesso                |
+| Recurso nativo     | Câmera e notificações locais       | Leitura de código de barras e alerta de estoque crítico                      |
+
+A justificativa completa, com as alternativas avaliadas e descartadas, está em [`docs/N1-arquitetura.md`](docs/N1-arquitetura.md).
+
+---
+
+## Estrutura do repositório
+
+```
+.
+├── app/                                    # Aplicação móvel (React Native com Expo)
+│   ├── src/
+│   │   ├── screens/                         # Apresentação: telas
+│   │   ├── components/                      # Apresentação: componentes
+│   │   ├── navigation/                      # Apresentação: abas e pilha
+│   │   ├── services/                        # Negócio: regras e transações
+│   │   ├── repositories/                    # Persistência: SQL sobre SQLite
+│   │   ├── database/                        # Persistência: esquema e conexão
+│   │   ├── domain/                          # Domínio: tipos das entidades
+│   │   └── theme/                           # Design system
+│   ├── tests/                               # Testes das regras de negócio
+│   └── README.md
+├── apresentacao/                           # Slides da defesa técnica
+├── docs/                                   # Documentação do projeto
+│   ├── N1-documento-de-projeto.md           # Escopo, requisitos, personas, regras de negócio
+│   ├── N1-arquitetura.md                    # Camadas, decisões técnicas, pilha
+│   ├── N1-memorial-prototipo.md             # Decisões de usabilidade e acessibilidade
+│   ├── N1-gestao-projeto.md                 # Backlog, ciclos, responsabilidades
+│   ├── N1-roteiro-apresentacao.md           # Roteiro da defesa técnica
+│   ├── N1-relatorio-revisao.md              # Revisão dos artefatos e pendências
+│   ├── checkpoint1-backlog.md               # Backlog priorizado (histórias de usuário)
+│   ├── checkpoint1-der-modelagem.md         # DER, scripts SQL, consultas
+│   ├── checkpoint1-prototipo-especificacao.md
+│   └── CHECKPOINT1-RESUMO.md
+└── prototipo/                              # Protótipo navegável HTML/CSS (11 telas)
+    ├── index.html                           # Ponto de entrada
+    ├── styles.css
+    └── README.md
+```
+
+---
+
+## Como executar
+
+### Protótipo navegável
+
+Não requer instalação. Abra `prototipo/index.html` em qualquer navegador:
+
+```bash
+git clone https://github.com/MatheusMitter/Projeto-Integrador-2026_2.git
+cd Projeto-Integrador-2026_2/prototipo
+open index.html        # macOS
+# xdg-open index.html  # Linux
+# start index.html     # Windows
+```
+
+Versão publicada: [matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/](https://matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/)
+
+### Banco de dados
+
+Os scripts de criação e a carga de exemplo estão em [`docs/checkpoint1-der-modelagem.md`](docs/checkpoint1-der-modelagem.md). Com PostgreSQL 14 ou superior disponível:
+
+```bash
+psql -U postgres -f scripts/schema.sql
+psql -U postgres -d stockeasy_db -f scripts/seed.sql
+```
+
+### Aplicação móvel
+
+Requer Node 18 ou superior.
+
+```bash
+cd app
+npm install
+npm start          # leia o código no terminal com o Expo Go
+npm run web        # alternativa para inspeção rápida no navegador
+```
+
+Credenciais de teste, criadas pela carga inicial:
+
+| Perfil       | E-mail                     | Senha    | Acesso                                        |
+| ------------ | -------------------------- | -------- | --------------------------------------------- |
+| Proprietário | proprietario@stockeasy.com | admin123 | Completo                                      |
+| Operador     | operador@stockeasy.com     | admin123 | Sem custo, margem nem valor do estoque (RN01) |
+
+Verificação:
+
+```bash
+cd app
+npm run verificar-tipos    # compilação TypeScript em modo estrito
+npm run testar-regras      # 21 testes das regras de negócio
+```
+
+Detalhes de organização, camadas e limitações em [`app/README.md`](app/README.md).
+
+---
+
+## Configuração e credenciais
+
+Nenhuma credencial é versionada. Variáveis de ambiente são lidas de um arquivo `.env` local, não rastreado pelo Git, a partir do modelo `.env.example`. O `.gitignore` cobre `.env`, chaves `*.pem`/`*.key`, `google-services.json` e artefatos de build.
+
+---
+
+## Requisitos mínimos de complexidade técnica
+
+Situação em 28/09/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
+
+| Req | Descrição                                  | Situação              | Onde é verificável                                    |
+| --- | ------------------------------------------ | --------------------- | ----------------------------------------------------- |
+| R1  | Mínimo de 6 telas com navegação            | Implementado          | `app/` — abas e pilha, 7 telas; protótipo com 11      |
+| R2  | Autenticação com 2 perfis                  | Implementado          | `app/src/services/authService.ts`                     |
+| R3  | Manutenção completa de 2+ entidades        | Implementado          | Produto e Fornecedor no aplicativo                    |
+| R4  | Mínimo de 3 regras de negócio não triviais | Implementado          | 5 regras em `app/src/services/regras.ts`, com 21 testes |
+| R5  | Persistência local                         | Implementado          | SQLite em `app/src/database/`                          |
+| R6  | Persistência remota com sincronização      | Ciclo 3               | Spring Boot e PostgreSQL                              |
+| R7  | Consumo de serviço externo                 | Ciclo 3               | Open Food Facts                                       |
+| R8  | Recurso nativo do dispositivo              | Ciclo 3               | Câmera e notificações                                 |
+| R9  | Filtro, busca e visão consolidada          | Parcial               | Busca e painel prontos; relatórios no Ciclo 2         |
+| R10 | Tratamento de erros e estados              | Implementado          | Erro explicado, lista vazia com ação, carregamento     |
+| R11 | Usabilidade e acessibilidade               | Implementado          | Contraste AA, alvo de 44px, rótulos acessíveis         |
+| R12 | Organização do código em camadas           | Implementado          | Três camadas em `app/src/`                             |
+| R13 | Versionamento com histórico distribuído    | Em andamento          | Histórico do repositório                              |
+| R14 | Pacote instalável em dispositivo físico    | Ciclo 4               | Até 27/11                                             |
+
+---
+
+## Cronograma das entregas
+
+| Marco                     | Data               | Situação      |
+| ------------------------- | ------------------ | ------------- |
+| Checkpoint 1              | 11/09/2026         | Entregue      |
+| Entrega e apresentação N1 | 29/09 a 02/10/2026 | Em preparação |
+| Checkpoint 2              | 06/11/2026         | Planejado     |
+| Testes com usuários       | 09 a 13/11/2026    | Planejado     |
+| Congelamento de escopo    | 27/11/2026         | Planejado     |
+| Documentação final        | 04/12/2026         | Planejado     |
+| Entrega e apresentação N2 | 07 a 11/12/2026    | Planejado     |
+
+---
+
+## Uso de ferramentas de inteligência artificial
+
+Conforme a Seção 9.1 do documento norteador, a equipe declara o uso de assistentes de IA como apoio à redação da documentação e à revisão de código. As decisões técnicas, a modelagem e a implementação são de autoria da equipe, que responde integralmente pelo conteúdo entregue. A declaração detalhada, com as finalidades de uso, será consolidada no relatório técnico final.
+
+---
+
+## Licença e uso acadêmico
+
+Projeto acadêmico sem fins comerciais, produzido para a disciplina ADS1253 da PUC Goiás. Os documentos normativos da disciplina não são redistribuídos neste repositório.

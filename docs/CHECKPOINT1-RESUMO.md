@@ -1,307 +1,158 @@
-# ✅ CHECKPOINT 1 — RESUMO EXECUTIVO
+# Checkpoint 1 — Resumo dos artefatos
 
-**Data:** 11/09/2026  
-**Equipe:** StockEasy Team  
 **Projeto:** StockEasy — Controle de Estoque Inteligente
+**Equipe:** StockEasy
+**Checkpoint 1:** 11/09/2026 — entregue
+**Revisão para a N1:** 28/09/2026
 
 ---
 
-## 🎯 STATUS GERAL
+## O que o Checkpoint 1 exigia
 
-| Artefato      | Status                                           | Arquivo                                  |
-| ------------- | ------------------------------------------------ | ---------------------------------------- |
-| **Escopo**    | ✅ Concluído                                     | `checkpoint1-respostas-formulario.md`    |
-| **Protótipo** | ⚠️ Especificação completa → Implementar no Figma | `checkpoint1-prototipo-especificacao.md` |
-| **Backlog**   | ✅ Concluído → Criar GitHub Projects             | `checkpoint1-backlog.md`                 |
-| **DER**       | ✅ Concluído                                     | `checkpoint1-der-modelagem.md`           |
+Escopo do projeto, protótipo navegável, backlog priorizado e o diagrama entidade-relacionamento do banco de dados.
+
+| Artefato  | Situação | Onde está                                                                 |
+| --------- | -------- | ------------------------------------------------------------------------- |
+| Escopo    | Entregue | Consolidado em [`N1-documento-de-projeto.md`](N1-documento-de-projeto.md) |
+| Protótipo | Entregue | [`../prototipo/`](../prototipo/) — 11 telas navegáveis                    |
+| Backlog   | Entregue | [`checkpoint1-backlog.md`](checkpoint1-backlog.md) — 30 histórias         |
+| DER       | Entregue | [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md)            |
+
+Todos os quatro artefatos foram revisados após o Checkpoint 1. O que mudou está registrado no histórico de revisão de cada documento.
 
 ---
 
-## 📋 FORMULÁRIO — RESPOSTAS PRONTAS
+## Escopo do projeto
 
-### 1. Integrantes do grupo
+### Problema
 
-```
-Matheus Oliveira Mitter - 2025.1.0120.0128-3
-Vitor Leal dos Santos - 2025.1.0120.0071-6
-Felipe Milhomem Rocha - 2025.1.0120.0024-4
-```
+Pequenos comerciantes — mercearias, minimercados, padarias, lojas de conveniência — controlam estoque em caderno ou planilha desatualizada, quando controlam. Isso produz perda de venda por ruptura, capital imobilizado em itens de baixo giro e descarte por vencimento.
 
-### 2. Nome do projeto
+### Público-alvo
 
-```
-StockEasy — Controle de Estoque Inteligente
-```
+Proprietários e funcionários de estabelecimentos de varejo de pequeno porte, com até cinco colaboradores. Perfil com smartphone Android e familiaridade com aplicativos do dia a dia, mas sem experiência em sistemas de gestão.
 
-### 3. Sobre o projeto
+As personas detalhadas estão no documento de projeto.
 
-```
-O StockEasy é um aplicativo móvel que resolve o problema de falta de controle efetivo
-de estoque em pequenos comércios, uma das principais causas de perdas financeiras,
-rupturas de produtos e desperdício por vencimento.
+### Funcionalidades da primeira versão
 
-Problema: Pequenos comerciantes (mercearias, lojas de conveniência, minimercados,
-farmácias) geralmente controlam estoque de forma manual (cadernos, planilhas
-desatualizadas) ou não controlam, resultando em perda de vendas por falta de produtos,
-compras desnecessárias e dificuldade em identificar produtos de baixo giro.
+**Produtos.** Cadastro com nome, categoria, preços, estoque mínimo, código de barras, fornecedor e validade. Listagem com busca, filtro e ordenação. Alteração e desativação.
 
-Público-alvo: Proprietários de pequenos comércios (mercearias, padarias, minimercados),
-gerentes de lojas de conveniência, empreendedores iniciantes no varejo, comerciantes
-que atuam sozinhos ou com equipes pequenas (até 5 funcionários).
-```
+**Movimentação.** Registro de entrada e saída com tipo, quantidade, data e observações, sempre com previsão do saldo resultante antes da confirmação. Histórico completo por produto e por período.
 
-### 4. Escopo da primeira versão
+**Alertas.** Classificação automática da situação de estoque em relação ao mínimo definido pelo usuário, com alerta de estoque crítico e de vencimento próximo, e notificação no dispositivo.
 
-```
-Funcionalidades principais previstas:
+**Consultas consolidadas.** Painel com total de produtos, valor do estoque, produtos críticos e próximos ao vencimento. Ranking de mais vendidos, relação de baixo giro e evolução do estoque.
 
-GESTÃO DE PRODUTOS
-- Cadastro completo de produtos (nome, código de barras, categoria, preço de custo e
-  venda, estoque mínimo, fornecedor)
-- Busca e filtros por categoria, fornecedor ou status de estoque
-- Edição e exclusão de produtos com validação
+**Fornecedores e categorias.** Cadastro, consulta, alteração e exclusão, com validação de vínculo.
 
-CONTROLE DE ESTOQUE
-- Registro de entrada de mercadorias (compra de fornecedor)
-- Registro de saída (venda, perda, vencimento, devolução)
-- Visualização do estoque atual com indicadores visuais
-- Histórico de movimentações por produto
+**Acesso.** Cadastro, autenticação e recuperação de senha, com dois perfis de permissão: Proprietário, com acesso completo, e Operador, sem acesso a custo, margem e relatórios financeiros.
 
-ALERTAS E NOTIFICAÇÕES
-- Alertas automáticos de produtos abaixo do estoque mínimo
-- Notificações de produtos próximos ao vencimento
-- Lembretes de reposição baseados no histórico de vendas
+**Persistência e integração.** Base local no dispositivo para operação sem conectividade, sincronização com o servidor quando houver conexão, consulta a serviço externo por código de barras e uso da câmera para leitura.
 
-RELATÓRIOS E VISÕES CONSOLIDADAS
-- Produtos mais vendidos (ranking)
-- Produtos com baixo giro
-- Valor total do estoque
-- Gráfico de evolução do estoque por período
-- Resumo financeiro
+---
 
-GESTÃO DE FORNECEDORES
-- Cadastro de fornecedores (nome, contato, produtos fornecidos)
-- Consulta de produtos por fornecedor
-- Histórico de compras por fornecedor
+## Pilha tecnológica
 
-AUTENTICAÇÃO E PERFIS DE USUÁRIO
-- Cadastro e login seguro
-- Perfil Proprietário: acesso completo
-- Perfil Operador: acesso limitado (sem relatórios financeiros)
-- Recuperação de senha
+| Camada             | Tecnologia                         |
+| ------------------ | ---------------------------------- |
+| Aplicação móvel    | React Native com Expo (TypeScript) |
+| Persistência local | SQLite                             |
+| Retaguarda         | Spring Boot com API REST           |
+| Banco remoto       | PostgreSQL                         |
+| Serviço externo    | Open Food Facts                    |
+| Recursos nativos   | Câmera e notificações locais       |
 
-RECURSOS NATIVOS E INTEGRAÇÃO
-- Leitura de código de barras via câmera
-- Sincronização com servidor remoto
-- Funcionalidade offline com sincronização posterior
-- Integração com API de consulta de produtos por código de barras
-```
+A justificativa de cada escolha, com as alternativas avaliadas e descartadas, está em [`N1-arquitetura.md`](N1-arquitetura.md). É o conteúdo do item 2 da N1.
 
-### 5. Link do protótipo navegável
+---
 
-```
+## Protótipo navegável
+
+Protótipo HTML/CSS hospedado em GitHub Pages:
 https://matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/
 
-Protótipo HTML/CSS totalmente navegável hospedado no GitHub Pages.
-Botões clicáveis, navegação real entre telas, 8 telas completas + 4 fluxos demonstráveis.
-```
+**11 telas:** login, cadastro de conta, recuperação de senha, painel, lista de produtos, cadastro de produto, detalhes do produto, movimentação, relatórios, configurações e fornecedores.
 
-### 6. Telas e fluxos visualizáveis no protótipo
+**5 fluxos navegáveis:** primeiro uso, registro de venda, resposta a alerta de falta, consulta de desempenho e manutenção de fornecedores.
 
-```
-TELAS COMPLETAS (8 telas):
-1. Login e Cadastro — Login, cadastro de novo usuário, recuperação de senha
-2. Dashboard — Resumo visual do estoque, cards de alerta, gráfico de produtos mais vendidos
-3. Listagem de Produtos — Lista com busca, filtros, ordenação
-4. Cadastro/Edição de Produto — Formulário completo com scanner de código de barras
-5. Movimentação de Estoque — Registro de entrada e saída
-6. Relatórios — Produtos mais vendidos, baixo giro, valor total, histórico
-7. Detalhes do Produto — Informações completas e histórico de movimentações
-8. Configurações — Perfil do usuário e configurações do app
+Três regras de negócio são verificáveis clicando no protótipo, e não apenas descritas:
 
+| Regra | Como verificar                                                                           |
+| ----- | ---------------------------------------------------------------------------------------- |
+| RN06  | Em movimentação, informar saída maior que o estoque disponível — o registro é bloqueado  |
+| RN07  | Em movimentação, informar saída que deixe o saldo no mínimo — aparece o aviso de crítico |
+| RN13  | Em fornecedores, tentar excluir um fornecedor que tem produtos vinculados                |
 
-FLUXOS NAVEGÁVEIS COMPLETOS:
-- Fluxo de primeiro uso: Cadastro → Login → Dashboard → Cadastro do primeiro produto
-- Fluxo de venda: Dashboard → Movimentação → Escanear código → Registrar saída
-- Fluxo de reposição: Dashboard → Alerta → Produtos críticos → Registrar entrada
-- Fluxo de consulta: Dashboard → Produtos → Busca/Filtro → Detalhes → Histórico
-- Fluxo de relatório: Dashboard → Relatórios → Filtrar → Visualizar → Compartilhar
-```
-
-### 7. Dificuldades, pendências ou observações
-
-```
-OBSERVAÇÕES TÉCNICAS:
-
-Arquitetura e tecnologia:
-Conforme o item 1.2 de docs/duvidas-coordenacao.md, há divergência entre os documentos
-normativos quanto à pilha tecnológica. O documento de ADS1253 indica persistência com
-JDBC e DAO, o que sugere retaguarda em Java (Spring Boot). Estamos adotando essa
-interpretação para garantir compatibilidade com o conteúdo da disciplina.
-
-Pilha prevista:
-- Mobile: React Native (Expo) — atende ao requisito de plataforma móvel nativa/híbrida
-- Backend: Spring Boot (Java) com API RESTful
-- Banco de dados: PostgreSQL (remoto) + SQLite (local para modo offline)
-- Integração externa: API de consulta de produtos por código de barras
-
-Justificativa técnica:
-- React Native permite desenvolvimento ágil com código compartilhado
-- Spring Boot + JDBC/DAO atende à exigência de ADS1253
-- Persistência local viabiliza operação offline
-- Scanner de código de barras exercita recurso nativo (câmera)
-
-Pendências normativas:
-Aguardamos esclarecimento formal da coordenação sobre:
-- Confirmação da pilha tecnológica (item 1.2 de docs/duvidas-coordenacao.md)
-- Reprogramação oficial das datas de registro de equipe e tema (item 1.5)
-- Tamanho mínimo de equipe (item 1.1)
-
-Distribuição inicial de responsabilidades:
-- Matheus Oliveira Mitter: Backend (Spring Boot, API REST, modelagem do banco)
-- Vitor Leal dos Santos: Frontend móvel (React Native, telas, navegação)
-- Felipe Milhomem Rocha: Integração (API externa, sincronização, recursos nativos, testes)
-
-Gestão do projeto:
-- Backlog: GitHub Projects (integrado ao repositório)
-- Prototipação: Figma
-- Versionamento: Git com estratégia de branches e pull requests revisados
-```
+As decisões de usabilidade e acessibilidade estão justificadas em [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md), que compõe o item 3 da N1.
 
 ---
 
-## 📦 ARTEFATOS PRODUZIDOS
+## Modelagem de dados
 
-### 1. Respostas do Formulário
+Sete entidades: `loja`, `usuario`, `categoria`, `fornecedor`, `produto`, `movimentacao` e `alerta`. Normalizada até a terceira forma normal, com uma desnormalização deliberada no saldo resultante da movimentação, justificada no documento.
 
-**Arquivo:** `checkpoint1-respostas-formulario.md`  
-**Conteúdo:** As 7 respostas do formulário prontas para copiar e colar
-
-### 2. Especificação do Protótipo
-
-**Arquivo:** `checkpoint1-prototipo-especificacao.md`  
-**Conteúdo:**
-
-- 9 telas detalhadas (layout, elementos, comportamentos, estados)
-- 4 fluxos navegáveis completos
-- Design system básico (cores, tipografia, componentes)
-- Checklist de validação
-
-**Próximo passo:** Implementar no Figma seguindo a especificação
-
-### 3. Backlog Priorizado
-
-**Arquivo:** `checkpoint1-backlog.md`  
-**Conteúdo:**
-
-- 29 histórias de usuário (US01-US29)
-- 10 épicos organizados
-- Prioridades, estimativas, critérios de aceite, dependências
-- Mapeamento para R1-R14
-- Distribuição de responsabilidades
-
-**Próximo passo:** Criar GitHub Projects e popular com as histórias como issues
-
-### 4. Modelagem de Dados
-
-**Arquivo:** `checkpoint1-der-modelagem.md`  
-**Conteúdo:**
-
-- DER completo com 5 entidades
-- Scripts SQL prontos para executar (PostgreSQL)
-- Estratégia de sincronização (SQLite ↔ PostgreSQL)
-- Consultas importantes documentadas
-- 9 regras de negócio implementadas
+O script de criação foi executado em PostgreSQL 16 e as regras de negócio foram verificadas na prática. O resultado dos testes está na seção de validação de [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md).
 
 ---
 
-## ✅ CHECKLIST FINAL
+## Backlog
 
-### Antes de submeter o formulário:
+30 histórias de usuário em 10 épicos, cada uma com prioridade, estimativa, ciclo de desenvolvimento, responsável, critérios de aceite e regras de negócio aplicáveis.
 
-- [ ] Implementar protótipo no Figma seguindo `checkpoint1-prototipo-especificacao.md`
-- [ ] Configurar permissão do Figma: "Anyone with the link can view"
-- [ ] Testar o link do Figma em navegador anônimo
-- [ ] Colar o link do Figma na resposta 5
-- [ ] Criar projeto no GitHub Projects
-- [ ] Popular o GitHub Projects com as 29 histórias como issues
-- [ ] Configurar permissão do GitHub Projects como público
-- [ ] Copiar as respostas de `checkpoint1-respostas-formulario.md`
-- [ ] Preencher o formulário
-- [ ] Revisar todas as 7 respostas
-- [ ] Submeter antes de 23h59 de 11/09/2026
+| Distribuição por ciclo                 | Histórias |
+| -------------------------------------- | --------- |
+| Ciclo 1 (14 a 25/09) — escopo da N1    | 8         |
+| Ciclo 2 (13 a 23/10)                   | 12        |
+| Ciclo 3 (26/10 a 06/11) — Checkpoint 2 | 5         |
+| Ciclo 4 (16 a 27/11)                   | 3         |
+| Semana 15 (09 a 13/11) — verificação   | 2         |
 
-### Opcional (mas recomendado):
-
-- [ ] Gerar PDF do DER usando ferramenta de modelagem (ex: draw.io, dbdiagram.io)
-- [ ] Criar README.md no repositório com instruções básicas
-- [ ] Fazer commit dos arquivos de documentação
-- [ ] Compartilhar o link do repositório com o docente
+Os ciclos seguem o cronograma oficial da disciplina, não sprints arbitrárias.
 
 ---
 
-## 📊 COBERTURA DOS REQUISITOS
+## Cobertura dos requisitos obrigatórios
 
-### Requisitos obrigatórios (R1-R14) já cobertos:
-
-| Req | Descrição                    | Cobertura no Checkpoint 1                              |
-| --- | ---------------------------- | ------------------------------------------------------ |
-| R1  | 6+ telas                     | ✅ 9 telas especificadas no protótipo                  |
-| R2  | Autenticação e perfis        | ✅ US01-US04 + telas de login no protótipo             |
-| R3  | CRUD em 2+ entidades         | ✅ Produtos e Fornecedores no backlog + DER            |
-| R4  | 3+ regras de negócio         | ✅ 9 regras (RN01-RN09) documentadas                   |
-| R5  | Persistência local           | ✅ SQLite no DER + US24 no backlog                     |
-| R6  | Persistência remota          | ✅ PostgreSQL no DER + US25 no backlog                 |
-| R7  | API externa                  | ✅ US23 (API de produtos) no backlog                   |
-| R8  | Recurso nativo               | ✅ US21 (câmera/scanner) + US22 (notificações)         |
-| R9  | Filtro + visão consolidada   | ✅ US06 (filtros) + US17-US18 (dashboard e ranking)    |
-| R10 | Erros e estados              | ✅ Especificado em todas as telas do protótipo         |
-| R11 | Usabilidade e acessibilidade | ✅ Design system no protótipo + US29 (testes)          |
-| R12 | Organização do código        | ⏳ Será implementado (arquitetura em camadas definida) |
-| R13 | Versionamento                | ✅ Repositório Git criado e público                    |
-| R14 | Distribuição (APK)           | ⏳ Sprint final antes da N2                            |
-
-**10 de 14 requisitos já cobertos na especificação do Checkpoint 1.**
+| Req | Requisito                             | Situação              | Onde é verificável                        |
+| --- | ------------------------------------- | --------------------- | ----------------------------------------- |
+| R1  | Mínimo de 6 telas com navegação       | Especificado          | 11 telas no protótipo                     |
+| R2  | Autenticação com 2 perfis             | Especificado          | RF01 a RF06                               |
+| R3  | Manutenção completa de 2+ entidades   | Especificado          | Produto, Fornecedor e Categoria           |
+| R4  | Mínimo de 3 regras não triviais       | Especificado          | 5 regras, 3 já demonstráveis no protótipo |
+| R5  | Persistência local                    | Ciclo 1               | SQLite                                    |
+| R6  | Persistência remota com sincronização | Ciclo 3               | Spring Boot e PostgreSQL                  |
+| R7  | Serviço externo                       | Ciclo 3               | Open Food Facts                           |
+| R8  | Recurso nativo                        | Ciclo 3               | Câmera e notificações                     |
+| R9  | Filtro, busca e visão consolidada     | Especificado          | Lista de produtos, painel e relatórios    |
+| R10 | Erros e estados de interface          | Especificado          | Critérios de aceite do backlog            |
+| R11 | Usabilidade e acessibilidade          | Atendido no protótipo | Memorial do protótipo                     |
+| R12 | Organização do código em camadas      | Definido              | Memorial de arquitetura                   |
+| R13 | Versionamento                         | Em andamento          | Repositório e README                      |
+| R14 | Pacote instalável                     | Ciclo 4               | Até 27/11                                 |
 
 ---
 
-## 🎯 PRÓXIMOS PASSOS (pós-Checkpoint 1)
+## Artefatos da entrega N1
 
-### Semana 1 (pós-11/09):
-
-1. Criar GitHub Projects
-2. Popular com as 29 histórias como issues
-3. Definir sprint 1 (histórias de prioridade ALTA para a N1)
-4. Iniciar desenvolvimento: US01, US02 (Autenticação)
-
-### Semana 2-3:
-
-5. US05, US06, US07 (Produtos: cadastro, listagem, detalhes)
-6. US10 ou US11 (Movimentação básica)
-7. US24 (Persistência local)
-
-### Até 28-29/09 (N1):
-
-8. Aplicação parcial em execução (item 4 da N1 = 2,0 pontos)
-9. Revisar documento de projeto (item 1 da N1 = 2,5 pontos)
-10. Preparar apresentação (item 6 da N1 = 1,0 ponto)
+| Item | Descrição                                  | Pontos | Artefato                                                                                                  |
+| ---- | ------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------- |
+| 1    | Documento de projeto                       | 2,5    | [`N1-documento-de-projeto.md`](N1-documento-de-projeto.md)                                                |
+| 2    | Modelagem e definição arquitetural         | 1,5    | [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md) e [`N1-arquitetura.md`](N1-arquitetura.md) |
+| 3    | Protótipo com justificativa de usabilidade | 2,0    | [`../prototipo/`](../prototipo/) e [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md)                 |
+| 4    | Aplicação parcial em execução              | 2,0    | Repositório e demonstração                                                                                |
+| 5    | Gestão do projeto                          | 1,0    | [`checkpoint1-backlog.md`](checkpoint1-backlog.md) e [`N1-gestao-projeto.md`](N1-gestao-projeto.md)       |
+| 6    | Apresentação e defesa técnica              | 1,0    | [`N1-roteiro-apresentacao.md`](N1-roteiro-apresentacao.md)                                                |
 
 ---
 
-## 💡 DICAS IMPORTANTES
+## Próximos marcos
 
-1. **Protótipo no Figma:** Usar a especificação completa em `checkpoint1-prototipo-especificacao.md`. Não precisa ser pixel-perfect, mas precisa ser navegável e cobrir os 4 fluxos.
-
-2. **GitHub Projects:** Criar um projeto "board" (não "table") para facilitar a visualização de colunas Backlog → To Do → In Progress → Done.
-
-3. **Commits regulares:** A partir de agora, todo código precisa ser versionado com mensagens descritivas. O histórico de commits alimenta o FPI.
-
-4. **DER:** Os scripts SQL estão prontos para executar. Testar localmente antes da N1.
-
-5. **Distribuição de trabalho:** A sugestão no backlog é um ponto de partida. Ajustar conforme habilidades e preferências da equipe.
-
----
-
-**Equipe StockEasy**  
-Matheus Oliveira Mitter · Vitor Leal dos Santos · Felipe Milhomem Rocha  
-PUC Goiás — ADS 2026/2 — Projeto Integrador
+| Marco                     | Data               |
+| ------------------------- | ------------------ |
+| Entrega e apresentação N1 | 29/09 a 02/10/2026 |
+| Checkpoint 2              | 06/11/2026         |
+| Testes com usuários       | 09 a 13/11/2026    |
+| Congelamento de escopo    | 27/11/2026         |
+| Documentação final        | 04/12/2026         |
+| Entrega e apresentação N2 | 07 a 11/12/2026    |
