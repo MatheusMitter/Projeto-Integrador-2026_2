@@ -3,82 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StockEasy — Apresentação N1</title>
+    <title>StockEasy — Apresentação Técnica PP1</title>
     <link rel="stylesheet" href="slides.css" />
   </head>
   <body>
-    <!-- ============ CAPA ============ -->
+    <!--
+      Estrutura conforme o Encontro 15 (PP1, Grupo A), de 29/09/2026:
+        Bloco 1 — Escopo e domínio ............ 3 min
+        Bloco 2 — Arquitetura e modelagem ..... 4 min
+        Bloco 3 — Demonstração ................ 5 min
+        Arguição .............................. 3 a 5 min
+      Total de 15 a 17 minutos por equipe.
+
+      São 12 minutos de fala para 16 slides: cerca de 45 segundos cada.
+      Não acrescente slide sem tirar outro.
+    -->
+
+    <!-- ============ 1. CAPA ============ -->
     <section class="slide capa ativo">
       <div class="conteudo">
-        <p class="etiqueta">Projeto Integrador · ADS 2026/2 · PUC Goiás</p>
+        <p class="etiqueta">Apresentação Técnica PP1 · ADS1253 · PUC Goiás</p>
         <h1>StockEasy</h1>
         <p class="subtitulo">Controle de estoque para pequenos comércios</p>
         <p class="equipe">
           Matheus Oliveira Mitter · Vitor Leal dos Santos · Felipe Milhomem
           Rocha<br />
-          ADS1253 — Programação Orientada a Objeto com Banco de Dados<br />
-          Entrega N1 — setembro de 2026
+          Projeto Integrador — entrega N1 · 29 de setembro de 2026
         </p>
       </div>
       <p class="ajuda-navegacao">
-        Use as setas do teclado para navegar · F para tela cheia
+        Setas do teclado para navegar · F para tela cheia
       </p>
     </section>
 
-    <!-- ============ AGENDA ============ -->
+    <!-- ============ 2. ROTEIRO ============ -->
     <section class="slide">
       <p class="etiqueta">Roteiro</p>
-      <h2>O que vamos apresentar</h2>
+      <h2>Como vamos conduzir</h2>
       <div class="conteudo">
         <table>
           <tr>
-            <th style="width: 42%">Bloco</th>
+            <th style="width: 46%">Bloco</th>
             <th style="width: 18%">Tempo</th>
             <th>Quem apresenta</th>
           </tr>
           <tr>
-            <td>Contextualização</td>
+            <td>Escopo e domínio</td>
             <td>3 min</td>
             <td>Vitor</td>
           </tr>
           <tr>
-            <td>Especificação</td>
+            <td>Arquitetura e modelagem</td>
             <td>4 min</td>
             <td>Matheus</td>
           </tr>
           <tr>
-            <td>Decisões técnicas</td>
+            <td>Demonstração da aplicação parcial</td>
             <td>5 min</td>
-            <td>Matheus</td>
-          </tr>
-          <tr>
-            <td>Demonstração</td>
-            <td>6 min</td>
             <td>Felipe</td>
           </tr>
           <tr>
-            <td>Encerramento</td>
-            <td>2 min</td>
-            <td>Vitor</td>
+            <td>Arguição</td>
+            <td>3 a 5 min</td>
+            <td>Toda a equipe</td>
           </tr>
         </table>
       </div>
       <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Equipe</span>
+        <span>StockEasy · PP1</span><span class="responsavel">Equipe</span>
       </div>
     </section>
 
-    <!-- ============ BLOCO 1 ============ -->
+    <!-- ============ BLOCO 1 — ESCOPO E DOMÍNIO ============ -->
     <section class="slide divisoria">
       <div class="conteudo">
-        <p class="etiqueta">Bloco 1 de 5</p>
-        <h1>Contextualização</h1>
+        <p class="etiqueta">Bloco 1 de 3</p>
+        <h1>Escopo e domínio</h1>
         <p class="tempo">
-          Domínio do problema, público-alvo e proposta de valor
+          O problema, o público-alvo e as principais regras de negócio · 3 min
         </p>
       </div>
       <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Vitor</span>
+        <span>StockEasy · PP1</span><span class="responsavel">Vitor</span>
       </div>
     </section>
 
@@ -91,15 +97,15 @@
             <div class="cartao alerta" style="margin-bottom: 2vh">
               <h3>Venda perdida</h3>
               <p>
-                O produto acaba e ninguém percebe. A reposição só acontece
-                quando um cliente pede o que falta.
+                O produto acaba e ninguém percebe. Repõe-se quando o cliente
+                pede o que falta.
               </p>
             </div>
             <div class="cartao alerta">
               <h3>Capital parado</h3>
               <p>
-                Compra-se por hábito ou por promoção do fornecedor, sem
-                consultar o giro real do item.
+                Compra-se por hábito ou por promoção, sem consultar o giro real
+                do item.
               </p>
             </div>
           </div>
@@ -114,7 +120,7 @@
             <div class="cartao alerta">
               <h3>Decisão às cegas</h3>
               <p>
-                Não há como saber quais itens sustentam o faturamento e quais só
+                Não se sabe quais itens sustentam o faturamento e quais só
                 ocupam espaço.
               </p>
             </div>
@@ -123,12 +129,14 @@
         <div class="cartao destaque" style="margin-top: 3vh">
           <p>
             <strong>A causa é a mesma nas quatro:</strong> não existe registro
-            confiável e atualizado do que entra e do que sai.
+            confiável e atualizado do que entra e do que sai. Escolhemos este
+            problema porque ele tem regra de negócio suficiente para sustentar
+            um sistema transacional, e não apenas telas de cadastro.
           </p>
         </div>
       </div>
       <div class="rodape">
-        <span>Contextualização</span><span class="responsavel">Vitor</span>
+        <span>Escopo e domínio</span><span class="responsavel">Vitor</span>
       </div>
     </section>
 
@@ -139,18 +147,18 @@
         <div class="colunas">
           <div class="cartao destaque">
             <h3>Proprietário</h3>
-            <p style="margin-bottom: 1.4vh">
+            <p style="margin-bottom: 1.2vh">
               Decide compra e preço. Quer saber o que repor, o que está vencendo
               e onde o dinheiro está investido.
             </p>
             <p>
-              <strong>Acesso completo</strong>, incluindo custo, margem e
-              relatórios financeiros.
+              <strong>Acesso completo</strong>, incluindo custo, margem e valor
+              do estoque.
             </p>
           </div>
           <div class="cartao info">
             <h3>Operador</h3>
-            <p style="margin-bottom: 1.4vh">
+            <p style="margin-bottom: 1.2vh">
               Registra movimentação durante o atendimento, com fila esperando.
               Não decide compra nem preço.
             </p>
@@ -160,164 +168,76 @@
             </p>
           </div>
         </div>
-        <p style="margin-top: 3vh">
-          É dessa separação que nasce o requisito de autenticação com dois
-          perfis de permissão, e a regra RN01.
+        <p style="margin-top: 2.5vh">
+          Estabelecimentos de até cinco colaboradores: mercearia, minimercado,
+          padaria, loja de conveniência. Perfil com celular Android e nenhuma
+          experiência com sistema de gestão.
         </p>
-      </div>
-      <div class="rodape">
-        <span>Contextualização</span><span class="responsavel">Vitor</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Proposta de valor</p>
-      <h2>Três condições do ambiente viraram decisões técnicas</h2>
-      <div class="conteudo">
-        <table>
-          <tr>
-            <th style="width: 42%">Condição real de uso</th>
-            <th>O que ela exigiu do projeto</th>
-          </tr>
-          <tr>
-            <td>O registro acontece durante o atendimento, em segundos</td>
-            <td>
-              Leitura de código de barras pela câmera, em vez de digitar 13
-              números
-            </td>
-          </tr>
-          <tr>
-            <td>O depósito é justamente onde o sinal falha</td>
-            <td>Banco local no aparelho, com sincronização posterior</td>
-          </tr>
-          <tr>
-            <td>Quem registra não é quem é dono</td>
-            <td>Dois perfis de acesso, com a informação financeira restrita</td>
-          </tr>
-        </table>
-        <div class="cartao destaque" style="margin-top: 3vh">
+        <div class="cartao aviso" style="margin-top: 2vh">
           <p>
-            Nenhuma dessas decisões é preferência técnica. Todas respondem a uma
-            característica do lugar onde o aplicativo vai rodar.
+            Dessa separação nasce a regra <strong>RN01</strong>, que restringe a
+            informação financeira. Ela é aplicada na camada de negócio, não
+            apenas escondida na tela — senão o dado continuaria acessível pela
+            interface de programação.
           </p>
         </div>
       </div>
       <div class="rodape">
-        <span>Contextualização</span><span class="responsavel">Vitor</span>
+        <span>Escopo e domínio</span><span class="responsavel">Vitor</span>
       </div>
     </section>
 
-    <!-- ============ BLOCO 2 ============ -->
+    <section class="slide">
+      <p class="etiqueta">Principais regras de negócio</p>
+      <h2>O que acontece se a regra for violada</h2>
+      <div class="conteudo">
+        <div class="cartao alerta" style="margin-bottom: 2vh">
+          <h3>RN06 — a saída não pode exceder o estoque</h3>
+          <p>
+            Validar na tela não basta. Dois aparelhos offline registram saída de
+            30 de um produto que tem 50: cada um passa, porque cada um vê 50.
+            Somadas, dão 60. O conflito só aparece na consolidação, então a
+            garantia real é do servidor, dentro da transação.
+          </p>
+        </div>
+        <div class="cartao aviso" style="margin-bottom: 2vh">
+          <h3>RN07 — situação de estoque é relativa ao mínimo</h3>
+          <p>
+            Oito unidades não informa nada: pode ser excesso para um item de
+            baixo giro e falta para um de alto giro. A faixa é calculada contra
+            o mínimo que o próprio usuário definiu, e gera alerta ao entrar em
+            crítico — sem repetir aviso já pendente.
+          </p>
+        </div>
+        <div class="cartao destaque">
+          <h3>RN12 — nenhum cadastro é excluído de verdade</h3>
+          <p>
+            Se violada, o histórico de movimentações perde a referência e a
+            auditoria deixa de existir. Por isso as chaves estrangeiras são
+            restritivas: a proteção está no banco, não só no código.
+          </p>
+        </div>
+        <p style="margin-top: 2vh; font-size: 1.3vw">
+          São 13 regras documentadas. Cinco atendem ao critério de não
+          trivialidade, contra o mínimo de três exigido.
+        </p>
+      </div>
+      <div class="rodape">
+        <span>Escopo e domínio</span><span class="responsavel">Vitor</span>
+      </div>
+    </section>
+
+    <!-- ============ BLOCO 2 — ARQUITETURA E MODELAGEM ============ -->
     <section class="slide divisoria">
       <div class="conteudo">
-        <p class="etiqueta">Bloco 2 de 5</p>
-        <h1>Especificação</h1>
-        <p class="tempo">Requisitos, regras de negócio e modelagem de dados</p>
-      </div>
-      <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Requisitos</p>
-      <h2>Escopo especificado</h2>
-      <div class="conteudo">
-        <div class="colunas-3" style="margin-bottom: 4vh">
-          <div>
-            <p class="numero">43</p>
-            <p class="rotulo-numero">
-              requisitos funcionais, priorizados por MoSCoW
-            </p>
-          </div>
-          <div>
-            <p class="numero">15</p>
-            <p class="rotulo-numero">
-              requisitos não funcionais, em cinco categorias
-            </p>
-          </div>
-          <div>
-            <p class="numero">13</p>
-            <p class="rotulo-numero">regras de negócio documentadas</p>
-          </div>
-        </div>
-        <p>
-          Cada requisito aponta para o ciclo de desenvolvimento em que entra e
-          para o requisito obrigatório que atende. Cada regra de negócio indica
-          onde é verificável na aplicação.
+        <p class="etiqueta">Bloco 2 de 3</p>
+        <h1>Arquitetura e modelagem</h1>
+        <p class="tempo">
+          O DER, a pilha tecnológica e as decisões de arquitetura · 4 min
         </p>
       </div>
       <div class="rodape">
-        <span>Especificação</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Regra de negócio · RN06</p>
-      <h2>A saída não pode exceder o estoque</h2>
-      <div class="conteudo">
-        <p style="margin-bottom: 3vh">
-          Parece trivial: bastaria comparar dois números na tela. Não basta.
-        </p>
-        <div class="cartao aviso" style="margin-bottom: 2.5vh">
-          <h3>O caso que quebra a validação simples</h3>
-          <p>
-            Dois aparelhos operando sem internet. Cada um registra uma saída de
-            30 unidades de um produto que tem 50. Os dois passam na validação
-            local, porque cada um vê 50 disponíveis. Somadas, as saídas dão 60.
-          </p>
-        </div>
-        <p>
-          O conflito só aparece na consolidação. Por isso a validação existe em
-          dois lugares: no aplicativo para responder rápido, e no servidor
-          dentro da transação, que é onde a integridade é realmente garantida.
-        </p>
-      </div>
-      <div class="rodape">
-        <span>Especificação</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Regra de negócio · RN07</p>
-      <h2>Situação de estoque é relativa, não absoluta</h2>
-      <div class="conteudo">
-        <p style="margin-bottom: 2.5vh">
-          Saber que há 8 unidades de um produto não informa nada. Oito pode ser
-          excesso para um item que sai uma vez por mês, e falta para um que sai
-          todo dia. A faixa é calculada contra o mínimo que o próprio usuário
-          definiu.
-        </p>
-        <table>
-          <tr>
-            <th style="width: 28%">Situação</th>
-            <th>Condição</th>
-          </tr>
-          <tr>
-            <td><strong>Crítico</strong></td>
-            <td>saldo menor ou igual ao mínimo</td>
-          </tr>
-          <tr>
-            <td><strong>Baixo</strong></td>
-            <td>até uma vez e meia o mínimo</td>
-          </tr>
-          <tr>
-            <td><strong>Normal</strong></td>
-            <td>até três vezes o mínimo</td>
-          </tr>
-          <tr>
-            <td><strong>Excesso</strong></td>
-            <td>acima de três vezes o mínimo</td>
-          </tr>
-        </table>
-        <p style="margin-top: 2.5vh">
-          Ao entrar em crítico, gera alerta — mas só se ainda não houver um
-          pendente, para não acumular avisos repetidos. Quando o saldo é
-          reposto, o alerta é baixado automaticamente.
-        </p>
-      </div>
-      <div class="rodape">
-        <span>Especificação</span><span class="responsavel">Matheus</span>
+        <span>StockEasy · PP1</span><span class="responsavel">Matheus</span>
       </div>
     </section>
 
@@ -325,7 +245,7 @@
       <p class="etiqueta">Modelagem de dados</p>
       <h2>Sete entidades</h2>
       <div class="conteudo">
-        <div class="bloco-codigo" style="font-size: 1.05vw; line-height: 1.9">
+        <div class="bloco-codigo" style="font-size: 1.05vw; line-height: 1.85">
           LOJA <span class="comentario">— escopo de todos os dados</span><br />
           &nbsp;├── USUARIO
           <span class="comentario">— proprietário ou operador</span><br />
@@ -342,121 +262,72 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── ALERTA
           <span class="comentario">— estado derivado do saldo</span>
         </div>
-        <div class="colunas" style="margin-top: 3vh">
+        <div class="colunas" style="margin-top: 2.5vh">
           <div class="cartao">
-            <h3>Normalizada até a 3ª forma normal</h3>
+            <h3>Terceira forma normal</h3>
             <p>
-              Com uma desnormalização deliberada, explicada no próximo slide.
+              Com uma desnormalização deliberada: o saldo resultante é gravado
+              em cada movimentação, para auditar qualquer ponto do histórico sem
+              recalcular a série inteira.
             </p>
           </div>
           <div class="cartao destaque">
-            <h3>Verificada por execução</h3>
+            <h3>Verificado por execução</h3>
             <p>
-              O script foi instalado em PostgreSQL e as regras testadas na
-              prática, não só descritas.
+              O script foi instalado em PostgreSQL 16. Sete tabelas, saldos
+              fechando com o histórico, treze verificações de regra aprovadas.
+              Não é só diagrama.
             </p>
           </div>
         </div>
       </div>
       <div class="rodape">
-        <span>Especificação</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Modelagem de dados</p>
-      <h2>Três decisões que sustentam a auditoria</h2>
-      <div class="conteudo">
-        <div class="cartao" style="margin-bottom: 2vh">
-          <h3>O histórico é imutável</h3>
-          <p>
-            Movimentação não é alterada nem excluída. Correção se faz por
-            lançamento de ajuste em sentido contrário. Além de preservar a
-            trilha de auditoria, isso elimina uma classe inteira de conflito na
-            sincronização: registros que só são acrescentados nunca divergem.
-          </p>
-        </div>
-        <div class="cartao" style="margin-bottom: 2vh">
-          <h3>Nenhum cadastro é excluído de verdade</h3>
-          <p>
-            Produtos, fornecedores, categorias e usuários são desativados. As
-            chaves estrangeiras são restritivas, e é isso que impede, no nível
-            do banco, que uma remoção acidental destrua o histórico.
-          </p>
-        </div>
-        <div class="cartao aviso">
-          <h3>O saldo resultante é gravado — desnormalização proposital</h3>
-          <p>
-            Ele poderia ser recalculado somando o histórico. Gravá-lo permite
-            auditar qualquer ponto da série sem refazer a conta desde o início.
-            O custo é manter o valor coerente, e é a transação que garante isso.
-          </p>
-        </div>
-      </div>
-      <div class="rodape">
-        <span>Especificação</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <!-- ============ BLOCO 3 ============ -->
-    <section class="slide divisoria">
-      <div class="conteudo">
-        <p class="etiqueta">Bloco 3 de 5</p>
-        <h1>Decisões técnicas</h1>
-        <p class="tempo">
-          Arquitetura, pilha tecnológica e justificativa das escolhas
-        </p>
-      </div>
-      <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Matheus</span>
+        <span>Arquitetura e modelagem</span
+        ><span class="responsavel">Matheus</span>
       </div>
     </section>
 
     <section class="slide">
       <p class="etiqueta">Arquitetura</p>
-      <h2>Três camadas, dos dois lados</h2>
+      <h2>Camadas, com a dependência apontando para dentro</h2>
       <div class="conteudo">
-        <div class="colunas">
-          <div>
-            <h3 style="color: var(--verde-escuro); margin-bottom: 1.4vh">
-              Aplicativo · React Native
-            </h3>
-            <div class="camada">
-              <strong>Apresentação</strong><br />telas, navegação, estados
-            </div>
-            <p class="seta-baixo">↓</p>
-            <div class="camada">
-              <strong>Negócio</strong><br />validações, regras, sincronização
-            </div>
-            <p class="seta-baixo">↓</p>
-            <div class="camada">
-              <strong>Persistência</strong><br />SQLite, fila de pendências
-            </div>
+        <div class="bloco-codigo" style="font-size: 1vw; line-height: 1.8">
+          app/src/<br />
+          ├── screens/ components/ navigation/ &nbsp;<span class="comentario"
+            >apresentação</span
+          ><br />
+          ├──
+          <span class="destacado">services/</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+            class="comentario"
+            >negócio — regras e transação</span
+          ><br />
+          └── repositories/ database/
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comentario"
+            >persistência — SQL</span
+          >
+        </div>
+        <div class="colunas" style="margin-top: 2.5vh">
+          <div class="cartao destaque">
+            <h3>A tela chama o serviço; o serviço chama o repositório</h3>
+            <p>
+              Nunca o contrário. A tela não conhece SQL e o banco não conhece
+              regra de negócio.
+            </p>
           </div>
-          <div>
-            <h3 style="color: var(--verde-escuro); margin-bottom: 1.4vh">
-              Retaguarda · Spring Boot
-            </h3>
-            <div class="camada">
-              <strong>Apresentação</strong><br />controladores REST
-            </div>
-            <p class="seta-baixo">↓</p>
-            <div class="camada">
-              <strong>Negócio</strong><br />transações, revalidação das regras
-            </div>
-            <p class="seta-baixo">↓</p>
-            <div class="camada">
-              <strong>Persistência</strong><br />DAO com JDBC, PostgreSQL
-            </div>
+          <div class="cartao info">
+            <h3>Prova prática da separação</h3>
+            <p>
+              As 21 verificações das regras rodam em Node puro, sem emulador e
+              sem banco. Só é possível porque a camada de negócio não depende
+              das outras duas.
+            </p>
           </div>
         </div>
-        <p style="margin-top: 3vh">
-          A regra de negócio vive na camada de negócio, nunca na tela e nunca no
-          acesso a dados.
-        </p>
       </div>
       <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
+        <span>Arquitetura e modelagem</span
+        ><span class="responsavel">Matheus</span>
       </div>
     </section>
 
@@ -464,227 +335,104 @@
       <p class="etiqueta">O ponto técnico central</p>
       <h2>A movimentação é uma transação</h2>
       <div class="conteudo">
-        <p style="margin-bottom: 2.5vh">
-          Atualizar o saldo e gravar o histórico são duas escritas que precisam
-          ser indivisíveis. Se a primeira acontece e a segunda falha, o saldo
-          passa a divergir do histórico e a auditoria se perde.
+        <p style="margin-bottom: 2vh">
+          Atualizar o saldo e gravar o histórico precisam ser indivisíveis. Se a
+          primeira escrita acontece e a segunda falha, o estoque diz 45 e a soma
+          dos lançamentos diz 50, sem nada explicando a diferença.
         </p>
-        <ol class="passos">
+        <ol class="passos" style="font-size: 1.35vw">
           <li>
-            <strong>Bloqueia a linha do produto</strong> — impede que duas
-            movimentações simultâneas leiam o mesmo saldo
+            <strong>Bloqueia a linha do produto</strong> — impede leitura
+            simultânea do mesmo saldo
           </li>
-          <li>Valida a regra RN06 contra o saldo lido</li>
-          <li>Calcula o saldo resultante</li>
-          <li>Atualiza o produto</li>
-          <li>Grava a movimentação com o saldo resultante</li>
+          <li>Valida RN06 contra o saldo lido</li>
+          <li>Atualiza o produto com o saldo resultante</li>
+          <li>Grava a movimentação, com o saldo registrado</li>
           <li>Aplica RN07 — reclassifica e cria ou baixa o alerta</li>
-          <li>Confirma a transação</li>
+          <li>Confirma, ou desfaz tudo em caso de erro</li>
         </ol>
-        <div class="cartao aviso" style="margin-top: 2.5vh">
+        <div class="cartao aviso" style="margin-top: 2vh">
           <p>
-            Sem o bloqueio do passo 1, duas saídas simultâneas leem 50, cada uma
-            calcula 45, e a segunda gravação sobrescreve a primeira. O saldo
-            final fica errado e o histórico não explica por quê.
+            Sem o bloqueio do passo 1, duas saídas simultâneas leem 50, ambas
+            calculam 45, e a segunda sobrescreve a primeira. É o cenário de
+            transações e concorrência da disciplina, e a razão principal de
+            termos escolhido retaguarda própria.
           </p>
         </div>
       </div>
       <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
+        <span>Arquitetura e modelagem</span
+        ><span class="responsavel">Matheus</span>
       </div>
     </section>
 
     <section class="slide">
       <p class="etiqueta">Pilha tecnológica</p>
-      <h2>O que usamos e por quê</h2>
+      <h2>O que escolhemos e o que descartamos</h2>
       <div class="conteudo">
-        <table>
+        <table style="font-size: 1.2vw">
           <tr>
-            <th style="width: 26%">Camada</th>
-            <th style="width: 30%">Escolha</th>
+            <th style="width: 24%">Camada</th>
+            <th style="width: 28%">Escolha</th>
             <th>Motivo</th>
           </tr>
           <tr>
             <td>Aplicativo</td>
             <td>React Native com Expo</td>
             <td>
-              A equipe já domina JavaScript; recursos nativos sem escrever
-              código nativo
+              A equipe já domina JavaScript; recursos nativos sem código nativo
             </td>
           </tr>
           <tr>
             <td>Banco no aparelho</td>
             <td>SQLite</td>
-            <td>Mesmo modelo relacional do servidor, e o mesmo SQL</td>
+            <td>Mesmo modelo relacional e mesmo SQL do servidor</td>
           </tr>
           <tr>
             <td>Retaguarda</td>
             <td>Spring Boot com JDBC e DAO</td>
-            <td>
-              Exercita o conteúdo da disciplina: transações e concorrência
-            </td>
+            <td>Exercita transações e concorrência, conteúdo da disciplina</td>
           </tr>
           <tr>
             <td>Banco remoto</td>
             <td>PostgreSQL</td>
-            <td>Restrições e gatilhos garantem regras no próprio banco</td>
-          </tr>
-          <tr>
-            <td>Serviço externo</td>
-            <td>Open Food Facts</td>
-            <td>Consulta por código de barras, sem chave de acesso</td>
-          </tr>
-          <tr>
-            <td>Recursos nativos</td>
-            <td>Câmera e notificações</td>
-            <td>Reduzem o tempo de registro e entregam o alerta</td>
+            <td>Restrições e gatilhos garantem regra no próprio banco</td>
           </tr>
         </table>
-      </div>
-      <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
 
-    <section class="slide">
-      <p class="etiqueta">Pilha tecnológica</p>
-      <h2>O que descartamos, e o motivo</h2>
-      <div class="conteudo">
-        <div class="cartao info" style="margin-bottom: 2vh">
-          <h3>Firebase ou Supabase</h3>
-          <p>
-            Seriam bem mais rápidos de montar, e são admitidos pelo documento
-            norteador. Descartados porque a persistência ficaria delegada a um
-            serviço gerenciado, sem camada de acesso a dados própria — e é
-            justamente JDBC, DAO e transação que a disciplina avalia e que a
-            arguição pergunta.
-          </p>
-        </div>
-        <div class="cartao info" style="margin-bottom: 2vh">
-          <h3>Android nativo com Kotlin</h3>
-          <p>
-            Melhor desempenho e acesso direto à plataforma. Descartado porque
-            exigiria aprender Kotlin e Jetpack Compose ao mesmo tempo que o Java
-            da disciplina. O ganho não compensa o risco de prazo.
-          </p>
-        </div>
-        <div class="cartao info">
-          <h3>Flutter</h3>
-          <p>
-            Tecnicamente adequado. Descartado por exigir aprender Dart, sem
-            vantagem decisiva sobre React Native para este domínio.
-          </p>
-        </div>
-      </div>
-      <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Decisão revisada</p>
-      <h2>A retaguarda sincroniza, não faz CRUD</h2>
-      <div class="conteudo">
-        <p style="margin-bottom: 2.5vh">
-          O desenho inicial previa endpoints de manutenção para cada entidade.
-          Revisando, percebemos que não combinava com o problema.
-        </p>
-        <div class="colunas" style="margin-bottom: 2.5vh">
-          <div class="cartao alerta">
-            <h3>Por que CRUD não serve aqui</h3>
-            <p>
-              O aplicativo é offline-first: grava local e segue. Não há quem
-              chame um endpoint de inclusão no momento da ação, porque a ação
-              precisa concluir sem rede.
-            </p>
-          </div>
-          <div class="cartao destaque">
-            <h3>Quatro endpoints bastam</h3>
-            <p>
-              Registrar, autenticar, enviar o lote de pendências e baixar o que
-              mudou. A lógica fica no aplicativo; o servidor consolida.
-            </p>
-          </div>
-        </div>
-        <div class="cartao aviso">
-          <p>
-            <strong>E isso melhora o lado técnico.</strong> O endpoint de
-            sincronização recebe um lote com várias movimentações e processa
-            tudo em uma transação: se a terceira violar o estoque, as duas
-            anteriores são desfeitas. É processamento transacional de lote com
-            rollback — um cenário bem mais rico que uma escrita por requisição.
-          </p>
-        </div>
-      </div>
-      <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Arquitetura implementada</p>
-      <h2>Como o código está organizado</h2>
-      <div class="conteudo">
-        <div class="bloco-codigo" style="font-size: 1vw; line-height: 1.85">
-          app/src/<br />
-          ├── screens/ &nbsp;&nbsp;&nbsp;&nbsp;<span class="comentario"
-            >apresentação — telas e estados</span
-          ><br />
-          ├── components/ &nbsp;<span class="comentario"
-            >apresentação — componentes reaproveitados</span
-          ><br />
-          ├── navigation/ &nbsp;<span class="comentario"
-            >apresentação — abas e pilha</span
-          ><br />
-          ├── <span class="destacado">services/</span> &nbsp;&nbsp;&nbsp;<span
-            class="comentario"
-            >negócio — regras, validações, transação</span
-          ><br />
-          ├── repositories/
-          <span class="comentario">persistência — SQL sobre o SQLite</span
-          ><br />
-          ├── database/ &nbsp;&nbsp;&nbsp;<span class="comentario"
-            >persistência — esquema e conexão</span
-          ><br />
-          └── domain/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comentario"
-            >tipos das entidades do problema</span
-          >
-        </div>
         <div class="colunas" style="margin-top: 2.5vh">
-          <div class="cartao destaque">
-            <h3>A dependência aponta para dentro</h3>
+          <div class="cartao info">
+            <h3>Firebase ou Supabase</h3>
             <p>
-              A tela chama o serviço; o serviço chama o repositório. O contrário
-              nunca acontece. A tela não conhece SQL e o banco não conhece regra
-              de negócio.
+              Mais rápidos de montar, e admitidos. Descartados porque a
+              persistência ficaria delegada, sem camada de acesso a dados
+              própria — justamente o que a disciplina avalia.
             </p>
           </div>
           <div class="cartao info">
-            <h3>Prova prática da separação</h3>
+            <h3>Kotlin nativo ou Flutter</h3>
             <p>
-              As 21 verificações das regras rodam em Node puro, sem emulador e
-              sem banco. Só é possível porque a camada de negócio não depende de
-              nenhuma das outras duas.
+              Exigiriam aprender linguagem nova em paralelo ao Java da
+              disciplina, sem vantagem decisiva para este domínio.
             </p>
           </div>
         </div>
       </div>
       <div class="rodape">
-        <span>Decisões técnicas</span><span class="responsavel">Matheus</span>
+        <span>Arquitetura e modelagem</span
+        ><span class="responsavel">Matheus</span>
       </div>
     </section>
 
-    <!-- ============ BLOCO 4 ============ -->
+    <!-- ============ BLOCO 3 — DEMONSTRAÇÃO ============ -->
     <section class="slide divisoria">
       <div class="conteudo">
-        <p class="etiqueta">Bloco 4 de 5</p>
+        <p class="etiqueta">Bloco 3 de 3</p>
         <h1>Demonstração</h1>
-        <p class="tempo">
-          Execução no aparelho, percorrendo os fluxos principais
-        </p>
+        <p class="tempo">A aplicação parcial rodando no aparelho · 5 min</p>
       </div>
       <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Felipe</span>
+        <span>StockEasy · PP1</span><span class="responsavel">Felipe</span>
       </div>
     </section>
 
@@ -694,43 +442,37 @@
       <div class="conteudo">
         <table>
           <tr>
-            <th style="width: 14%">Tempo</th>
+            <th style="width: 16%">Tempo</th>
             <th>O que acontece na tela</th>
           </tr>
           <tr>
             <td>1 min</td>
-            <td>Cadastro e autenticação, entrando como proprietário</td>
+            <td>Autenticação como proprietário e visão geral do painel</td>
           </tr>
           <tr>
             <td>1 min</td>
-            <td>
-              Cadastro de produto, com validação de campo e margem calculada
-            </td>
-          </tr>
-          <tr>
-            <td>1 min</td>
-            <td>
-              Listagem com busca, mostrando a situação de estoque de cada item
-            </td>
+            <td>Cadastro de produto, com validação e margem calculada</td>
           </tr>
           <tr style="background: var(--verde-claro)">
             <td><strong>2 min</strong></td>
             <td>
-              <strong>Movimentação.</strong> Entrada, depois saída, com a
-              previsão de saldo mudando ao digitar. Tentativa de saída maior que
-              o estoque: o sistema bloqueia e cita a regra. Depois, saída que
-              derruba o produto abaixo do mínimo: aparece o alerta.
+              <strong>Movimentação.</strong> Saída maior que o estoque: o
+              sistema bloqueia e cita a regra. Depois, saída que derruba o
+              produto abaixo do mínimo: aparece o alerta.
             </td>
           </tr>
           <tr>
             <td>1 min</td>
-            <td>Fechar e reabrir o aplicativo: os dados continuam lá</td>
+            <td>
+              Entrar como operador: custo, margem e valor do estoque desaparecem
+              — RN01 aplicada na camada de negócio
+            </td>
           </tr>
         </table>
         <div class="cartao destaque" style="margin-top: 2.5vh">
           <p>
-            O momento que importa é o bloqueio da saída. É a diferença entre uma
-            regra documentada e uma regra implementada.
+            Os dois últimos são o que separa regra documentada de regra
+            implementada. O bloqueio acontece no aparelho, com o toque real.
           </p>
         </div>
       </div>
@@ -739,158 +481,50 @@
       </div>
     </section>
 
-    <!-- ============ BLOCO 5 ============ -->
-    <section class="slide divisoria">
-      <div class="conteudo">
-        <p class="etiqueta">Bloco 5 de 5</p>
-        <h1>Encerramento</h1>
-        <p class="tempo">Estado atual, limitações e próximos passos</p>
-      </div>
-      <div class="rodape">
-        <span>StockEasy — N1</span><span class="responsavel">Vitor</span>
-      </div>
-    </section>
-
     <section class="slide">
       <p class="etiqueta">Estado atual</p>
-      <h2>O que está pronto</h2>
+      <h2>O que roda e o que ainda não</h2>
       <div class="conteudo">
         <div class="colunas">
-          <div>
-            <ul>
-              <li>
-                Documento de projeto, com personas, requisitos priorizados e
-                regras de negócio
-              </li>
-              <li>Modelagem de dados verificada por execução em PostgreSQL</li>
-              <li>
-                Arquitetura definida, com as alternativas descartadas
-                registradas
-              </li>
-            </ul>
+          <div class="cartao destaque">
+            <h3>Funcionando</h3>
+            <p style="line-height: 1.8">
+              Autenticação com dois perfis · navegação por abas e pilha ·
+              cadastro, listagem, busca, detalhes e desativação de produto ·
+              manutenção de fornecedores · movimentação de entrada e saída ·
+              painel com indicadores · banco SQLite · 21 testes das regras
+            </p>
           </div>
-          <div>
-            <ul>
-              <li>
-                Protótipo navegável de 11 telas, usável no próprio celular
-              </li>
-              <li>Backlog de 30 histórias, distribuídas em quatro ciclos</li>
-              <li>
-                Aplicação em execução: navegação, autenticação com dois perfis,
-                produtos e movimentação sobre SQLite
-              </li>
-              <li>
-                21 testes automatizados das regras de negócio, executáveis sem
-                emulador
-              </li>
-            </ul>
+          <div class="cartao aviso">
+            <h3>Ainda não</h3>
+            <p style="line-height: 1.8">
+              Retaguarda e sincronização, leitura de código de barras,
+              notificações e pacote instalável. Todos previstos para os Ciclos 3
+              e 4, conforme o cronograma.
+            </p>
+            <p style="margin-top: 1.2vh">
+              A senha é comparada em texto puro. O resumo criptográfico entra
+              junto com o servidor, no Ciclo 3.
+            </p>
           </div>
         </div>
-        <div class="cartao destaque" style="margin-top: 3vh">
+        <div class="cartao info" style="margin-top: 2.5vh">
           <p>
-            Três regras de negócio já são verificáveis por interação, e não
-            apenas descritas em documento.
+            <strong>A parte mais difícil até aqui</strong> foi garantir que o
+            saldo e o histórico nunca divirjam. Resolvemos com transação e com o
+            saldo resultante gravado em cada lançamento — o que também tornou o
+            histórico imutável e eliminou conflito na futura sincronização.
           </p>
         </div>
       </div>
       <div class="rodape">
-        <span>Encerramento</span><span class="responsavel">Vitor</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Limitações</p>
-      <h2>O que ainda não está pronto</h2>
-      <div class="conteudo">
-        <p style="margin-bottom: 2.5vh">
-          Declaramos abertamente, porque faz parte do estado do projeto nesta
-          etapa.
-        </p>
-        <ul>
-          <li>
-            <strong>A retaguarda não está em operação.</strong> A aplicação
-            persiste apenas no aparelho. Isso segue o cronograma, que prevê a
-            integração com serviço de retaguarda no Ciclo 3.
-          </li>
-          <li>
-            <strong>A senha é comparada em texto puro.</strong> O requisito
-            RNF11 exige resumo criptográfico. A verificação passa para o
-            servidor no Ciclo 3, e é lá que o resumo será aplicado. A limitação
-            está sinalizada no próprio código.
-          </li>
-          <li>
-            <strong
-              >Leitura de código de barras, notificações e sincronização</strong
-            >
-            estão especificadas e não implementadas, previstas para o Ciclo 3.
-          </li>
-          <li>
-            <strong
-              >O relatório de mais vendidos usa o preço atual do produto</strong
-            >, não o preço praticado na venda. A limitação está registrada e a
-            correção prevista para a N2.
-          </li>
-          <li>
-            <strong>A acessibilidade foi verificada estruturalmente</strong>,
-            mas não validada com usuários. As sessões de usabilidade estão
-            previstas para a semana de 09 a 13 de novembro.
-          </li>
-        </ul>
-      </div>
-      <div class="rodape">
-        <span>Encerramento</span><span class="responsavel">Vitor</span>
-      </div>
-    </section>
-
-    <section class="slide">
-      <p class="etiqueta">Próximos passos</p>
-      <h2>Do Ciclo 2 até a entrega final</h2>
-      <div class="conteudo">
-        <table>
-          <tr>
-            <th style="width: 20%">Ciclo</th>
-            <th style="width: 24%">Período</th>
-            <th>Entrega</th>
-          </tr>
-          <tr>
-            <td><strong>Ciclo 2</strong></td>
-            <td>13 a 23 de outubro</td>
-            <td>
-              Manutenção completa das entidades, regras de negócio, listagens
-              com filtro e visão consolidada
-            </td>
-          </tr>
-          <tr style="background: var(--verde-claro)">
-            <td><strong>Ciclo 3</strong></td>
-            <td>26/10 a 06/11</td>
-            <td>
-              Retaguarda, sincronização, serviço externo e recursos nativos — é
-              o escopo do Checkpoint 2
-            </td>
-          </tr>
-          <tr>
-            <td>Verificação</td>
-            <td>09 a 13 de novembro</td>
-            <td>
-              Testes funcionais e sessões de usabilidade com usuários do
-              perfil-alvo
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Ciclo 4</strong></td>
-            <td>16 a 27 de novembro</td>
-            <td>Correção de defeitos, acessibilidade e pacote instalável</td>
-          </tr>
-        </table>
-      </div>
-      <div class="rodape">
-        <span>Encerramento</span><span class="responsavel">Vitor</span>
+        <span>Demonstração</span><span class="responsavel">Felipe</span>
       </div>
     </section>
 
     <section class="slide capa">
       <div class="conteudo">
-        <p class="etiqueta">Obrigado</p>
+        <p class="etiqueta">Arguição</p>
         <h1>Perguntas</h1>
         <p class="subtitulo" style="margin-top: 2vh">
           github.com/MatheusMitter/Projeto-Integrador-2026_2
@@ -906,13 +540,11 @@
       const slides = Array.from(document.querySelectorAll(".slide"));
       let atual = 0;
 
-      // barra de progresso no topo de cada slide
       slides.forEach((s, i) => {
         const barra = document.createElement("div");
         barra.className = "progresso";
         barra.style.width = ((i + 1) / slides.length) * 100 + "%";
         s.appendChild(barra);
-        // numeração no rodapé, quando houver
         const rodape = s.querySelector(".rodape");
         if (rodape) {
           const n = document.createElement("span");
@@ -947,12 +579,10 @@
         }
       });
 
-      // toque na metade direita avança, na esquerda volta
       document.addEventListener("click", (e) => {
         mostrar(e.clientX > window.innerWidth / 2 ? atual + 1 : atual - 1);
       });
 
-      // permite abrir direto num slide pela URL
       const inicial = parseInt(location.hash.replace("#", ""), 10);
       if (inicial >= 1 && inicial <= slides.length) mostrar(inicial - 1);
     </script>

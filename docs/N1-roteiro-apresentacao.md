@@ -1,130 +1,198 @@
-# Roteiro de Apresentação e Arguição — N1
+# Roteiro de Apresentação e Arguição — PP1
 
 **Projeto Integrador · ADS 2026/2 · PUC Goiás**
-**Equipe:** StockEasy · **Apresentação:** 29/09 a 02/10/2026
-**Versão:** 1.0 — 28/09/2026
+**Equipe:** StockEasy · **Apresentação:** 29/09/2026 — Grupo A
+**Versão:** 2.0 — 29/09/2026
 
-Atende ao item 6 da composição da N1: apresentação e defesa técnica, com participação de todos os integrantes e domínio demonstrado das decisões tomadas.
-
-Estrutura conforme o Apêndice D: 20 minutos de apresentação e até 10 minutos de arguição. Todos os integrantes apresentam parte do conteúdo.
+Estrutura conforme o material do Encontro 15, de 29/09/2026.
 
 ---
 
 ## 1. Divisão dos blocos
 
-| Bloco             | Duração | Responsável | Conteúdo                                                    |
-| ----------------- | ------- | ----------- | ----------------------------------------------------------- |
-| Contextualização  | 3 min   | Vitor       | Domínio do problema, público-alvo e proposta de valor       |
-| Especificação     | 4 min   | Matheus     | Requisitos, regras de negócio e modelagem de dados          |
-| Decisões técnicas | 5 min   | Matheus     | Arquitetura, pilha tecnológica e justificativa das escolhas |
-| Demonstração      | 6 min   | Felipe      | Execução da aplicação, percorrendo os fluxos principais     |
-| Encerramento      | 2 min   | Vitor       | Estado atual, limitações e próximos passos                  |
+Quatro blocos, 15 a 17 minutos por equipe. São **12 minutos de fala**, seguidos da arguição.
 
-A distribuição segue a frente técnica de cada um: quem fez a modelagem defende a modelagem, quem fez a integração demonstra a aplicação.
+| Bloco                             | Duração   | Responsável   | Conteúdo                                                     |
+| --------------------------------- | --------- | ------------- | ------------------------------------------------------------ |
+| Escopo e domínio                  | 3 min     | Vitor         | O problema, o público-alvo e as principais regras de negócio |
+| Arquitetura e modelagem           | 4 min     | Matheus       | O DER atualizado, a pilha escolhida e as decisões tomadas    |
+| Demonstração da aplicação parcial | 5 min     | Felipe        | A aplicação rodando, mostrando o que já funciona             |
+| Arguição                          | 3 a 5 min | Toda a equipe | Perguntas da banca a qualquer integrante                     |
 
----
+São 15 slides para 12 minutos, cerca de 45 segundos cada. Não acrescente slide sem tirar outro.
 
-## 2. Bloco 1 — Contextualização (3 min)
-
-**Abertura, 30 segundos.** Nome do projeto, integrantes e o domínio: controle de estoque para pequenos comércios.
-
-**O problema, 1 min 30.** Pequenos comerciantes controlam estoque em caderno ou planilha desatualizada, quando controlam. Isso gera quatro perdas simultâneas: venda perdida por ruptura, capital imobilizado em item de baixo giro, descarte por vencimento e decisão tomada sem informação. As quatro têm a mesma raiz: não existe registro confiável do que entra e do que sai.
-
-**Público-alvo, 30 segundos.** Estabelecimentos com até cinco colaboradores. Dois perfis de uso: o proprietário, que decide compra e preço, e o operador, que registra movimentação mas não deve ver custo nem margem.
-
-**Proposta de valor, 30 segundos.** Três decisões de produto: registro em segundos no ponto de uso, alerta em vez de consulta, e informação consolidada acionável. Fechar dizendo que as três condições do ambiente — registro durante o atendimento, sinal ruim no depósito e operador que não é o dono — explicam as decisões técnicas que o próximo bloco vai detalhar.
-
-**Transição:** "Essas três condições viraram requisitos. O Matheus mostra como."
+> **Mudança em relação à versão 1.0.** A primeira versão seguia o Apêndice D do documento norteador: cinco blocos e 20 minutos. O Encontro 15 propõe quatro blocos, 15 a 17 minutos, e coloca as regras de negócio no bloco de escopo em vez do de especificação. Slides e roteiro foram reorganizados.
 
 ---
 
-## 3. Bloco 2 — Especificação (4 min)
+## 1.1 Os oito critérios avaliados
 
-**Requisitos, 1 min.** 43 requisitos funcionais e 15 não funcionais, priorizados por MoSCoW e associados ao ciclo de desenvolvimento. Não percorrer a lista: mostrar a estrutura e citar que cada requisito aponta para o requisito obrigatório que atende.
+A PP1 vale até 4,0 pontos, distribuídos assim na rubrica proposta:
 
-**Regras de negócio, 1 min 30.** O R4 exige três regras não triviais. O projeto tem cinco. Detalhar duas:
+| Critério                            | Pontos | Onde é demonstrado                                    |
+| ----------------------------------- | ------ | ----------------------------------------------------- |
+| Definição e documentação do projeto | 0,5    | Bloco 1 e o documento de projeto                      |
+| Requisitos e regras de negócio      | 0,5    | Bloco 1, slide das regras                             |
+| Modelagem e arquitetura             | 0,7    | Bloco 2, com o DER e a justificativa da pilha         |
+| Qualidade do protótipo              | 0,6    | Protótipo de 11 telas, aberto em aba separada         |
+| Aplicação parcial                   | 0,8    | Bloco 3, demonstração ao vivo                         |
+| Gestão do projeto                   | 0,4    | Backlog com responsável por história                  |
+| Versionamento                       | 0,3    | Repositório, com histórico de commits dos integrantes |
+| Apresentação técnica                | 0,2    | Clareza, tempo cumprido e coerência na arguição       |
 
-RN06, que impede saída superior ao estoque disponível. O ponto técnico: a validação na tela não bastaria. Dois dispositivos operando offline podem registrar saídas que, somadas, excedem o saldo. O conflito só aparece na consolidação, então a validação que garante a integridade é a do servidor, dentro da transação.
+O maior peso é a aplicação parcial, seguida da modelagem e arquitetura — e são justamente os dois blocos mais longos da apresentação.
 
-RN07, que classifica o produto em quatro faixas contra o estoque mínimo e gera alerta ao entrar em situação crítica, com baixa automática quando o saldo é reposto. Um número isolado não informa nada — oito unidades pode ser excesso ou falta, depende do giro. A faixa relativa ao mínimo é o que torna o dado útil.
+---
 
-**Modelagem, 1 min 30.** Sete entidades. Mostrar o diagrama e destacar três decisões:
+## 1.2 O que levar para a defesa
 
-O histórico de movimentações é imutável. Não há alteração nem exclusão; correção se faz por lançamento de ajuste em sentido contrário. Isso preserva a auditoria e elimina uma classe inteira de conflito na sincronização.
+Checklist da página 8 do Encontro 15:
+
+| Item                                                               | Onde está                                          |
+| ------------------------------------------------------------------ | -------------------------------------------------- |
+| Documento de escopo, com domínio e público-alvo definidos          | `docs/N1-documento-de-projeto.md`                  |
+| DER atualizado do banco de dados                                   | `docs/checkpoint1-der-modelagem.md`                |
+| Definição arquitetural, com a pilha justificada                    | `docs/N1-arquitetura.md`                           |
+| Protótipo navegável ou aplicação parcial, pronta para demonstração | `app/` e `prototipo/`                              |
+| Backlog priorizado, com distribuição de responsabilidades          | `docs/checkpoint1-backlog.md`                      |
+| Repositório Git acessível, com histórico de commits                | github.com/MatheusMitter/Projeto-Integrador-2026_2 |
+
+---
+
+## 2. Bloco 1 — Escopo e domínio (3 min) · Vitor
+
+**Abertura, 20 segundos.** Nome do projeto, integrantes, e o domínio: controle de estoque para pequenos comércios.
+
+**O problema, 1 min.** Pequenos comerciantes controlam estoque em caderno ou planilha desatualizada, quando controlam. Quatro perdas simultâneas: venda perdida por ruptura, capital imobilizado em item de baixo giro, descarte por vencimento, e decisão tomada sem informação. As quatro têm a mesma raiz: não existe registro confiável do que entra e do que sai.
+
+Acrescentar por que este problema: ele tem regra de negócio suficiente para sustentar um sistema transacional, e não apenas telas de cadastro. Isso já responde de véspera a primeira pergunta provável da banca.
+
+**Público-alvo, 40 segundos.** Estabelecimentos de até cinco colaboradores. Dois perfis com necessidades opostas: o proprietário decide compra e preço; o operador registra movimentação durante o atendimento e não deve ver custo nem margem. É dessa separação que nasce a regra RN01.
+
+**Principais regras de negócio, 1 min.** Não percorrer as treze. Mostrar três e dizer o que acontece se cada uma for violada:
+
+RN06, a saída não pode exceder o estoque. Validar só na tela não basta: dois aparelhos offline registram saída de 30 de um produto que tem 50, cada um passa porque cada um vê 50, e somadas dão 60. O conflito só aparece na consolidação.
+
+RN07, a situação de estoque é relativa ao mínimo. Oito unidades não informa nada: pode ser excesso para item de baixo giro e falta para item de alto giro.
+
+RN12, nenhum cadastro é excluído de verdade. Se violada, o histórico perde a referência e a auditoria deixa de existir.
+
+**Transição:** "Essas condições viraram decisões de modelagem e de arquitetura. O Matheus mostra."
+
+---
+
+## 3. Bloco 2 — Arquitetura e modelagem (4 min) · Matheus
+
+**Modelagem, 1 min 20.** Sete entidades. Mostrar o diagrama e destacar três decisões:
+
+O histórico de movimentações é imutável. Correção se faz por lançamento de ajuste em sentido contrário. Preserva a auditoria e elimina uma classe inteira de conflito na sincronização.
 
 Nenhum cadastro é excluído fisicamente. As chaves estrangeiras são restritivas, e é isso que impede, no nível do banco, que uma remoção destrua o histórico.
 
-O saldo resultante é gravado em cada movimentação. É desnormalização deliberada: permite auditar qualquer ponto do histórico sem recalcular a série inteira.
+O saldo resultante é gravado em cada movimentação. Desnormalização deliberada: permite auditar qualquer ponto da série sem recalcular desde o início.
 
-**Encerrar com a validação:** o script foi executado em PostgreSQL e as regras foram verificadas na prática, não apenas escritas.
+Fechar dizendo que o script foi executado em PostgreSQL 16, com sete tabelas, saldos fechando com o histórico e treze verificações de regra aprovadas. Não é só diagrama.
 
----
+**Arquitetura em camadas, 1 min.** Apresentação, negócio e persistência, com a dependência apontando sempre para dentro: a tela chama o serviço, o serviço chama o repositório, nunca o contrário.
 
-## 4. Bloco 3 — Decisões técnicas (5 min)
+A prova prática vale mais que a explicação: os 21 testes das regras rodam em Node puro, sem emulador e sem banco. Só é possível porque a camada de negócio não depende das outras duas.
 
-**Arquitetura em camadas, 1 min 30.** Apresentação, negócio e persistência, replicadas nos dois lados da fronteira de rede. Explicar por que a regra de negócio existe nos dois lados: no aplicativo ela dá resposta imediata e permite operar offline; no servidor ela é a única garantia real. Não é redundância acidental.
+**A transação da movimentação, 1 min 10.** É o ponto técnico mais forte. Atualizar o saldo e gravar o histórico precisam ser indivisíveis: se a primeira escrita ocorre e a segunda falha, o estoque diz 45 e a soma dos lançamentos diz 50, sem nada explicando a diferença.
 
-**A transação da movimentação, 1 min 30.** Este é o ponto técnico mais forte da apresentação. Atualizar o saldo e gravar o histórico são duas escritas que precisam ser indivisíveis: se a primeira ocorre e a segunda falha, o saldo divergir do histórico e a auditoria se perde.
+Percorrer os seis passos e destacar o bloqueio da linha do produto. Sem ele, duas saídas simultâneas leem 50, ambas calculam 45, e a segunda sobrescreve a primeira.
 
-Percorrer a sequência: bloqueio da linha do produto, validação da regra, cálculo do saldo, atualização, gravação, aplicação da regra de alerta, confirmação. Destacar o bloqueio — sem ele, duas movimentações simultâneas leem o mesmo saldo e a segunda sobrescreve o resultado da primeira.
+Dizer explicitamente que este é o cenário de transações e concorrência da disciplina, e a razão principal de termos escolhido retaguarda própria.
 
-Dizer explicitamente que este é o cenário de transações e concorrência tratado na disciplina, e que é a principal razão da escolha de retaguarda própria.
-
-**Pilha tecnológica, 1 min 30.** React Native com Expo na aplicação, SQLite local, Spring Boot com JDBC e DAO na retaguarda, PostgreSQL, Open Food Facts como serviço externo, câmera e notificações como recursos nativos.
-
-Apresentar as alternativas descartadas, que é o que distingue justificativa de preferência:
-
-Firebase e Supabase seriam mais rápidos de montar e são admitidos. Foram descartados porque a persistência ficaria delegada a um serviço gerenciado, sem código de acesso a dados próprio — e é justamente JDBC, DAO e transações que a disciplina avalia.
-
-Android nativo com Kotlin e Flutter exigiriam aprender uma linguagem nova em paralelo ao Java da disciplina, sem vantagem decisiva para este domínio.
-
-**Decisões registradas, 30 segundos.** Sete decisões arquiteturais documentadas, cada uma com o motivo e o custo assumido. Mencionar uma como exemplo: o identificador gerado no dispositivo, que garante que um reenvio após falha de rede não duplique a movimentação.
+**Pilha tecnológica, 30 segundos.** React Native com Expo, SQLite local, Spring Boot com JDBC e DAO, PostgreSQL. O que distingue justificativa de preferência são as alternativas descartadas: Firebase e Supabase seriam mais rápidos e são admitidos, mas a persistência ficaria delegada, sem camada de acesso a dados própria. Kotlin e Flutter exigiriam aprender linguagem nova em paralelo ao Java da disciplina.
 
 **Transição:** "O Felipe mostra o que já está rodando."
 
 ---
 
-## 5. Bloco 4 — Demonstração (6 min)
+## 4. Bloco 3 — Demonstração (5 min) · Felipe
 
-Executar no aparelho, não em emulador. Ter o roteiro decorado: seis minutos não permitem hesitação.
+Executar no aparelho. Ter o roteiro decorado: cinco minutos não permitem hesitação.
 
-| Tempo | O que mostrar                                                                                                                                                                                                         |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 min | Cadastro e autenticação. Entrar como proprietário.                                                                                                                                                                    |
-| 1 min | Cadastro de produto, com validação de campo obrigatório e cálculo automático de margem.                                                                                                                               |
-| 1 min | Listagem com busca, mostrando a situação de estoque de cada item.                                                                                                                                                     |
-| 2 min | Movimentação: entrada, depois saída. Mostrar a previsão de saldo mudando. **Tentar uma saída maior que o estoque e mostrar o bloqueio.** Depois uma saída que derruba o produto abaixo do mínimo, mostrando o alerta. |
-| 1 min | Persistência: fechar o aplicativo, reabrir e mostrar que os dados continuam. Se possível, ativar o modo avião e registrar uma movimentação.                                                                           |
+| Tempo | O que mostrar                                                                                                                                                      |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1 min | Autenticação como proprietário e visão geral do painel, com os indicadores                                                                                         |
+| 1 min | Cadastro de produto, com validação de campo e margem calculada automaticamente                                                                                     |
+| 2 min | **Movimentação.** Saída maior que o estoque: o sistema bloqueia e cita a regra. Depois, saída que derruba o produto abaixo do mínimo: aparece o alerta preventivo. |
+| 1 min | Sair e entrar como operador: custo, margem e valor do estoque desaparecem                                                                                          |
 
-O momento mais importante é o bloqueio da saída. É a prova de que a regra de negócio está implementada, e não apenas documentada. Ensaiar para que aconteça sem tropeço.
+Os dois últimos são o que separa regra documentada de regra implementada. O bloqueio da saída é o momento mais importante da apresentação inteira.
 
-Se algum fluxo estiver instável, não improvisar: mostrar o que funciona e declarar o que ainda não está pronto. Uma demonstração honesta e curta vale mais que uma tentativa que falha ao vivo.
+Se der tempo, fechar mostrando que fechar e reabrir o aplicativo preserva os dados — é a persistência local funcionando.
 
----
+**Encerramento, dentro deste bloco.** Não há bloco separado para isso na estrutura nova. Em cerca de 30 segundos, declarar o que ainda não está pronto: retaguarda e sincronização, leitura de código de barras, notificações e pacote instalável, todos previstos para os Ciclos 3 e 4. Mencionar que a senha ainda é comparada em texto puro e que o resumo criptográfico entra junto com o servidor.
 
-## 6. Bloco 5 — Encerramento (2 min)
+Declarar limitação é melhor que ser pego por ela. A rubrica valoriza coerência na arguição, e uma pendência assumida com o motivo demonstra controle do projeto.
 
-**Estado atual, 45 segundos.** O que está pronto: documentação de projeto, modelagem validada por execução, arquitetura definida e justificada, protótipo navegável de 11 telas, backlog em quatro ciclos, e a aplicação em execução com navegação, autenticação de dois perfis e o módulo de produtos e movimentação sobre persistência local. Mencionar os 21 testes automatizados das regras de negócio, que rodam sem emulador.
-
-> **Confira antes de apresentar.** Este trecho e o slide correspondente descrevem o estado da aplicação. Se algum fluxo deixar de funcionar até o dia, ajuste o texto: afirmação que não se sustenta na demonstração custa mais do que pendência declarada com honestidade.
-
-**Limitações, 45 segundos.** Declarar abertamente, porque a arguição vai perguntar de qualquer forma:
-
-A retaguarda ainda não está em operação — a aplicação persiste apenas localmente. Isso segue o cronograma, que prevê integração com serviço de retaguarda no Ciclo 3.
-
-Leitura de código de barras, notificações e sincronização estão especificadas e não implementadas, previstas para o Ciclo 3.
-
-O relatório de mais vendidos usa o preço atual do produto, não o preço praticado na venda. A limitação está registrada, com a correção prevista para a N2.
-
-A acessibilidade foi verificada estruturalmente, mas não validada com usuários. As sessões de usabilidade estão previstas para a Semana 15.
-
-**Próximos passos, 30 segundos.** Ciclo 2 fecha manutenção de dados, regras e consultas consolidadas. Ciclo 3 entrega retaguarda, sincronização, serviço externo e recursos nativos, e é o escopo do Checkpoint 2 em 06/11.
+Se algum fluxo estiver instável no dia, não improvisar: mostrar o que funciona e declarar o resto. Demonstração honesta e curta vale mais que tentativa que falha ao vivo.
 
 ---
 
-## 7. Preparação para a arguição individual
+## 5. As quatro perguntas que o Encontro 15 sugere
 
-O Apêndice D lista os eixos que a arguição pode abordar. As perguntas abaixo derivam desses eixos. Cada integrante precisa responder sobre a própria frente, e ter noção das outras duas.
+Estas são as perguntas propostas no material do próprio encontro. São as mais prováveis, e por isso vêm primeiro.
+
+---
+
+**"Por que esse problema, e não outro? O que acontece no sistema se essa regra de negócio for violada?"**
+
+Sobre a escolha: o controle de estoque tem regra de negócio suficiente para sustentar um sistema transacional, e não apenas telas de cadastro. Cada movimentação altera saldo, pode disparar alerta e precisa ser auditável. Outros temas que consideramos se reduziriam a listagem com formulário.
+
+Sobre a violação, três respostas concretas:
+
+Se a RN06 falhar, o estoque fica negativo e o sistema passa a afirmar que existe mercadoria que não existe. Toda decisão de compra derivada dali fica errada. Por isso há validação na camada de negócio e restrição de verificação no banco, como última barreira.
+
+Se a RN12 falhar e um produto for excluído fisicamente, o histórico de movimentações perde a referência e a auditoria deixa de existir. É por isso que as chaves estrangeiras são restritivas.
+
+Se a transação da movimentação falhar no meio, o saldo diverge do histórico: o estoque diz 45 e a soma dos lançamentos diz 50, sem nada explicando a diferença.
+
+---
+
+**"Por que essa tecnologia foi escolhida em vez de outra? O que mudaria se precisassem trocar de banco de dados?"**
+
+A primeira parte está no bloco 2: React Native porque a equipe já domina JavaScript; Spring Boot com JDBC e DAO porque exercita transações e concorrência, conteúdo da disciplina; Firebase e Supabase descartados porque a persistência ficaria delegada, sem camada de acesso a dados própria.
+
+A segunda parte é a pergunta mais interessante, e a resposta é o motivo de existir a camada de persistência separada.
+
+Trocar de banco afeta apenas `repositories/` e `database/`. A camada de negócio não sabe qual banco está embaixo: ela chama `produtoRepository.listar()` e recebe objetos de domínio. O serviço de estoque não tem uma linha de SQL.
+
+O que mudaria na prática: reescrever as consultas para o dialeto novo, ajustar os tipos no esquema, e verificar o controle transacional, porque cada banco trata isolamento de forma diferente. O que não mudaria: nenhuma regra de negócio, nenhuma tela, nenhum teste das regras.
+
+Vale acrescentar que isso não é hipótese no nosso caso. Já mantemos dois bancos: SQLite no aparelho e PostgreSQL no servidor. Os dois têm o mesmo modelo relacional, e é justamente a separação em camadas que permite conviver com os dois sem duplicar a lógica.
+
+---
+
+**"O que, do planejado, ainda não está funcionando? Qual foi a parte mais difícil de implementar até aqui?"**
+
+Não está funcionando: retaguarda e sincronização, leitura de código de barras, notificações e pacote instalável. Todos previstos para os Ciclos 3 e 4, conforme o cronograma — não são atrasos. Além disso, a senha ainda é comparada em texto puro; o resumo criptográfico entra junto com o servidor, e a limitação está sinalizada no próprio código.
+
+A parte mais difícil foi garantir que o saldo e o histórico nunca divirjam. A primeira versão atualizava o produto e gravava o lançamento em duas operações soltas: qualquer falha entre elas deixava os dois inconsistentes. A solução foi envolver em transação e gravar o saldo resultante em cada movimentação.
+
+Isso trouxe uma consequência que não estava prevista e acabou sendo boa: como o lançamento guarda o saldo, ele não pode ser alterado depois sem quebrar a série. Aceitamos isso como decisão, o histórico passou a ser imutável, e uma classe inteira de conflito na sincronização desapareceu — registros que só são acrescentados nunca divergem entre aparelhos.
+
+---
+
+**"Como as tarefas foram distribuídas? Explique uma parte que não foi você quem fez."**
+
+A distribuição é por frente técnica: Matheus na modelagem e retaguarda, Vitor nas telas e navegação, Felipe na persistência local, integração e testes. As 30 histórias do backlog têm responsável nomeado.
+
+A segunda parte é a mais exigente: qualquer integrante pode ser chamado a explicar o trabalho de outro. Prepare-se para estas três, que são as mais prováveis:
+
+_A transação da movimentação_ — está em `services/estoqueService.ts`. Abre transação, lê o saldo do produto, valida a regra contra o saldo lido, calcula o resultado, atualiza o produto, grava o lançamento com o saldo, confirma. Qualquer falha no meio desfaz tudo.
+
+_A separação em camadas_ — a tela chama o serviço, o serviço chama o repositório, nunca o contrário. A prova prática é que os testes das regras rodam em Node puro, sem emulador e sem banco.
+
+_Por que o produto é desativado e não excluído_ — porque excluir levaria o histórico junto e destruiria a auditoria. O campo `ativo` marca a desativação e a chave estrangeira restritiva impede a remoção física.
+
+---
+
+## 6. Outras perguntas prováveis
+
+Derivadas dos eixos de arguição do documento norteador. Cada integrante responde sobre a própria frente e tem noção das outras duas.
 
 ### Sobre decisões arquiteturais e alternativas descartadas
 
@@ -185,23 +253,26 @@ Porque o cadastro de produto e a tela de configurações permitem criar categori
 
 ---
 
-## 8. Checagem antes de apresentar
+## 7. Checagem antes de apresentar
 
-| Item                                                                        |
-| --------------------------------------------------------------------------- |
-| Aplicação instalada e testada no aparelho que será usado                    |
-| Roteiro de demonstração ensaiado, com o bloqueio de saída funcionando       |
-| Aparelho carregado, com notificações silenciadas                            |
-| Protótipo aberto em aba separada, como alternativa se a demonstração falhar |
-| Diagrama de modelagem e diagrama de camadas prontos para exibição           |
-| Repositório acessível, para mostrar código se solicitado                    |
-| Documentos exportados em PDF conforme o padrão de nomeação da disciplina    |
-| Cada integrante sabe qual bloco apresenta e em quanto tempo                 |
-| Cada integrante leu o memorial de arquitetura, não apenas a própria parte   |
+| Item                                                                              |
+| --------------------------------------------------------------------------------- |
+| Aplicação instalada e testada no aparelho que será usado                          |
+| Roteiro de demonstração ensaiado, com o bloqueio de saída funcionando             |
+| Aparelho carregado, com notificações silenciadas                                  |
+| Protótipo aberto em aba separada — a rubrica avalia qualidade do protótipo em 0,6 |
+| Slides abertos em tela cheia, testados no projetor se possível                    |
+| Diagrama de modelagem pronto para exibição                                        |
+| Repositório aberto numa aba, para mostrar código e histórico se pedirem           |
+| Cada integrante sabe qual bloco apresenta e em quanto tempo                       |
+| Cada integrante leu o memorial de arquitetura, não apenas a própria parte         |
+| Ensaio cronometrado: 12 minutos de fala, sem passar                               |
+
+**Plano de contingência para a demonstração.** Se a rede da faculdade bloquear a conexão entre o computador e o celular, o Expo não consegue servir o aplicativo. Duas alternativas, na ordem: usar o ponto de acesso do próprio celular para conectar o computador, ou abrir a versão web com `npm run web` numa aba já preparada. A segunda é inferior, porque a rubrica espera a aplicação rodando, mas é melhor que ficar sem demonstração.
 
 ---
 
-## 9. Postura na arguição
+## 8. Postura na arguição
 
 Três orientações práticas.
 
@@ -215,6 +286,7 @@ Três orientações práticas.
 
 ## Controle de versões
 
-| Versão | Data       | Alterações                          | Responsável      |
-| ------ | ---------- | ----------------------------------- | ---------------- |
-| 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
+| Versão | Data       | Alterações                                                                                                                                                                                                                                   | Responsável      |
+| ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 1.0    | 28/09/2026 | Versão inicial, seguindo o Apêndice D: cinco blocos e 20 minutos                                                                                                                                                                             | Equipe StockEasy |
+| 2.0    | 29/09/2026 | Reorganizado para a estrutura do Encontro 15: três blocos e 12 minutos de fala, com as regras de negócio no bloco de escopo. Acrescentados os oito critérios da rubrica, o checklist da defesa e as quatro perguntas sugeridas pelo material | Equipe StockEasy |
