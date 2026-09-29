@@ -63,7 +63,7 @@ Escopo definido pelo item 4 da N1: navegação estruturada, autenticação e ao 
 
 A estrutura de navegação que conecta essas telas e a organização do projeto em camadas são trabalho transversal, não atribuído a uma história isolada.
 
-A modelagem de dados que sustenta o ciclo foi concluída e validada em PostgreSQL, com registro em [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md).
+A modelagem de dados que sustenta o ciclo foi concluída e validada em PostgreSQL, com registro em [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md).
 
 ### Por que a persistência local está no Ciclo 1
 
@@ -103,7 +103,7 @@ Tipos em uso: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`.
 
 O backlog é mantido em GitHub Projects, acessível ao docente, no formato de quadro com as colunas Backlog, A fazer, Em andamento, Em revisão e Concluído.
 
-Cada história do backlog corresponde a uma issue, com responsável, ciclo e critérios de aceite transcritos. O backlog completo está em [`checkpoint1-backlog.md`](checkpoint1-backlog.md).
+Cada história do backlog corresponde a uma issue, com responsável, ciclo e critérios de aceite transcritos. O backlog completo está em [`05-backlog.md`](05-backlog.md).
 
 | Indicador                        | Valor                                      |
 | -------------------------------- | ------------------------------------------ |
@@ -145,8 +145,8 @@ Registro conforme a Seção 6.1: o que foi concluído, o que foi replanejado e q
 
 | Impedimento                                                                 | Encaminhamento                                                                                                      |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Inconsistências entre backlog, modelagem e protótipo, detectadas na revisão | Corrigidas e registradas em [`N1-relatorio-revisao.md`](N1-relatorio-revisao.md)                                    |
-| Paleta do protótipo reprovava no contraste exigido pelo R11                 | Paleta substituída e verificada; registro em [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md)                 |
+| Inconsistências entre backlog, modelagem e protótipo, detectadas na revisão | Corrigidas e registradas em [`99-historico-de-revisao.md`](99-historico-de-revisao.md)                                    |
+| Paleta do protótipo reprovava no contraste exigido pelo R11                 | Paleta substituída e verificada; registro em [`04-prototipo.md`](04-prototipo.md)                 |
 | Erros no script de banco que impediriam a execução em outros ambientes      | Corrigidos e validados por execução real em PostgreSQL                                                              |
 | Implementação da aplicação parcial concentrada no fim do ciclo              | Escopo reduzido ao mínimo verificável do item 4, com retaguarda adiada para o Ciclo 3 conforme o cronograma oficial |
 
@@ -205,7 +205,7 @@ Correção dos defeitos priorizados, refinamento de acessibilidade e tratamento 
 
 | Exigência da Seção 6.1                                             | Onde é atendida                                                      |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| Backlog em ferramenta de gestão, em formato de história de usuário | GitHub Projects e [`checkpoint1-backlog.md`](checkpoint1-backlog.md) |
+| Backlog em ferramenta de gestão, em formato de história de usuário | GitHub Projects e [`05-backlog.md`](05-backlog.md) |
 | Itens priorizados e atribuídos a responsáveis                      | 30 histórias, todas com prioridade e responsável                     |
 | Registro do concluído, replanejado e impedimentos por ciclo        | Seção 7 deste documento                                              |
 | Quadro e repositório acessíveis ao docente                         | Repositório público                                                  |

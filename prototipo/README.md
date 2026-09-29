@@ -10,7 +10,7 @@ Protótipo interativo do aplicativo StockEasy — Controle de Estoque Inteligent
 
 Protótipo HTML/CSS navegável que demonstra os fluxos principais do aplicativo. Os botões são clicáveis e a navegação entre telas funciona como no aplicativo real.
 
-A escolha de HTML/CSS em vez de uma ferramenta de prototipação visual está justificada em [`docs/N1-memorial-prototipo.md`](../docs/N1-memorial-prototipo.md).
+A escolha de HTML/CSS em vez de uma ferramenta de prototipação visual está justificada em [`docs/04-prototipo.md`](../docs/04-prototipo.md).
 
 **Importante:** é um protótipo de interface, não um aplicativo funcional. Os dados são estáticos. Câmera, scanner de código de barras e sincronização são simulados com mensagens explicativas.
 

@@ -20,7 +20,7 @@ Disciplina ADS1253 — Programação Orientada a Objeto com Banco de Dados
 | Vitor Leal dos Santos   | 2025.1.0120.0071-6 | Aplicação móvel: telas, navegação, componentes, formulários e validações de entrada                         |
 | Felipe Milhomem Rocha   | 2025.1.0120.0024-4 | Integração: persistência local SQLite, sincronização, consumo de serviço externo, recursos nativos e testes |
 
-A distribuição de responsabilidades por ciclo consta em [`N1-gestao-projeto.md`](N1-gestao-projeto.md).
+A distribuição de responsabilidades por ciclo consta em [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md).
 
 ---
 
@@ -67,7 +67,7 @@ A proposta se sustenta em três decisões de produto:
 
 O domínio atende às condições da Seção 3.3 do documento norteador: usuários identificáveis, dois perfis com permissões distintas, regras de negócio explícitas e verificáveis, e um fluxo principal — registrar movimentação e reagir ao alerta resultante — que justifica a existência da aplicação. Não se trata de listagem estática nem de agregador de conteúdo: o sistema mantém estado transacional, e cada movimentação altera o saldo do produto e pode disparar alertas.
 
-O domínio também exercita integralmente o conteúdo da ADS1253. O controle de estoque é um problema transacional clássico: a baixa de saldo e o registro no histórico precisam ocorrer atomicamente, sob pena de o saldo divergir do histórico. Esse é exatamente o cenário de transações, isolamento e concorrência tratado na disciplina, e é a razão pela qual a equipe optou por interface de programação própria com JDBC e DAO em vez de uma plataforma de backend como serviço — decisão detalhada em [`N1-arquitetura.md`](N1-arquitetura.md).
+O domínio também exercita integralmente o conteúdo da ADS1253. O controle de estoque é um problema transacional clássico: a baixa de saldo e o registro no histórico precisam ocorrer atomicamente, sob pena de o saldo divergir do histórico. Esse é exatamente o cenário de transações, isolamento e concorrência tratado na disciplina, e é a razão pela qual a equipe optou por interface de programação própria com JDBC e DAO em vez de uma plataforma de backend como serviço — decisão detalhada em [`03-arquitetura.md`](03-arquitetura.md).
 
 ---
 
@@ -379,7 +379,7 @@ As regras RN02 e RN04, de unicidade, não são contabilizadas aqui por serem res
 
 ## 8. Modelagem de dados
 
-O modelo conceitual e lógico, o diagrama entidade-relacionamento, os scripts de criação, as consultas relevantes e a estratégia de persistência local estão em [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md).
+O modelo conceitual e lógico, o diagrama entidade-relacionamento, os scripts de criação, as consultas relevantes e a estratégia de persistência local estão em [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md).
 
 Síntese: sete entidades — `loja`, `usuario`, `categoria`, `fornecedor`, `produto`, `movimentacao` e `alerta` — normalizadas até a terceira forma normal, com uma desnormalização deliberada e justificada no campo de saldo resultante da movimentação.
 
@@ -387,13 +387,13 @@ Síntese: sete entidades — `loja`, `usuario`, `categoria`, `fornecedor`, `prod
 
 ## 9. Definição arquitetural
 
-A organização em camadas, o fluxo de dados entre aplicação móvel e retaguarda, a justificativa da pilha tecnológica e as alternativas descartadas estão em [`N1-arquitetura.md`](N1-arquitetura.md).
+A organização em camadas, o fluxo de dados entre aplicação móvel e retaguarda, a justificativa da pilha tecnológica e as alternativas descartadas estão em [`03-arquitetura.md`](03-arquitetura.md).
 
 ---
 
 ## 10. Cronograma interno e distribuição de responsabilidades
 
-O cronograma por ciclo, a alocação de requisitos por integrante e o registro de cada ciclo estão em [`N1-gestao-projeto.md`](N1-gestao-projeto.md). O backlog priorizado em formato de história de usuário, com critérios de aceite, está em [`checkpoint1-backlog.md`](checkpoint1-backlog.md).
+O cronograma por ciclo, a alocação de requisitos por integrante e o registro de cada ciclo estão em [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md). O backlog priorizado em formato de história de usuário, com critérios de aceite, está em [`05-backlog.md`](05-backlog.md).
 
 ---
 

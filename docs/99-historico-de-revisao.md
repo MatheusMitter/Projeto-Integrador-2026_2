@@ -14,10 +14,10 @@ O objetivo é que as correções sejam rastreáveis: cada alteração nos docume
 | Artefato revisado                             | Situação após a revisão                             |
 | --------------------------------------------- | --------------------------------------------------- |
 | `README.md`                                   | Reescrito                                           |
-| `docs/CHECKPOINT1-RESUMO.md`                  | Reescrito                                           |
-| `docs/checkpoint1-backlog.md`                 | Revisado para a versão 2.0                          |
-| `docs/checkpoint1-der-modelagem.md`           | Revisado para a versão 2.0 e validado em PostgreSQL |
-| `docs/checkpoint1-prototipo-especificacao.md` | Revisado para a versão 2.0                          |
+| `docs/00-LEIA-PRIMEIRO.md`                  | Reescrito                                           |
+| `docs/05-backlog.md`                 | Revisado para a versão 2.0                          |
+| `docs/02-modelagem-de-dados.md`           | Revisado para a versão 2.0 e validado em PostgreSQL |
+| `docs/04-prototipo.md` | Revisado para a versão 2.0                          |
 | `prototipo/` (8 telas)                        | Corrigido e ampliado para 11 telas                  |
 | `prototipo/README.md`                         | Reescrito                                           |
 
@@ -25,10 +25,10 @@ Documentos criados na revisão, por serem exigidos pelo Apêndice A.1 e não exi
 
 | Documento                    | Item da N1 que atende |
 | ---------------------------- | --------------------- |
-| `N1-documento-de-projeto.md` | Item 1 — 2,5 pontos   |
-| `N1-arquitetura.md`          | Item 2 — 1,5 pontos   |
-| `N1-memorial-prototipo.md`   | Item 3 — 2,0 pontos   |
-| `N1-gestao-projeto.md`       | Item 5 — 1,0 ponto    |
+| `01-documento-de-projeto.md` | Item 1 — 2,5 pontos   |
+| `03-arquitetura.md`          | Item 2 — 1,5 pontos   |
+| `04-prototipo.md`   | Item 3 — 2,0 pontos   |
+| `06-gestao-do-projeto.md`       | Item 5 — 1,0 ponto    |
 
 ---
 
@@ -97,7 +97,7 @@ A precisão exigiria gravar o preço praticado em cada movimentação. A equipe 
 | Saldo negativo é rejeitado                                     | Aprovado  |
 | E-mail e código de barras duplicados são rejeitados            | Aprovado  |
 
-O registro detalhado está na seção de validação de [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md).
+O registro detalhado está na seção de validação de [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md).
 
 ---
 
@@ -166,7 +166,7 @@ A especificação afirmava atender ao contraste mínimo de 4,5:1 da WCAG 2.1 ní
 
 Além disso, `#9E9E9E` era usado como cor de texto para preços e códigos, com 2,8:1.
 
-Correção: paleta substituída por tons mais escuros da mesma família, todos verificados. Detalhamento em [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md).
+Correção: paleta substituída por tons mais escuros da mesma família, todos verificados. Detalhamento em [`04-prototipo.md`](04-prototipo.md).
 
 ### 4.2 Ausência de suporte a leitores de tela
 
@@ -222,7 +222,7 @@ O resumo declarava que a pilha tecnológica estava indefinida e aguardava esclar
 
 O problema é de posicionamento: o item 2 da N1 avalia justamente a "justificativa da pilha tecnológica adotada", e a Seção 4 do documento norteador admite explicitamente a combinação escolhida. Apresentar uma decisão própria como dúvida em aberto enfraquece exatamente o que está sendo avaliado.
 
-Correção: reescrito como decisão fundamentada, com as alternativas avaliadas, os motivos do descarte e o custo assumido. O conteúdo está em [`N1-arquitetura.md`](N1-arquitetura.md).
+Correção: reescrito como decisão fundamentada, com as alternativas avaliadas, os motivos do descarte e o custo assumido. O conteúdo está em [`03-arquitetura.md`](03-arquitetura.md).
 
 ### 5.3 Ferramenta de prototipação divergente do entregue
 

@@ -881,11 +881,11 @@ A N1 vale 10,0 pontos distribuídos em seis itens, conforme a Seção 8.1 do doc
 
 | Item | Descrição                                                             | Pontos | Artefato                                                                                                  |
 | ---- | --------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------- |
-| 1    | Documento de projeto                                                  | 2,5    | [`N1-documento-de-projeto.md`](N1-documento-de-projeto.md)                                                |
-| 2    | Modelagem de dados e definição arquitetural                           | 1,5    | [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md) e [`N1-arquitetura.md`](N1-arquitetura.md) |
-| 3    | Protótipo navegável com justificativa de usabilidade e acessibilidade | 2,0    | `prototipo/` e [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md)                                     |
+| 1    | Documento de projeto                                                  | 2,5    | [`01-documento-de-projeto.md`](01-documento-de-projeto.md)                                                |
+| 2    | Modelagem de dados e definição arquitetural                           | 1,5    | [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md) e [`03-arquitetura.md`](03-arquitetura.md) |
+| 3    | Protótipo navegável com justificativa de usabilidade e acessibilidade | 2,0    | `prototipo/` e [`04-prototipo.md`](04-prototipo.md)                                     |
 | 4    | Aplicação parcial em execução                                         | 2,0    | Repositório e demonstração                                                                                |
-| 5    | Gestão do projeto                                                     | 1,0    | Este backlog e [`N1-gestao-projeto.md`](N1-gestao-projeto.md)                                             |
+| 5    | Gestão do projeto                                                     | 1,0    | Este backlog e [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md)                                             |
 | 6    | Apresentação e defesa técnica                                         | 1,0    | Apresentação presencial                                                                                   |
 
 **Escopo mínimo do item 4.** O enunciado exige navegação estruturada, autenticação e ao menos um módulo funcional integrado à persistência. Traduzido em histórias:
@@ -956,7 +956,7 @@ Cinco regras não triviais contra o mínimo de três exigido. Três delas — RN
 
 ### Distribuição por integrante
 
-Cada história tem responsável nomeado no seu detalhamento. O resumo abaixo consolida a carga. O acompanhamento por ciclo está em [`N1-gestao-projeto.md`](N1-gestao-projeto.md).
+Cada história tem responsável nomeado no seu detalhamento. O resumo abaixo consolida a carga. O acompanhamento por ciclo está em [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md).
 
 **Matheus Oliveira Mitter — retaguarda e dados**
 Modelagem e migrações do PostgreSQL · DAO com JDBC · API REST em Spring Boot · autenticação e autorização com JWT e RN01 · consultas de agregação
@@ -970,11 +970,11 @@ Histórias: US01, US02, US03, US05, US06, US07, US08, US09, US15, US16, US26, US
 Persistência local em SQLite · sincronização idempotente · serviço externo · câmera e notificações · testes
 Histórias: US10, US11, US12, US21, US22, US23, US24, US25, US28, US29
 
-As frentes se sustentam mutuamente: a modelagem e a API viabilizam as telas, e a camada de persistência local viabiliza a operação offline de todas elas. O acompanhamento por ciclo está em [`N1-gestao-projeto.md`](N1-gestao-projeto.md).
+As frentes se sustentam mutuamente: a modelagem e a API viabilizam as telas, e a camada de persistência local viabiliza a operação offline de todas elas. O acompanhamento por ciclo está em [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md).
 
 ### Versionamento
 
-Cada integrante versiona o próprio trabalho, com commits em seu nome e mensagens descritivas da alteração realizada. O trabalho é integrado ao ramo principal por ramos de funcionalidade, com revisão por outro integrante, conforme a política registrada em [`N1-gestao-projeto.md`](N1-gestao-projeto.md).
+Cada integrante versiona o próprio trabalho, com commits em seu nome e mensagens descritivas da alteração realizada. O trabalho é integrado ao ramo principal por ramos de funcionalidade, com revisão por outro integrante, conforme a política registrada em [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md).
 
 ### Ferramentas:
 

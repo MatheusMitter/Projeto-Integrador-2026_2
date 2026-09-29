@@ -24,7 +24,7 @@ O StockEasy resolve isso com registro de movimentações no celular, alerta auto
 | Vitor Leal dos Santos   | 2025.1.0120.0071-6 | Aplicação móvel: telas, navegação, formulários e validações   |
 | Felipe Milhomem Rocha   | 2025.1.0120.0024-4 | Integração: API externa, recursos nativos, persistência local |
 
-A distribuição de responsabilidades por ciclo está em [`docs/N1-gestao-projeto.md`](docs/N1-gestao-projeto.md).
+A distribuição de responsabilidades por ciclo está em [`docs/06-gestao-do-projeto.md`](docs/06-gestao-do-projeto.md).
 
 ---
 
@@ -39,7 +39,7 @@ A distribuição de responsabilidades por ciclo está em [`docs/N1-gestao-projet
 | Integração externa | Open Food Facts                    | Consulta de produto por código de barras, sem chave de acesso                |
 | Recurso nativo     | Câmera e notificações locais       | Leitura de código de barras e alerta de estoque crítico                      |
 
-A justificativa completa, com as alternativas avaliadas e descartadas, está em [`docs/N1-arquitetura.md`](docs/N1-arquitetura.md).
+A justificativa completa, com as alternativas avaliadas e descartadas, está em [`docs/03-arquitetura.md`](docs/03-arquitetura.md).
 
 ---
 
@@ -61,15 +61,14 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 │   └── README.md
 ├── apresentacao/                           # Slides da defesa técnica
 ├── docs/                                   # Documentação do projeto
-│   ├── N1-documento-de-projeto.md           # Escopo, requisitos, personas, regras de negócio
-│   ├── N1-arquitetura.md                    # Camadas, decisões técnicas, pilha
-│   ├── N1-memorial-prototipo.md             # Decisões de usabilidade e acessibilidade
-│   ├── N1-gestao-projeto.md                 # Backlog, ciclos, responsabilidades
-│   ├── N1-relatorio-revisao.md              # Revisão dos artefatos e pendências
-│   ├── checkpoint1-backlog.md               # Backlog priorizado (histórias de usuário)
-│   ├── checkpoint1-der-modelagem.md         # DER, scripts SQL, consultas
-│   ├── checkpoint1-prototipo-especificacao.md
-│   └── CHECKPOINT1-RESUMO.md
+│   ├── 00-LEIA-PRIMEIRO.md                  # Índice: o que é cada documento
+│   ├── 01-documento-de-projeto.md           # Problema, requisitos, personas, regras de negócio
+│   ├── 02-modelagem-de-dados.md             # Diagrama do banco, scripts SQL, consultas
+│   ├── 03-arquitetura.md                    # Camadas, decisões técnicas, pilha justificada
+│   ├── 04-prototipo.md                      # Telas, usabilidade e acessibilidade
+│   ├── 05-backlog.md                        # Histórias de usuário priorizadas
+│   ├── 06-gestao-do-projeto.md              # Cronograma, ciclos, responsabilidades
+│   └── 99-historico-de-revisao.md           # O que foi corrigido e por quê
 └── prototipo/                              # Protótipo navegável HTML/CSS (11 telas)
     ├── index.html                           # Ponto de entrada
     ├── styles.css
@@ -96,7 +95,7 @@ Versão publicada: [matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/
 
 ### Banco de dados
 
-Os scripts de criação e a carga de exemplo estão em [`docs/checkpoint1-der-modelagem.md`](docs/checkpoint1-der-modelagem.md). Com PostgreSQL 14 ou superior disponível:
+Os scripts de criação e a carga de exemplo estão em [`docs/02-modelagem-de-dados.md`](docs/02-modelagem-de-dados.md). Com PostgreSQL 14 ou superior disponível:
 
 ```bash
 psql -U postgres -f scripts/schema.sql
@@ -145,22 +144,22 @@ Nenhuma credencial é versionada. Variáveis de ambiente são lidas de um arquiv
 
 Situação em 28/09/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
 
-| Req | Descrição                                  | Situação              | Onde é verificável                                    |
-| --- | ------------------------------------------ | --------------------- | ----------------------------------------------------- |
-| R1  | Mínimo de 6 telas com navegação            | Implementado          | `app/` — abas e pilha, 7 telas; protótipo com 11      |
-| R2  | Autenticação com 2 perfis                  | Implementado          | `app/src/services/authService.ts`                     |
-| R3  | Manutenção completa de 2+ entidades        | Implementado          | Produto e Fornecedor no aplicativo                    |
-| R4  | Mínimo de 3 regras de negócio não triviais | Implementado          | 5 regras em `app/src/services/regras.ts`, com 21 testes |
-| R5  | Persistência local                         | Implementado          | SQLite em `app/src/database/`                          |
-| R6  | Persistência remota com sincronização      | Ciclo 3               | Spring Boot e PostgreSQL                              |
-| R7  | Consumo de serviço externo                 | Ciclo 3               | Open Food Facts                                       |
-| R8  | Recurso nativo do dispositivo              | Ciclo 3               | Câmera e notificações                                 |
-| R9  | Filtro, busca e visão consolidada          | Parcial               | Busca e painel prontos; relatórios no Ciclo 2         |
-| R10 | Tratamento de erros e estados              | Implementado          | Erro explicado, lista vazia com ação, carregamento     |
-| R11 | Usabilidade e acessibilidade               | Implementado          | Contraste AA, alvo de 44px, rótulos acessíveis         |
-| R12 | Organização do código em camadas           | Implementado          | Três camadas em `app/src/`                             |
-| R13 | Versionamento com histórico distribuído    | Em andamento          | Histórico do repositório                              |
-| R14 | Pacote instalável em dispositivo físico    | Ciclo 4               | Até 27/11                                             |
+| Req | Descrição                                  | Situação     | Onde é verificável                                      |
+| --- | ------------------------------------------ | ------------ | ------------------------------------------------------- |
+| R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — abas e pilha, 7 telas; protótipo com 11        |
+| R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`                       |
+| R3  | Manutenção completa de 2+ entidades        | Implementado | Produto e Fornecedor no aplicativo                      |
+| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | 5 regras em `app/src/services/regras.ts`, com 21 testes |
+| R5  | Persistência local                         | Implementado | SQLite em `app/src/database/`                           |
+| R6  | Persistência remota com sincronização      | Ciclo 3      | Spring Boot e PostgreSQL                                |
+| R7  | Consumo de serviço externo                 | Ciclo 3      | Open Food Facts                                         |
+| R8  | Recurso nativo do dispositivo              | Ciclo 3      | Câmera e notificações                                   |
+| R9  | Filtro, busca e visão consolidada          | Parcial      | Busca e painel prontos; relatórios no Ciclo 2           |
+| R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento      |
+| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 44px, rótulos acessíveis          |
+| R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                              |
+| R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                |
+| R14 | Pacote instalável em dispositivo físico    | Ciclo 4      | Até 27/11                                               |
 
 ---
 

@@ -45,6 +45,52 @@ No computador o conteúdo permanece centralizado numa largura de 428px, que corr
 
 ---
 
+## 1.2 Estrutura de navegação e telas
+
+```
+Login ──┬── Cadastro de conta
+        └── Recuperação de senha
+           ↓
+Painel
+    ├→ Produtos (lista, busca, filtros)
+    │   ├→ Detalhes do produto
+    │   └→ Cadastro e edição de produto
+    ├→ Movimentação (entrada e saída)
+    ├→ Relatórios
+    └→ Configurações e perfil
+        └→ Fornecedores
+```
+
+A navegação inferior dá acesso a Painel, Produtos, Movimentação, Relatórios e Configurações de qualquer tela, em um toque.
+
+| #   | Arquivo                 | Tela                   | Conteúdo                                                        |
+| --- | ----------------------- | ---------------------- | --------------------------------------------------------------- |
+| 1   | `index.html`            | Login                  | E-mail, senha, links para cadastro e recuperação                |
+| 2   | `cadastro.html`         | Cadastro de conta      | Dados do usuário, seleção de perfil, termos de uso              |
+| 3   | `recuperar-senha.html`  | Recuperação de senha   | Envio de link, com confirmação neutra por segurança             |
+| 4   | `dashboard.html`        | Painel                 | Cartões de resumo, gráfico de mais vendidos, navegação          |
+| 5   | `produtos.html`         | Lista de produtos      | Busca, filtros por status e categoria, situação por produto     |
+| 6   | `produto-cadastro.html` | Cadastro de produto    | Formulário completo, scanner simulado, margem automática        |
+| 7   | `produto-detalhes.html` | Detalhes do produto    | Dados, precificação, fornecedor, histórico, ações rápidas       |
+| 8   | `movimentacao.html`     | Movimentação           | Entrada e saída, previsão de saldo com RN06 e RN07              |
+| 9   | `relatorios.html`       | Relatórios             | Valor em estoque, mais vendidos, baixo giro, histórico          |
+| 10  | `configuracoes.html`    | Configurações e perfil | Perfil, notificações, sincronização, sair da conta              |
+| 11  | `fornecedores.html`     | Fornecedores           | Lista, cadastro, edição e exclusão com validação de vínculo     |
+
+### Fluxos navegáveis
+
+**Primeiro uso** — login, criar conta, painel, cadastrar produto, voltar à lista.
+
+**Registrar venda** — painel, movimentação, aba saída, tipo venda, confirmar.
+
+**Responder a alerta de falta** — painel, cartão de produtos críticos, lista filtrada, detalhes, registrar entrada.
+
+**Consultar desempenho** — painel, relatórios, selecionar período, mais vendidos e baixo giro.
+
+**Manter fornecedores** — configurações, gerenciar fornecedores, criar ou editar.
+
+---
+
 ## 2. Decisões de usabilidade
 
 ### 2.1 A operação mais frequente é o caminho mais curto

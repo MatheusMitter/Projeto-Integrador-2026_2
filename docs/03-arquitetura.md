@@ -362,9 +362,9 @@ Revisão: decisão tomada na revisão de 29/09/2026, substituindo o desenho ante
 
 ## 13. Diagramas e artefatos complementares
 
-Modelagem de dados, diagrama entidade-relacionamento, scripts e consultas: [`checkpoint1-der-modelagem.md`](checkpoint1-der-modelagem.md).
-Requisitos e regras de negócio: [`N1-documento-de-projeto.md`](N1-documento-de-projeto.md).
-Decisões de interface: [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md).
+Modelagem de dados, diagrama entidade-relacionamento, scripts e consultas: [`02-modelagem-de-dados.md`](02-modelagem-de-dados.md).
+Requisitos e regras de negócio: [`01-documento-de-projeto.md`](01-documento-de-projeto.md).
+Decisões de interface: [`04-prototipo.md`](04-prototipo.md).
 
 ---
 

@@ -915,7 +915,7 @@ A condição de tipo precisa ficar no `ON`, não no `WHERE`: no `WHERE`, ela eli
 
 ## Onde cada regra de negócio é aplicada
 
-As regras completas estão descritas em [`N1-documento-de-projeto.md`](N1-documento-de-projeto.md). A tabela abaixo indica o mecanismo que garante cada uma e em que camada.
+As regras completas estão descritas em [`01-documento-de-projeto.md`](01-documento-de-projeto.md). A tabela abaixo indica o mecanismo que garante cada uma e em que camada.
 
 | Regra | Mecanismo no banco                                            | Camada de negócio                                               |
 | ----- | ------------------------------------------------------------- | --------------------------------------------------------------- |
