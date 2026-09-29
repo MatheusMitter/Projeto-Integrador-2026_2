@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "StockEasy",
+    "slug": "stockeasy",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2E7D32"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "br.pucgoias.stockeasy",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#2E7D32"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

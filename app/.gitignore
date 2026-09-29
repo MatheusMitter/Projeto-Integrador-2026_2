@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+.DS_Store
+
+# credenciais e variáveis de ambiente nunca são versionadas (RNF12)
+.env
+.env.local
+*.keystore
+*.jks
