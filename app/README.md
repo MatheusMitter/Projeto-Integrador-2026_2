@@ -15,7 +15,9 @@ npm install
 
 **No celular (recomendado).** Instale o Expo Go pela loja do aparelho, rode `npm start` e leia o código apresentado no terminal com a câmera. O aparelho e o computador precisam estar na mesma rede.
 
-**No navegador.** `npm run web` e abra o endereço indicado. Serve para inspeção rápida; a experiência real é no aparelho.
+**No emulador Android.** `npm run android`, com o Android Studio configurado.
+
+**No navegador não funciona.** O `expo-sqlite` não tem implementação para web: o módulo lança `Unimplemented`. Como toda a persistência depende dele, a aplicação exige celular ou emulador. Abrindo no navegador, aparece uma tela explicando isso em vez de um erro de banco.
 
 **No emulador Android.** `npm run android`, com o Android Studio configurado.
 
@@ -125,6 +127,8 @@ Ainda não implementados, previstos para os Ciclos 3 e 4: persistência remota e
 ---
 
 ## Limitações declaradas
+
+**Não roda no navegador.** O `expo-sqlite` não implementa a interface de banco para web. A aplicação precisa de celular ou emulador. É consequência direta da escolha de banco local, que por sua vez é exigência do ambiente de uso: o depósito da loja é onde o sinal falha.
 
 **A senha é comparada em texto puro.** O requisito RNF11 exige resumo criptográfico com BCrypt. A verificação de senha passa a acontecer no servidor no Ciclo 3, e é lá que o resumo será aplicado. Está sinalizado no próprio `authService.ts`.
 

@@ -112,8 +112,10 @@ Requer Node 18 ou superior.
 cd app
 npm install
 npm start          # leia o código no terminal com o Expo Go
-npm run web        # alternativa para inspeção rápida no navegador
+npm run android    # alternativa: emulador Android
 ```
+
+A aplicação exige celular ou emulador: o módulo de banco local não tem implementação para navegador.
 
 Credenciais de teste, criadas pela carga inicial:
 

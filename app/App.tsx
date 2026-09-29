@@ -8,7 +8,7 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { Platform, ScrollView, Text, View } from "react-native";
 
 import LoginScreen from "./src/screens/LoginScreen";
 import CadastroScreen from "./src/screens/CadastroScreen";
@@ -18,7 +18,7 @@ import { obterBanco } from "./src/database/conexao";
 import { encerrarSessao } from "./src/services/authService";
 import { cores, espaco } from "./src/theme/tema";
 
-type Tela = "carregando" | "login" | "cadastro" | "app" | "falha";
+type Tela = "carregando" | "login" | "cadastro" | "app" | "falha" | "semBanco";
 
 export default function App() {
   const [tela, setTela] = useState<Tela>("carregando");
@@ -28,6 +28,16 @@ export default function App() {
   // Se falhar, a aplicação avisa em vez de abrir uma tela quebrada.
   useEffect(() => {
     let cancelado = false;
+
+    // O expo-sqlite não tem implementação para navegador: a versão web do
+    // módulo lança "Unimplemented". Como toda a persistência depende dele,
+    // o aplicativo precisa de um aparelho ou emulador. Avisamos de forma
+    // explícita em vez de mostrar erro de banco, que pareceria defeito.
+    if (Platform.OS === "web") {
+      setTela("semBanco");
+      return;
+    }
+
     (async () => {
       try {
         await obterBanco();
@@ -52,15 +62,79 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      {tela === "carregando" && <Carregando texto="Preparando o banco local..." />}
+      {tela === "carregando" && (
+        <Carregando texto="Preparando o banco local..." />
+      )}
+
+      {tela === "semBanco" && (
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "center",
+            padding: espaco.lg,
+            backgroundColor: cores.branco,
+            maxWidth: 560,
+            alignSelf: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: "700",
+              color: cores.cinza900,
+              marginBottom: espaco.md,
+            }}
+          >
+            StockEasy
+          </Text>
+          <Aviso
+            tipo="info"
+            texto={
+              "Este aplicativo guarda os dados em SQLite, no próprio aparelho. " +
+              "O módulo de banco não tem implementação para navegador, então a " +
+              "execução precisa acontecer em um celular ou emulador."
+            }
+          />
+          <Text
+            style={{
+              fontSize: 14,
+              color: cores.cinza800,
+              lineHeight: 22,
+              marginBottom: espaco.md,
+            }}
+          >
+            Para executar no celular: instale o Expo Go pela loja de
+            aplicativos, rode{" "}
+            <Text style={{ fontWeight: "700" }}>npm start</Text> na pasta do
+            projeto e leia o código que aparece no terminal. O celular e o
+            computador precisam estar na mesma rede.
+          </Text>
+          <Text style={{ fontSize: 14, color: cores.cinza800, lineHeight: 22 }}>
+            A escolha do SQLite está justificada em{" "}
+            <Text style={{ fontWeight: "700" }}>docs/N1-arquitetura.md</Text>: o
+            banco local é o que permite operar sem conexão, requisito do
+            ambiente de uso, onde o sinal falha no depósito da loja.
+          </Text>
+        </ScrollView>
+      )}
 
       {tela === "falha" && (
-        <View style={{ flex: 1, justifyContent: "center", padding: espaco.lg, backgroundColor: cores.branco }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            padding: espaco.lg,
+            backgroundColor: cores.branco,
+          }}
+        >
           <Aviso
             tipo="erro"
             texto={`Não foi possível preparar o banco de dados local. ${erro ?? ""}`}
           />
-          <Botao titulo="Tentar novamente" onPress={() => setTela("carregando")} />
+          <Botao
+            titulo="Tentar novamente"
+            onPress={() => setTela("carregando")}
+          />
         </View>
       )}
 

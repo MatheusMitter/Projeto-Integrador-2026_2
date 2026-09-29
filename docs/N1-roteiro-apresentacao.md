@@ -268,7 +268,22 @@ Porque o cadastro de produto e a tela de configurações permitem criar categori
 | Cada integrante leu o memorial de arquitetura, não apenas a própria parte         |
 | Ensaio cronometrado: 12 minutos de fala, sem passar                               |
 
-**Plano de contingência para a demonstração.** Se a rede da faculdade bloquear a conexão entre o computador e o celular, o Expo não consegue servir o aplicativo. Duas alternativas, na ordem: usar o ponto de acesso do próprio celular para conectar o computador, ou abrir a versão web com `npm run web` numa aba já preparada. A segunda é inferior, porque a rubrica espera a aplicação rodando, mas é melhor que ficar sem demonstração.
+### Plano de contingência para a demonstração
+
+A aplicação guarda os dados em SQLite e o módulo de banco não tem implementação para navegador. Ou seja: **ela roda em celular ou emulador, não no navegador.** Isso elimina a alternativa mais óbvia e torna a preparação mais importante.
+
+Se a rede da faculdade bloquear a conexão entre o computador e o celular, o Expo não consegue servir o aplicativo. Alternativas, em ordem de preferência:
+
+| Ordem | Alternativa                                                         | Observação                                                                       |
+| ----- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 1     | Ponto de acesso do próprio celular, com o computador conectado nele | Resolve bloqueio de rede institucional; testar antes                             |
+| 2     | `npx expo start --tunnel`, que faz a conexão passar pela internet   | Mais lento, mas contorna isolamento entre dispositivos                           |
+| 3     | Emulador Android no computador, com `npm run android`               | Exige Android Studio configurado                                                 |
+| 4     | Demonstrar o protótipo navegável                                    | O checklist do Encontro 15 admite "protótipo navegável **ou** aplicação parcial" |
+
+A quarta alternativa é legítima, e não improviso: o material da página 8 aceita os dois. Mas o critério "aplicação parcial", de 0,8 ponto, avalia "o que já roda de verdade" — então demonstrar o protótipo cobre o bloco, e não substitui a aplicação na rubrica.
+
+Por isso a recomendação é preparar o celular com antecedência e deixar o protótipo aberto numa aba como apoio, não como substituto.
 
 ---
 
