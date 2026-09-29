@@ -29,7 +29,6 @@ Documentos criados na revisão, por serem exigidos pelo Apêndice A.1 e não exi
 | `N1-arquitetura.md`          | Item 2 — 1,5 pontos   |
 | `N1-memorial-prototipo.md`   | Item 3 — 2,0 pontos   |
 | `N1-gestao-projeto.md`       | Item 5 — 1,0 ponto    |
-| `N1-roteiro-apresentacao.md` | Item 6 — 1,0 ponto    |
 
 ---
 

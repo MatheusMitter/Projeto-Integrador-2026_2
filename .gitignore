@@ -32,3 +32,7 @@ Thumbs.db
 # Material de apoio da disciplina (não redistribuir no repositório público)
 *.pdf
 
+
+# Material interno de preparação da apresentação (não versionado)
+docs/N1-guia-da-fala.md
+docs/N1-roteiro-apresentacao.md

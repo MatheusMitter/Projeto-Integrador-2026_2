@@ -886,7 +886,7 @@ A N1 vale 10,0 pontos distribuídos em seis itens, conforme a Seção 8.1 do doc
 | 3    | Protótipo navegável com justificativa de usabilidade e acessibilidade | 2,0    | `prototipo/` e [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md)                                     |
 | 4    | Aplicação parcial em execução                                         | 2,0    | Repositório e demonstração                                                                                |
 | 5    | Gestão do projeto                                                     | 1,0    | Este backlog e [`N1-gestao-projeto.md`](N1-gestao-projeto.md)                                             |
-| 6    | Apresentação e defesa técnica                                         | 1,0    | [`N1-roteiro-apresentacao.md`](N1-roteiro-apresentacao.md)                                                |
+| 6    | Apresentação e defesa técnica                                         | 1,0    | Apresentação presencial                                                                                   |
 
 **Escopo mínimo do item 4.** O enunciado exige navegação estruturada, autenticação e ao menos um módulo funcional integrado à persistência. Traduzido em histórias:
 

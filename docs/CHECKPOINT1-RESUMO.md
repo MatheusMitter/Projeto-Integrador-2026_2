@@ -142,7 +142,7 @@ Os ciclos seguem o cronograma oficial da disciplina, não sprints arbitrárias.
 | 3    | Protótipo com justificativa de usabilidade | 2,0    | [`../prototipo/`](../prototipo/) e [`N1-memorial-prototipo.md`](N1-memorial-prototipo.md)                 |
 | 4    | Aplicação parcial em execução              | 2,0    | Repositório e demonstração                                                                                |
 | 5    | Gestão do projeto                          | 1,0    | [`checkpoint1-backlog.md`](checkpoint1-backlog.md) e [`N1-gestao-projeto.md`](N1-gestao-projeto.md)       |
-| 6    | Apresentação e defesa técnica              | 1,0    | [`N1-roteiro-apresentacao.md`](N1-roteiro-apresentacao.md)                                                |
+| 6    | Apresentação e defesa técnica              | 1,0    | Apresentação presencial                                                                                   |
 
 ---
 

@@ -65,7 +65,6 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 │   ├── N1-arquitetura.md                    # Camadas, decisões técnicas, pilha
 │   ├── N1-memorial-prototipo.md             # Decisões de usabilidade e acessibilidade
 │   ├── N1-gestao-projeto.md                 # Backlog, ciclos, responsabilidades
-│   ├── N1-roteiro-apresentacao.md           # Roteiro da defesa técnica
 │   ├── N1-relatorio-revisao.md              # Revisão dos artefatos e pendências
 │   ├── checkpoint1-backlog.md               # Backlog priorizado (histórias de usuário)
 │   ├── checkpoint1-der-modelagem.md         # DER, scripts SQL, consultas
