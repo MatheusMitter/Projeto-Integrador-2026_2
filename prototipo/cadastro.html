@@ -1,57 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Cadastro</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="header">
-      <a href="index.html" class="header-icon">←</a>
-      <h1 class="header-title">Criar Conta</h1>
-      <div></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Cadastro</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a
+          href="index.html"
+          class="header-icon"
+          aria-label="Voltar para a tela de login"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Criar Conta</h1>
+        <div class="header-icon" aria-hidden="true"></div>
+      </header>
+
+      <main class="content">
+        <form action="dashboard.html" method="get" novalidate>
+          <div class="input-group">
+            <label class="input-label" for="cadastro-nome">Nome Completo</label>
+            <input
+              type="text"
+              id="cadastro-nome"
+              name="nome"
+              class="input-field"
+              placeholder="Seu nome"
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="cadastro-email">E-mail</label>
+            <input
+              type="email"
+              id="cadastro-email"
+              name="email"
+              class="input-field"
+              placeholder="seu@email.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="cadastro-senha">Senha</label>
+            <input
+              type="password"
+              id="cadastro-senha"
+              name="senha"
+              class="input-field"
+              placeholder="Mínimo 8 caracteres"
+              autocomplete="new-password"
+              aria-describedby="cadastro-senha-dica"
+            />
+            <p class="input-hint" id="cadastro-senha-dica">
+              Use no mínimo 8 caracteres.
+            </p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="cadastro-senha-confirma"
+              >Confirmar Senha</label
+            >
+            <input
+              type="password"
+              id="cadastro-senha-confirma"
+              name="senha-confirma"
+              class="input-field"
+              placeholder="Digite a senha novamente"
+              autocomplete="new-password"
+            />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="cadastro-perfil"
+              >Perfil de Usuário</label
+            >
+            <select class="select-field" id="cadastro-perfil" name="perfil">
+              <option value="proprietario">
+                Proprietário - Acesso completo
+              </option>
+              <option value="operador">Operador - Acesso limitado</option>
+            </select>
+          </div>
+
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="cadastro-termos"
+              name="termos"
+              class="checkbox"
+            />
+            <label for="cadastro-termos" class="checkbox-label"
+              >Aceito os termos de uso</label
+            >
+          </div>
+
+          <a href="dashboard.html" class="btn btn-primary">Criar Conta</a>
+        </form>
+
+        <a href="index.html" class="link">Já tenho conta - Fazer login</a>
+      </main>
     </div>
-    
-    <div class="content">
-      <div class="input-group">
-        <label class="input-label">Nome Completo</label>
-        <input type="text" class="input-field" placeholder="Seu nome">
-      </div>
-      
-      <div class="input-group">
-        <label class="input-label">E-mail</label>
-        <input type="email" class="input-field" placeholder="seu@email.com">
-      </div>
-      
-      <div class="input-group">
-        <label class="input-label">Senha</label>
-        <input type="password" class="input-field" placeholder="Mínimo 8 caracteres">
-      </div>
-      
-      <div class="input-group">
-        <label class="input-label">Confirmar Senha</label>
-        <input type="password" class="input-field" placeholder="Digite a senha novamente">
-      </div>
-      
-      <div class="input-group">
-        <label class="input-label">Perfil de Usuário</label>
-        <select class="select-field">
-          <option value="proprietario">Proprietário - Acesso completo</option>
-          <option value="operador">Operador - Acesso limitado</option>
-        </select>
-      </div>
-      
-      <div class="checkbox-group">
-        <input type="checkbox" id="terms" class="checkbox">
-        <label for="terms" style="font-size: 14px;">Aceito os termos de uso</label>
-      </div>
-      
-      <a href="dashboard.html" class="btn btn-primary">Criar Conta</a>
-      
-      <a href="index.html" class="link">Já tenho conta - Fazer login</a>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

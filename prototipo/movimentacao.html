@@ -1,130 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Movimentação</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="header">
-      <a href="dashboard.html" class="header-icon">←</a>
-      <h1 class="header-title">Movimentação de Estoque</h1>
-      <div></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Movimentação</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a
+          href="dashboard.html"
+          class="header-icon"
+          aria-label="Voltar para o início"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Movimentação</h1>
+        <span class="header-spacer" aria-hidden="true"></span>
+      </header>
+
+      <main class="content">
+        <form
+          id="form-movimentacao"
+          onsubmit="
+            event.preventDefault();
+            confirmar();
+          "
+        >
+          <!-- Seleção de produto -->
+          <div class="input-group">
+            <label class="input-label" for="busca-produto-mov">Produto</label>
+            <div style="display: flex; gap: var(--space-sm)">
+              <input
+                type="text"
+                id="busca-produto-mov"
+                name="busca-produto-mov"
+                class="input-field"
+                placeholder="Buscar produto..."
+                value="Arroz Tipo 1 5kg"
+                style="flex: 1"
+              />
+              <button
+                type="button"
+                class="btn btn-secondary"
+                style="width: 48px; padding: 0; flex-shrink: 0"
+                aria-label="Selecionar produto lendo o código de barras"
+                onclick="
+                  alert(
+                    'Protótipo: o leitor de código de barras selecionaria o produto automaticamente (requisito R8).',
+                  )
+                "
+              >
+                <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5h3l1.5-2.5h9L18 8.5h3v11H3v-11Z"/><circle cx="12" cy="13.5" r="3.2"/></svg></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto selecionado -->
+          <div class="card list-item mb-lg">
+            <span class="product-image" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5"/><path d="M12 12v9"/></svg></span>
+            <span class="list-item-info">
+              <span class="list-item-title">Arroz Tipo 1 5kg</span>
+              <span class="list-item-meta">Estoque atual: 50 unidades</span>
+            </span>
+          </div>
+
+          <!-- Tipo de movimentação -->
+          <fieldset class="fieldset">
+            <legend class="input-label">Tipo de movimentação</legend>
+            <div class="tab-group" role="group" aria-label="Entrada ou saída">
+              <button
+                type="button"
+                id="tab-entrada"
+                class="tab tab-entrada is-active"
+                aria-pressed="true"
+                onclick="selecionarTipo('entrada')"
+              >
+                <span aria-hidden="true">↓</span> Entrada
+              </button>
+              <button
+                type="button"
+                id="tab-saida"
+                class="tab tab-saida"
+                aria-pressed="false"
+                onclick="selecionarTipo('saida')"
+              >
+                <span aria-hidden="true">↑</span> Saída
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- Quantidade -->
+          <div class="input-group">
+            <label class="input-label" for="quantidade">
+              Quantidade <span aria-hidden="true">*</span>
+              <span class="sr-only">(obrigatório)</span>
+            </label>
+            <div class="stepper">
+              <button
+                type="button"
+                class="btn btn-secondary stepper-btn"
+                aria-label="Diminuir quantidade"
+                onclick="ajustar(-1)"
+              >
+                <span aria-hidden="true">−</span>
+              </button>
+              <input
+                type="number"
+                id="quantidade"
+                name="quantidade"
+                class="input-field stepper-input"
+                min="1"
+                value="5"
+                required
+                oninput="atualizarPrevisao()"
+              />
+              <button
+                type="button"
+                class="btn btn-secondary stepper-btn"
+                aria-label="Aumentar quantidade"
+                onclick="ajustar(1)"
+              >
+                <span aria-hidden="true">+</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Motivo: entrada -->
+          <div class="input-group" id="grupo-entrada">
+            <label class="input-label" for="tipo-entrada-select"
+              >Tipo de Entrada</label
+            >
+            <select
+              id="tipo-entrada-select"
+              name="tipo-entrada"
+              class="select-field"
+            >
+              <option value="COMPRA">Compra de fornecedor</option>
+              <option value="DEVOLUCAO_CLIENTE">Devolução de cliente</option>
+              <option value="AJUSTE_ENTRADA">Ajuste de inventário</option>
+              <option value="OUTROS">Outros</option>
+            </select>
+          </div>
+
+          <!-- Motivo: saída -->
+          <div class="input-group" id="grupo-saida" hidden>
+            <label class="input-label" for="tipo-saida-select"
+              >Tipo de Saída</label
+            >
+            <select
+              id="tipo-saida-select"
+              name="tipo-saida"
+              class="select-field"
+            >
+              <option value="VENDA">Venda</option>
+              <option value="PERDA">Perda</option>
+              <option value="VENCIMENTO">Vencimento</option>
+              <option value="DEVOLUCAO_FORNECEDOR">
+                Devolução a fornecedor
+              </option>
+              <option value="AJUSTE_SAIDA">Ajuste de inventário</option>
+              <option value="OUTROS">Outros</option>
+            </select>
+          </div>
+
+          <!-- Data e hora -->
+          <div class="input-group">
+            <label class="input-label" for="data-hora">
+              Data e Hora <span aria-hidden="true">*</span>
+              <span class="sr-only">(obrigatório)</span>
+            </label>
+            <input
+              type="datetime-local"
+              id="data-hora"
+              name="data-hora"
+              class="input-field"
+              value="2026-09-28T14:30"
+              required
+            />
+          </div>
+
+          <!-- Observações -->
+          <div class="input-group">
+            <label class="input-label" for="observacoes"
+              >Observações (opcional)</label
+            >
+            <textarea
+              id="observacoes"
+              name="observacoes"
+              class="input-field"
+              rows="3"
+              placeholder="Adicione detalhes sobre esta movimentação..."
+            ></textarea>
+          </div>
+
+          <!-- Previsão -->
+          <div
+            class="alert alert-success"
+            id="previsao"
+            role="status"
+            aria-live="polite"
+          >
+            <p class="fw-bold">Previsão após movimentação</p>
+            <p>Estoque atual: <strong>50 unidades</strong></p>
+            <p>Após esta movimentação: <strong>55 unidades</strong></p>
+          </div>
+
+          <!-- Ações -->
+          <div class="action-bar">
+            <a href="dashboard.html" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary" id="btn-confirmar">
+              Confirmar
+            </button>
+          </div>
+        </form>
+      </main>
     </div>
-    
-    <div class="content">
-      <!-- Seleção de Produto -->
-      <div class="input-group">
-        <label class="input-label">Produto</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" class="input-field" placeholder="Buscar produto..." style="flex: 1;" value="Arroz Tipo 1 5kg">
-          <button class="btn btn-secondary" style="width: 48px; padding: 0; flex-shrink: 0;" onclick="alert('Scanner ativado')">📷</button>
-        </div>
-      </div>
-      
-      <!-- Produto Selecionado -->
-      <div class="card" style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-        <div style="width: 60px; height: 60px; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">
-          🍚
-        </div>
-        <div style="flex: 1;">
-          <div style="font-weight: 600; margin-bottom: 2px;">Arroz Tipo 1 5kg</div>
-          <div style="font-size: 12px; color: #757575;">Estoque atual: 50 unidades</div>
-        </div>
-      </div>
-      
-      <!-- Tabs: Entrada/Saída -->
-      <div style="display: flex; gap: 8px; margin-bottom: 24px;">
-        <button class="btn btn-primary" style="flex: 1;" onclick="document.getElementById('tipo-entrada').style.display='block'; document.getElementById('tipo-saida').style.display='none'; this.classList.add('btn-primary'); this.classList.remove('btn-secondary'); document.querySelector('.btn-danger').classList.add('btn-secondary'); document.querySelector('.btn-danger').classList.remove('btn-danger');">
-          ✅ Entrada
-        </button>
-        <button class="btn btn-secondary" style="flex: 1;" onclick="document.getElementById('tipo-entrada').style.display='none'; document.getElementById('tipo-saida').style.display='block'; this.classList.add('btn-danger'); this.classList.remove('btn-secondary'); document.querySelector('.btn-primary').classList.add('btn-secondary'); document.querySelector('.btn-primary').classList.remove('btn-primary');">
-          ❌ Saída
-        </button>
-      </div>
-      
-      <!-- Quantidade -->
-      <div class="input-group">
-        <label class="input-label">Quantidade *</label>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button class="btn btn-secondary" style="width: 40px; padding: 0; font-size: 20px;" onclick="let input = this.nextElementSibling; input.value = Math.max(0, parseInt(input.value || 0) - 1); updatePreview();">−</button>
-          <input type="number" class="input-field" placeholder="0" min="0" value="5" style="flex: 1; text-align: center;" oninput="updatePreview()">
-          <button class="btn btn-secondary" style="width: 40px; padding: 0; font-size: 20px;" onclick="let input = this.previousElementSibling; input.value = parseInt(input.value || 0) + 1; updatePreview();">+</button>
-        </div>
-      </div>
-      
-      <!-- Tipo de Movimentação (Entrada) -->
-      <div class="input-group" id="tipo-entrada">
-        <label class="input-label">Tipo de Entrada</label>
-        <select class="select-field">
-          <option value="compra">Compra de fornecedor</option>
-          <option value="devolucao_cliente">Devolução de cliente</option>
-          <option value="ajuste_entrada">Ajuste de inventário</option>
-          <option value="outros">Outros</option>
-        </select>
-      </div>
-      
-      <!-- Tipo de Movimentação (Saída) - Inicialmente oculto -->
-      <div class="input-group" id="tipo-saida" style="display: none;">
-        <label class="input-label">Tipo de Saída</label>
-        <select class="select-field">
-          <option value="venda">Venda</option>
-          <option value="perda">Perda</option>
-          <option value="vencimento">Vencimento</option>
-          <option value="devolucao_fornecedor">Devolução a fornecedor</option>
-          <option value="ajuste_saida">Ajuste de inventário</option>
-          <option value="outros">Outros</option>
-        </select>
-      </div>
-      
-      <!-- Data e Hora -->
-      <div class="input-group">
-        <label class="input-label">Data e Hora *</label>
-        <input type="datetime-local" class="input-field" value="2026-09-18T14:30">
-      </div>
-      
-      <!-- Observações -->
-      <div class="input-group">
-        <label class="input-label">Observações (opcional)</label>
-        <textarea class="input-field" rows="3" placeholder="Adicione detalhes sobre esta movimentação..."></textarea>
-      </div>
-      
-      <!-- Previsão -->
-      <div class="alert alert-success" id="preview">
-        <div style="font-weight: 600; margin-bottom: 4px;">Previsão após movimentação</div>
-        <div style="font-size: 14px;">Estoque atual: <strong>50 unidades</strong></div>
-        <div style="font-size: 14px;">Após esta movimentação: <strong>55 unidades</strong></div>
-      </div>
-      
-      <!-- Botões -->
-      <div style="display: flex; gap: 8px; margin-top: 24px; margin-bottom: 24px;">
-        <a href="dashboard.html" class="btn btn-secondary" style="flex: 1;">Cancelar</a>
-        <button class="btn btn-primary" style="flex: 1;" onclick="alert('Movimentação registrada com sucesso!'); window.location='dashboard.html';">Confirmar Movimentação</button>
-      </div>
-    </div>
-  </div>
-  
-  <script>
-    function updatePreview() {
-      const qtd = parseInt(document.querySelector('input[type=number]').value) || 0;
-      const estoqueAtual = 50;
-      const novoEstoque = estoqueAtual + qtd;
-      const preview = document.getElementById('preview');
-      preview.innerHTML = `
-        <div style="font-weight: 600; margin-bottom: 4px;">Previsão após movimentação</div>
-        <div style="font-size: 14px;">Estoque atual: <strong>${estoqueAtual} unidades</strong></div>
-        <div style="font-size: 14px;">Após esta movimentação: <strong>${novoEstoque} unidades</strong></div>
-      `;
-      
-      if (novoEstoque <= 10) {
-        preview.className = 'alert alert-danger';
-        preview.innerHTML += '<div style="font-size: 14px; margin-top: 8px;">⚠️ <strong>Atenção:</strong> Estoque ficará crítico!</div>';
-      } else {
-        preview.className = 'alert alert-success';
+
+    <script>
+      const ESTOQUE_ATUAL = 50;
+      const ESTOQUE_MINIMO = 10;
+      let tipo = "entrada";
+
+      function selecionarTipo(novoTipo) {
+        tipo = novoTipo;
+        const ehEntrada = tipo === "entrada";
+
+        const tabEntrada = document.getElementById("tab-entrada");
+        const tabSaida = document.getElementById("tab-saida");
+
+        tabEntrada.classList.toggle("is-active", ehEntrada);
+        tabSaida.classList.toggle("is-active", !ehEntrada);
+        tabEntrada.setAttribute("aria-pressed", String(ehEntrada));
+        tabSaida.setAttribute("aria-pressed", String(!ehEntrada));
+
+        document.getElementById("grupo-entrada").hidden = !ehEntrada;
+        document.getElementById("grupo-saida").hidden = ehEntrada;
+
+        atualizarPrevisao();
       }
-    }
-  </script>
-</body>
+
+      function ajustar(delta) {
+        const campo = document.getElementById("quantidade");
+        const atual = parseInt(campo.value, 10) || 0;
+        campo.value = Math.max(1, atual + delta);
+        atualizarPrevisao();
+      }
+
+      function atualizarPrevisao() {
+        const qtd =
+          parseInt(document.getElementById("quantidade").value, 10) || 0;
+        const saldo =
+          tipo === "entrada" ? ESTOQUE_ATUAL + qtd : ESTOQUE_ATUAL - qtd;
+        const painel = document.getElementById("previsao");
+
+        let classe = "alert alert-success";
+        let extra = "";
+
+        // RN06 — a saída não pode exceder o estoque disponível
+        if (tipo === "saida" && qtd > ESTOQUE_ATUAL) {
+          classe = "alert alert-danger";
+          extra =
+            "<p class='mt-sm'><strong>Erro:</strong> a saída de " +
+            qtd +
+            " unidades excede o estoque disponível de " +
+            ESTOQUE_ATUAL +
+            " unidades. Regra RN06.</p>";
+        } else if (saldo <= ESTOQUE_MINIMO) {
+          // RN07 — abaixo ou igual ao mínimo, o produto entra em estado crítico
+          classe = "alert alert-warning";
+          extra =
+            "<p class='mt-sm'><strong>Atenção:</strong> o produto ficará em estoque crítico (mínimo de " +
+            ESTOQUE_MINIMO +
+            " unidades). Regra RN07.</p>";
+        }
+
+        painel.className = classe;
+        painel.innerHTML =
+          "<p class='fw-bold'>Previsão após movimentação</p>" +
+          "<p>Estoque atual: <strong>" +
+          ESTOQUE_ATUAL +
+          " unidades</strong></p>" +
+          "<p>Após esta movimentação: <strong>" +
+          Math.max(0, saldo) +
+          " unidades</strong></p>" +
+          extra;
+      }
+
+      function confirmar() {
+        const qtd =
+          parseInt(document.getElementById("quantidade").value, 10) || 0;
+
+        if (tipo === "saida" && qtd > ESTOQUE_ATUAL) {
+          alert(
+            "Não é possível registrar esta saída.\n\nA quantidade informada (" +
+              qtd +
+              ") é maior que o estoque disponível (" +
+              ESTOQUE_ATUAL +
+              ").\n\nRegra de negócio RN06.",
+          );
+          return;
+        }
+
+        alert("Movimentação registrada com sucesso!");
+        window.location = "dashboard.html";
+      }
+
+      atualizarPrevisao();
+    </script>
+  </body>
 </html>

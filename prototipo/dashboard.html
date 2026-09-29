@@ -1,116 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="header">
-      <div>
-        <h1 class="header-title">Olá, Matheus</h1>
-      </div>
-      <div style="display: flex; gap: 16px;">
-        <div style="position: relative;">
-          <span class="header-icon">🔔</span>
-          <span class="badge">8</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Dashboard</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <div>
+          <h1 class="header-title">Olá, Matheus</h1>
         </div>
-        <span class="header-icon">👤</span>
-      </div>
-    </div>
-    
-    <div class="content">
-      <!-- Cards de Resumo -->
-      <div class="card-grid">
-        <div class="card-stat">
-          <div class="card-stat-icon">📦</div>
-          <div class="card-stat-number">247</div>
-          <div class="card-stat-label">produtos cadastrados</div>
+        <div style="display: flex; gap: var(--space-sm)">
+          <button
+            type="button"
+            class="header-icon"
+            style="position: relative"
+            onclick="
+              alert(
+                'Protótipo: aqui seria aberta a central de notificações com os 8 alertas de estoque.',
+              )
+            "
+          >
+            <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 15 18 9Z"/><path d="M13.8 20.5a2.2 2.2 0 0 1-3.6 0"/></svg></span>
+            <span class="sr-only">Notificações</span>
+            <span class="badge" role="img" aria-label="8 alertas não lidos"
+              >8</span
+            >
+          </button>
+          <a
+            href="configuracoes.html"
+            class="header-icon"
+            aria-label="Perfil e configurações"
+          >
+            <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-1a7.5 7.5 0 0 1 15 0v1"/></svg></span>
+          </a>
         </div>
-        
-        <div class="card-stat">
-          <div class="card-stat-icon">💰</div>
-          <div class="card-stat-number">R$ 12,4k</div>
-          <div class="card-stat-label">valor em estoque</div>
+      </header>
+
+      <main class="content">
+        <!-- Cards de Resumo -->
+        <h2 class="sr-only">Resumo do estoque</h2>
+        <div class="card-grid">
+          <div class="card-stat">
+            <div class="card-stat-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5"/><path d="M12 12v9"/></svg></div>
+            <div class="card-stat-number">247</div>
+            <div class="card-stat-label">produtos cadastrados</div>
+          </div>
+
+          <div class="card-stat">
+            <div class="card-stat-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 7.5h19v11h-19v-11Z"/><circle cx="12" cy="13" r="2.6"/><path d="M6 13h.01"/><path d="M18 13h.01"/></svg></div>
+            <div class="card-stat-number">R$ 12,4k</div>
+            <div class="card-stat-label">valor em estoque</div>
+          </div>
+
+          <a
+            href="produtos.html?filtro=critico"
+            class="card-stat"
+            style="text-decoration: none; color: inherit"
+            aria-label="8 produtos críticos. Abrir lista de produtos filtrada por estoque crítico"
+          >
+            <div class="card-stat-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.6 4.2 2.4 18a1.6 1.6 0 0 0 1.4 2.4h16.4A1.6 1.6 0 0 0 21.6 18L13.4 4.2a1.6 1.6 0 0 0-2.8 0Z"/><path d="M12 9.5v4"/><path d="M12 17h.01"/></svg></div>
+            <div class="card-stat-number critical">8</div>
+            <div class="card-stat-label">produtos críticos</div>
+          </a>
+
+          <div class="card-stat">
+            <div class="card-stat-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 5.5h17v15h-17v-15Z"/><path d="M8 3v5"/><path d="M16 3v5"/><path d="M3.5 11h17"/></svg></div>
+            <div class="card-stat-number warning">3</div>
+            <div class="card-stat-label">próx. ao vencimento</div>
+          </div>
         </div>
-        
-        <a href="produtos.html?filtro=critico" class="card-stat" style="text-decoration: none;">
-          <div class="card-stat-icon">⚠️</div>
-          <div class="card-stat-number critical">8</div>
-          <div class="card-stat-label">produtos críticos</div>
+
+        <!-- Produtos Mais Vendidos -->
+        <h2 class="section-title" id="titulo-mais-vendidos">
+          Produtos Mais Vendidos
+        </h2>
+        <figure
+          class="chart-figure"
+          aria-labelledby="titulo-mais-vendidos"
+          aria-describedby="legenda-mais-vendidos"
+        >
+          <div class="chart">
+            <div class="chart-bar">
+              <div class="chart-label">Arroz Tipo 1 5kg</div>
+              <div class="chart-bar-fill" style="width: 85%">
+                <span class="chart-value">42 un</span>
+              </div>
+            </div>
+            <div class="chart-bar">
+              <div class="chart-label">Feijão Preto 1kg</div>
+              <div class="chart-bar-fill" style="width: 70%">
+                <span class="chart-value">35 un</span>
+              </div>
+            </div>
+            <div class="chart-bar">
+              <div class="chart-label">Refrigerante Cola 2L</div>
+              <div class="chart-bar-fill" style="width: 55%">
+                <span class="chart-value">27 un</span>
+              </div>
+            </div>
+            <div class="chart-bar">
+              <div class="chart-label">Detergente 500ml</div>
+              <div class="chart-bar-fill" style="width: 40%">
+                <span class="chart-value">20 un</span>
+              </div>
+            </div>
+            <div class="chart-bar">
+              <div class="chart-label">Sabonete 90g</div>
+              <div class="chart-bar-fill" style="width: 30%">
+                <span class="chart-value">15 un</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="chart-caption" id="legenda-mais-vendidos">
+            Gráfico de barras com os 5 produtos mais vendidos no último mês, em
+            unidades: Arroz Tipo 1 5kg, 42 unidades; Feijão Preto 1kg, 35
+            unidades; Refrigerante Cola 2L, 27 unidades; Detergente 500ml, 20
+            unidades; Sabonete 90g, 15 unidades.
+          </figcaption>
+        </figure>
+      </main>
+
+      <!-- Floating Action Button -->
+      <button
+        type="button"
+        class="fab"
+        aria-label="Ações rápidas"
+        onclick="
+          alert(
+            'Ações rápidas:\n• Registrar Venda\n• Registrar Entrada\n• Cadastrar Produto',
+          )
+        "
+      >
+        <span aria-hidden="true">+</span>
+      </button>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav" aria-label="Navegação principal">
+        <a href="dashboard.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5V21H3V10.5Z"/><path d="M9.5 21v-6h5v6"/></svg></span>
+          <span>Início</span>
         </a>
-        
-        <div class="card-stat">
-          <div class="card-stat-icon">📅</div>
-          <div class="card-stat-number warning">3</div>
-          <div class="card-stat-label">próx. ao vencimento</div>
-        </div>
-      </div>
-      
-      <!-- Produtos Mais Vendidos -->
-      <h2 class="section-title">Produtos Mais Vendidos</h2>
-      <div class="chart">
-        <div class="chart-bar">
-          <div class="chart-label">Arroz Tipo 1 5kg</div>
-          <div class="chart-bar-fill" style="width: 85%;">
-            <span class="chart-value">42 un</span>
-          </div>
-        </div>
-        <div class="chart-bar">
-          <div class="chart-label">Feijão Preto 1kg</div>
-          <div class="chart-bar-fill" style="width: 70%;">
-            <span class="chart-value">35 un</span>
-          </div>
-        </div>
-        <div class="chart-bar">
-          <div class="chart-label">Refrigerante Cola 2L</div>
-          <div class="chart-bar-fill" style="width: 55%;">
-            <span class="chart-value">27 un</span>
-          </div>
-        </div>
-        <div class="chart-bar">
-          <div class="chart-label">Detergente 500ml</div>
-          <div class="chart-bar-fill" style="width: 40%;">
-            <span class="chart-value">20 un</span>
-          </div>
-        </div>
-        <div class="chart-bar">
-          <div class="chart-label">Sabonete 90g</div>
-          <div class="chart-bar-fill" style="width: 30%;">
-            <span class="chart-value">15 un</span>
-          </div>
-        </div>
-      </div>
+        <a href="produtos.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5"/><path d="M12 12v9"/></svg></span>
+          <span>Produtos</span>
+        </a>
+        <a href="movimentacao.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 20V4"/><path d="m3.5 7.5 3.5-3.5 3.5 3.5"/><path d="M17 4v16"/><path d="m13.5 16.5 3.5 3.5 3.5-3.5"/></svg></span>
+          <span>Movimentação</span>
+        </a>
+        <a href="relatorios.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 21h18"/><path d="M6 21v-7"/><path d="M12 21V4"/><path d="M18 21v-11"/></svg></span>
+          <span>Relatórios</span>
+        </a>
+        <a href="configuracoes.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8h18"/><path d="M3 16h18"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg></span>
+          <span>Mais</span>
+        </a>
+      </nav>
     </div>
-    
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="alert('Ações rápidas:\n• Registrar Venda\n• Registrar Entrada\n• Cadastrar Produto')">+</button>
-    
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-      <a href="dashboard.html" class="nav-item active">
-        <span class="nav-icon">🏠</span>
-        <span>Início</span>
-      </a>
-      <a href="produtos.html" class="nav-item">
-        <span class="nav-icon">📦</span>
-        <span>Produtos</span>
-      </a>
-      <a href="movimentacao.html" class="nav-item">
-        <span class="nav-icon">🔄</span>
-        <span>Movimentação</span>
-      </a>
-      <a href="relatorios.html" class="nav-item">
-        <span class="nav-icon">📊</span>
-        <span>Relatórios</span>
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">⚙️</span>
-        <span>Mais</span>
-      </a>
-    </nav>
-  </div>
-</body>
+  </body>
 </html>

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Fornecedores</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a
+          href="configuracoes.html"
+          class="header-icon"
+          aria-label="Voltar para configurações"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Fornecedores</h1>
+        <span class="header-spacer" aria-hidden="true"></span>
+      </header>
+
+      <main class="content">
+        <!-- Busca -->
+        <div class="search-bar">
+          <label for="busca-fornecedor" class="sr-only"
+            >Buscar fornecedor por nome</label
+          >
+          <span class="search-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m20.5 20.5-4.9-4.9"/></svg></span>
+          <input
+            type="search"
+            id="busca-fornecedor"
+            name="busca-fornecedor"
+            class="search-input"
+            placeholder="Buscar fornecedor..."
+          />
+        </div>
+
+        <!-- Lista -->
+        <section id="lista-fornecedores" aria-labelledby="titulo-lista">
+          <h2 class="section-subtitle" id="titulo-lista">
+            3 fornecedores cadastrados
+          </h2>
+
+          <ul class="plain-list">
+            <li class="list-item">
+              <span class="avatar" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 21V3.5h15V21"/><path d="M3 21h18"/><path d="M8.5 7.5h2"/><path d="M13.5 7.5h2"/><path d="M8.5 12h2"/><path d="M13.5 12h2"/><path d="M10.5 21v-4.5h3V21"/></svg></span>
+              <span class="list-item-info">
+                <span class="list-item-title">Distribuidora ABC Ltda</span>
+                <span class="list-item-meta"
+                  >(62) 3333-4444 · 12 produtos</span
+                >
+              </span>
+              <span class="list-item-actions">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  aria-label="Editar fornecedor Distribuidora ABC Ltda"
+                  onclick="abrirFormulario('Distribuidora ABC Ltda')"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5L16.5 3.5Z"/></svg></span>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn danger"
+                  aria-label="Excluir fornecedor Distribuidora ABC Ltda"
+                  onclick="tentarExcluir('Distribuidora ABC Ltda', 12)"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 6h17"/><path d="M8.5 6V3.5h7V6"/><path d="M6 6l1 14.5h10L18 6"/><path d="M10.5 10v7"/><path d="M13.5 10v7"/></svg></span>
+                </button>
+              </span>
+            </li>
+
+            <li class="list-item">
+              <span class="avatar" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 21V3.5h15V21"/><path d="M3 21h18"/><path d="M8.5 7.5h2"/><path d="M13.5 7.5h2"/><path d="M8.5 12h2"/><path d="M13.5 12h2"/><path d="M10.5 21v-4.5h3V21"/></svg></span>
+              <span class="list-item-info">
+                <span class="list-item-title">Comercial XYZ</span>
+                <span class="list-item-meta">(62) 3555-6666 · 8 produtos</span>
+              </span>
+              <span class="list-item-actions">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  aria-label="Editar fornecedor Comercial XYZ"
+                  onclick="abrirFormulario('Comercial XYZ')"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5L16.5 3.5Z"/></svg></span>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn danger"
+                  aria-label="Excluir fornecedor Comercial XYZ"
+                  onclick="tentarExcluir('Comercial XYZ', 8)"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 6h17"/><path d="M8.5 6V3.5h7V6"/><path d="M6 6l1 14.5h10L18 6"/><path d="M10.5 10v7"/><path d="M13.5 10v7"/></svg></span>
+                </button>
+              </span>
+            </li>
+
+            <li class="list-item">
+              <span class="avatar" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 21V3.5h15V21"/><path d="M3 21h18"/><path d="M8.5 7.5h2"/><path d="M13.5 7.5h2"/><path d="M8.5 12h2"/><path d="M13.5 12h2"/><path d="M10.5 21v-4.5h3V21"/></svg></span>
+              <span class="list-item-info">
+                <span class="list-item-title">Atacadão Central</span>
+                <span class="list-item-meta">(62) 3777-8888 · 0 produtos</span>
+              </span>
+              <span class="list-item-actions">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  aria-label="Editar fornecedor Atacadão Central"
+                  onclick="abrirFormulario('Atacadão Central')"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5L16.5 3.5Z"/></svg></span>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn danger"
+                  aria-label="Excluir fornecedor Atacadão Central"
+                  onclick="tentarExcluir('Atacadão Central', 0)"
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 6h17"/><path d="M8.5 6V3.5h7V6"/><path d="M6 6l1 14.5h10L18 6"/><path d="M10.5 10v7"/><path d="M13.5 10v7"/></svg></span>
+                </button>
+              </span>
+            </li>
+          </ul>
+
+          <p class="input-hint">
+            Um fornecedor só pode ser excluído quando não há produtos vinculados
+            a ele (regra RN13).
+          </p>
+        </section>
+
+        <!-- Formulário -->
+        <section id="form-secao" aria-labelledby="titulo-form" hidden>
+          <h2 class="section-subtitle" id="titulo-form">Novo fornecedor</h2>
+          <form
+            class="card"
+            onsubmit="event.preventDefault(); alert('Fornecedor salvo com sucesso!'); fecharFormulario();"
+          >
+            <div class="input-group">
+              <label class="input-label" for="forn-nome">
+                Nome <span aria-hidden="true">*</span>
+                <span class="sr-only">(obrigatório)</span>
+              </label>
+              <input
+                type="text"
+                id="forn-nome"
+                name="forn-nome"
+                class="input-field"
+                placeholder="Ex: Distribuidora ABC Ltda"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forn-telefone">Telefone</label>
+              <input
+                type="tel"
+                id="forn-telefone"
+                name="forn-telefone"
+                class="input-field"
+                placeholder="(62) 99999-9999"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forn-email">E-mail</label>
+              <input
+                type="email"
+                id="forn-email"
+                name="forn-email"
+                class="input-field"
+                placeholder="contato@fornecedor.com.br"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forn-endereco">Endereço</label>
+              <input
+                type="text"
+                id="forn-endereco"
+                name="forn-endereco"
+                class="input-field"
+                placeholder="Rua, número, bairro, cidade"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="forn-observacoes"
+                >Observações</label
+              >
+              <textarea
+                id="forn-observacoes"
+                name="forn-observacoes"
+                class="input-field"
+                rows="3"
+                placeholder="Prazo de entrega, condições de pagamento..."
+              ></textarea>
+            </div>
+
+            <div class="action-bar">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="fecharFormulario()"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+          </form>
+        </section>
+      </main>
+
+      <!-- Ação principal -->
+      <button
+        type="button"
+        class="fab"
+        id="fab-novo"
+        aria-label="Cadastrar fornecedor"
+        onclick="abrirFormulario()"
+      >
+        <span aria-hidden="true">+</span>
+      </button>
+
+      <!-- Navegação inferior -->
+      <nav class="bottom-nav" aria-label="Navegação principal">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5V21H3V10.5Z"/><path d="M9.5 21v-6h5v6"/></svg></span>
+          <span>Início</span>
+        </a>
+        <a href="produtos.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5"/><path d="M12 12v9"/></svg></span>
+          <span>Produtos</span>
+        </a>
+        <a href="movimentacao.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 20V4"/><path d="m3.5 7.5 3.5-3.5 3.5 3.5"/><path d="M17 4v16"/><path d="m13.5 16.5 3.5 3.5 3.5-3.5"/></svg></span>
+          <span>Movimentação</span>
+        </a>
+        <a href="relatorios.html" class="nav-item">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 21h18"/><path d="M6 21v-7"/><path d="M12 21V4"/><path d="M18 21v-11"/></svg></span>
+          <span>Relatórios</span>
+        </a>
+        <a href="configuracoes.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8h18"/><path d="M3 16h18"/><circle cx="9" cy="8" r="2.2"/><circle cx="15" cy="16" r="2.2"/></svg></span>
+          <span>Mais</span>
+        </a>
+      </nav>
+    </div>
+
+    <script>
+      function abrirFormulario(nome) {
+        const secao = document.getElementById("form-secao");
+        const titulo = document.getElementById("titulo-form");
+
+        titulo.textContent = nome ? "Editar fornecedor" : "Novo fornecedor";
+        document.getElementById("forn-nome").value = nome || "";
+
+        secao.hidden = false;
+        document.getElementById("lista-fornecedores").hidden = true;
+        document.getElementById("fab-novo").hidden = true;
+        document.getElementById("forn-nome").focus();
+      }
+
+      function fecharFormulario() {
+        document.getElementById("form-secao").hidden = true;
+        document.getElementById("lista-fornecedores").hidden = false;
+        document.getElementById("fab-novo").hidden = false;
+      }
+
+      // RN13 — fornecedor com produtos vinculados não pode ser excluído
+      function tentarExcluir(nome, produtosVinculados) {
+        if (produtosVinculados > 0) {
+          alert(
+            "Não é possível excluir " +
+              nome +
+              ".\n\nExistem " +
+              produtosVinculados +
+              " produtos vinculados a este fornecedor. Reatribua ou desative esses produtos antes de excluí-lo.\n\nRegra de negócio RN13.",
+          );
+          return;
+        }
+
+        if (confirm("Excluir o fornecedor " + nome + "?")) {
+          alert("Fornecedor excluído com sucesso.");
+        }
+      }
+    </script>
+  </body>
+</html>

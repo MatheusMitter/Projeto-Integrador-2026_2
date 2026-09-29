@@ -1,111 +1,269 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Novo Produto</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="header">
-      <a href="produtos.html" class="header-icon">←</a>
-      <h1 class="header-title">Novo Produto</h1>
-      <span class="header-icon" onclick="alert('Produto salvo com sucesso!'); window.location='produtos.html';">✓</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Novo Produto</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a
+          href="produtos.html"
+          class="header-icon"
+          aria-label="Voltar para a lista de produtos"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Novo Produto</h1>
+        <button
+          type="submit"
+          form="form-produto"
+          class="header-icon"
+          aria-label="Salvar produto"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m20 6.5-10.5 11L4 12"/></svg></span>
+        </button>
+      </header>
+
+      <main class="content">
+        <form
+          id="form-produto"
+          onsubmit="
+            event.preventDefault();
+            alert('Produto cadastrado com sucesso!');
+            window.location = 'produtos.html';
+          "
+        >
+          <!-- Foto -->
+          <fieldset class="fieldset">
+            <legend class="section-subtitle">Foto do produto</legend>
+            <div class="text-center mb-lg">
+              <div class="photo-placeholder" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5h3l1.5-2.5h9L18 8.5h3v11H3v-11Z"/><circle cx="12" cy="13.5" r="3.2"/></svg></div>
+              <button
+                type="button"
+                class="btn btn-secondary mt-md"
+                style="max-width: 200px; margin: 0 auto"
+                onclick="
+                  alert(
+                    'Protótipo: abriria a câmera do aparelho ou a galeria de fotos (recurso nativo — requisito R8).',
+                  )
+                "
+              >
+                Adicionar Foto
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- Identificação -->
+          <fieldset class="fieldset">
+            <legend class="section-subtitle">Identificação</legend>
+
+            <div class="input-group">
+              <label class="input-label" for="codigo-barras"
+                >Código de Barras</label
+              >
+              <div style="display: flex; gap: var(--space-sm)">
+                <input
+                  type="text"
+                  id="codigo-barras"
+                  name="codigo-barras"
+                  class="input-field"
+                  placeholder="7891234567890"
+                  inputmode="numeric"
+                  aria-describedby="ajuda-codigo"
+                  style="flex: 1"
+                />
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  style="width: 48px; padding: 0; flex-shrink: 0"
+                  aria-label="Ler código de barras com a câmera"
+                  onclick="
+                    alert(
+                      'Protótipo: o leitor de código de barras seria ativado e os dados do produto buscados na API Open Food Facts (requisitos R7 e R8).',
+                    )
+                  "
+                >
+                  <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5h3l1.5-2.5h9L18 8.5h3v11H3v-11Z"/><circle cx="12" cy="13.5" r="3.2"/></svg></span>
+                </button>
+              </div>
+              <p class="input-hint" id="ajuda-codigo">
+                Ao ler o código, os dados do produto são buscados
+                automaticamente na base Open Food Facts.
+              </p>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="nome-produto">
+                Nome do Produto <span aria-hidden="true">*</span>
+                <span class="sr-only">(obrigatório)</span>
+              </label>
+              <input
+                type="text"
+                id="nome-produto"
+                name="nome-produto"
+                class="input-field"
+                placeholder="Ex: Arroz Tipo 1 5kg"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="categoria">
+                Categoria <span aria-hidden="true">*</span>
+                <span class="sr-only">(obrigatório)</span>
+              </label>
+              <select
+                id="categoria"
+                name="categoria"
+                class="select-field"
+                required
+              >
+                <option value="">Selecione...</option>
+                <option value="alimentos">Alimentos</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="higiene">Higiene</option>
+                <option value="outros">Outros</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="fornecedor">Fornecedor</label>
+              <select id="fornecedor" name="fornecedor" class="select-field">
+                <option value="">Selecione...</option>
+                <option value="1">Distribuidora ABC Ltda</option>
+                <option value="2">Comercial XYZ</option>
+                <option value="3">Atacadão Central</option>
+              </select>
+              <a href="fornecedores.html" class="link link-sm"
+                >+ Cadastrar novo fornecedor</a
+              >
+            </div>
+          </fieldset>
+
+          <!-- Precificação -->
+          <fieldset class="fieldset">
+            <legend class="section-subtitle">Precificação</legend>
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label" for="preco-custo">
+                  Preço de Custo <span aria-hidden="true">*</span>
+                  <span class="sr-only">(obrigatório, em reais)</span>
+                </label>
+                <input
+                  type="number"
+                  id="preco-custo"
+                  name="preco-custo"
+                  class="input-field"
+                  placeholder="0,00"
+                  step="0.01"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="preco-venda">
+                  Preço de Venda <span aria-hidden="true">*</span>
+                  <span class="sr-only">(obrigatório, em reais)</span>
+                </label>
+                <input
+                  type="number"
+                  id="preco-venda"
+                  name="preco-venda"
+                  class="input-field"
+                  placeholder="0,00"
+                  step="0.01"
+                  min="0"
+                  required
+                  aria-describedby="ajuda-margem"
+                />
+              </div>
+            </div>
+
+            <p class="alert alert-info" id="ajuda-margem">
+              <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><path d="M12 7.8h.01"/></svg></span> A margem de lucro é calculada
+              automaticamente. Se o preço de venda for menor que o custo, o
+              sistema avisa mas permite salvar (regra RN03).
+            </p>
+          </fieldset>
+
+          <!-- Estoque -->
+          <fieldset class="fieldset">
+            <legend class="section-subtitle">Estoque</legend>
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label" for="quantidade-inicial">
+                  Quantidade Inicial <span aria-hidden="true">*</span>
+                  <span class="sr-only">(obrigatório)</span>
+                </label>
+                <input
+                  type="number"
+                  id="quantidade-inicial"
+                  name="quantidade-inicial"
+                  class="input-field"
+                  placeholder="0"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="estoque-minimo">
+                  Estoque Mínimo <span aria-hidden="true">*</span>
+                  <span class="sr-only">(obrigatório)</span>
+                </label>
+                <input
+                  type="number"
+                  id="estoque-minimo"
+                  name="estoque-minimo"
+                  class="input-field"
+                  placeholder="0"
+                  min="0"
+                  required
+                  aria-describedby="ajuda-minimo"
+                />
+              </div>
+            </div>
+            <p class="input-hint" id="ajuda-minimo">
+              Você será alertado quando o estoque ficar igual ou abaixo do
+              mínimo (regra RN07).
+            </p>
+
+            <div class="input-group">
+              <label class="input-label" for="validade"
+                >Data de Validade (opcional)</label
+              >
+              <input
+                type="date"
+                id="validade"
+                name="validade"
+                class="input-field"
+              />
+            </div>
+          </fieldset>
+
+          <!-- Ações -->
+          <div class="action-bar">
+            <a href="produtos.html" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+              Salvar Produto
+            </button>
+          </div>
+        </form>
+      </main>
     </div>
-    
-    <div class="content">
-      <!-- Foto do Produto -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="width: 120px; height: 120px; margin: 0 auto; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 48px; cursor: pointer;" onclick="alert('Tirar foto ou escolher da galeria')">
-          📷
-        </div>
-        <button class="btn btn-secondary mt-md" style="max-width: 200px; margin: 0 auto;" onclick="alert('Tirar foto ou escolher da galeria')">Adicionar Foto</button>
-      </div>
-      
-      <!-- Código de Barras -->
-      <div class="input-group">
-        <label class="input-label">Código de Barras</label>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" class="input-field" placeholder="7891234567890" style="flex: 1;">
-          <button class="btn btn-secondary" style="width: 48px; padding: 0; flex-shrink: 0;" onclick="alert('Scanner de código de barras ativado')">📷</button>
-        </div>
-      </div>
-      
-      <!-- Nome -->
-      <div class="input-group">
-        <label class="input-label">Nome do Produto *</label>
-        <input type="text" class="input-field" placeholder="Ex: Arroz Tipo 1 5kg">
-      </div>
-      
-      <!-- Categoria -->
-      <div class="input-group">
-        <label class="input-label">Categoria *</label>
-        <select class="select-field">
-          <option value="">Selecione...</option>
-          <option value="alimentos">Alimentos</option>
-          <option value="bebidas">Bebidas</option>
-          <option value="limpeza">Limpeza</option>
-          <option value="higiene">Higiene</option>
-          <option value="outros">Outros</option>
-        </select>
-      </div>
-      
-      <!-- Fornecedor -->
-      <div class="input-group">
-        <label class="input-label">Fornecedor</label>
-        <select class="select-field">
-          <option value="">Selecione...</option>
-          <option value="1">Distribuidora ABC Ltda</option>
-          <option value="2">Comercial XYZ</option>
-        </select>
-        <a href="#" class="link" style="margin-top: 8px; font-size: 12px;">+ Cadastrar novo fornecedor</a>
-      </div>
-      
-      <!-- Preços -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="input-group">
-          <label class="input-label">Preço de Custo *</label>
-          <input type="number" class="input-field" placeholder="R$ 0,00" step="0.01">
-        </div>
-        <div class="input-group">
-          <label class="input-label">Preço de Venda *</label>
-          <input type="number" class="input-field" placeholder="R$ 0,00" step="0.01">
-        </div>
-      </div>
-      
-      <div class="alert alert-success" style="font-size: 12px;">
-        💡 Margem de lucro: será calculada automaticamente
-      </div>
-      
-      <!-- Estoque -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="input-group">
-          <label class="input-label">Quantidade Inicial *</label>
-          <input type="number" class="input-field" placeholder="0" min="0">
-        </div>
-        <div class="input-group">
-          <label class="input-label">Estoque Mínimo *</label>
-          <input type="number" class="input-field" placeholder="0" min="0">
-        </div>
-      </div>
-      
-      <div style="font-size: 12px; color: #757575; margin-top: -8px; margin-bottom: 16px;">
-        Você será alertado quando o estoque ficar abaixo do mínimo
-      </div>
-      
-      <!-- Data de Validade -->
-      <div class="input-group">
-        <label class="input-label">Data de Validade (opcional)</label>
-        <input type="date" class="input-field">
-      </div>
-      
-      <!-- Botões -->
-      <div style="display: flex; gap: 8px; margin-top: 24px; margin-bottom: 24px;">
-        <a href="produtos.html" class="btn btn-secondary" style="flex: 1;">Cancelar</a>
-        <button class="btn btn-primary" style="flex: 1;" onclick="alert('Produto cadastrado com sucesso!'); window.location='produtos.html';">Salvar Produto</button>
-      </div>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

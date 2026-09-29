@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Recuperar Senha</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a href="index.html" class="header-icon" aria-label="Voltar para o login">
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Recuperar Senha</h1>
+        <span class="header-spacer" aria-hidden="true"></span>
+      </header>
+
+      <main class="content content-centered">
+        <div class="logo" aria-hidden="true">S</div>
+
+        <div style="width: 100%; max-width: 320px">
+          <p class="text-gray text-center mb-lg">
+            Informe o e-mail cadastrado e enviaremos um link para você redefinir
+            a sua senha. O link é válido por 24 horas.
+          </p>
+
+          <form
+            onsubmit="event.preventDefault(); document.getElementById('confirmacao').hidden = false; document.getElementById('form-recuperar').hidden = true;"
+            id="form-recuperar"
+          >
+            <div class="input-group">
+              <label class="input-label" for="email-recuperacao">
+                E-mail cadastrado <span aria-hidden="true">*</span>
+                <span class="sr-only">(obrigatório)</span>
+              </label>
+              <input
+                type="email"
+                id="email-recuperacao"
+                name="email-recuperacao"
+                class="input-field"
+                placeholder="seu@email.com"
+                autocomplete="email"
+                required
+                aria-describedby="ajuda-recuperacao"
+              />
+              <p class="input-hint" id="ajuda-recuperacao">
+                Por segurança, a confirmação de envio é exibida mesmo que o
+                e-mail não esteja cadastrado.
+              </p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar link</button>
+          </form>
+
+          <div
+            class="alert alert-success"
+            id="confirmacao"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <p class="fw-bold">Link enviado</p>
+            <p>
+              Se este e-mail estiver cadastrado, você receberá as instruções de
+              redefinição em alguns minutos. Verifique também a caixa de spam.
+            </p>
+          </div>
+
+          <a href="index.html" class="link">Voltar para login</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,126 +1,204 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Detalhes do Produto</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="header">
-      <a href="produtos.html" class="header-icon">←</a>
-      <h1 class="header-title">Detalhes</h1>
-      <div style="display: flex; gap: 16px;">
-        <span class="header-icon">✏️</span>
-        <span class="header-icon" style="color: #F44336;" onclick="if(confirm('Tem certeza? Esta ação excluirá o produto e todo o histórico.')) { alert('Produto excluído'); window.location='produtos.html'; }">🗑️</span>
-      </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Detalhes do Produto</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <header class="header">
+        <a
+          href="produtos.html"
+          class="header-icon"
+          aria-label="Voltar para a lista de produtos"
+        >
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+        </a>
+        <h1 class="header-title">Detalhes</h1>
+        <div style="display: flex; gap: var(--space-xs)">
+          <a
+            href="produto-cadastro.html"
+            class="header-icon"
+            aria-label="Editar produto"
+          >
+            <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5L16.5 3.5Z"/></svg></span>
+          </a>
+          <button
+            type="button"
+            class="icon-btn danger"
+            aria-label="Desativar produto"
+            onclick="
+              if (
+                confirm(
+                  'Desativar o produto Arroz Tipo 1 5kg?\n\nEle deixa de aparecer nas listagens, mas o histórico de movimentações é preservado para auditoria (regra RN12).',
+                )
+              ) {
+                alert('Produto desativado.');
+                window.location = 'produtos.html';
+              }
+            "
+          >
+            <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 6h17"/><path d="M8.5 6V3.5h7V6"/><path d="M6 6l1 14.5h10L18 6"/><path d="M10.5 10v7"/><path d="M13.5 10v7"/></svg></span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Identificação -->
+        <div class="text-center mb-lg">
+          <div class="product-hero" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5"/><path d="M12 12v9"/></svg></div>
+          <h2 class="product-hero-name">Arroz Tipo 1 5kg</h2>
+          <p class="product-hero-code">Código de barras 7891234567890</p>
+          <p class="status-pill status-pill-normal">
+            <span aria-hidden="true">●</span> Estoque normal
+          </p>
+        </div>
+
+        <!-- Estoque e categoria -->
+        <h3 class="sr-only">Situação de estoque e categoria</h3>
+        <div class="card-grid mb-lg">
+          <div class="card">
+            <p class="data-label">Estoque atual</p>
+            <p class="data-value data-value-ok">50 unidades</p>
+            <p class="data-hint">Mínimo: 10 un</p>
+            <div
+              class="progress"
+              role="img"
+              aria-label="Estoque em 50 unidades, cinco vezes acima do mínimo de 10 unidades"
+            >
+              <div class="progress-fill" style="width: 80%"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <p class="data-label">Categoria</p>
+            <p class="data-value-sm">Alimentos</p>
+            <a
+              href="produtos.html"
+              class="btn btn-secondary btn-sm"
+              aria-label="Ver outros produtos da categoria Alimentos"
+              >Ver outros</a
+            >
+          </div>
+        </div>
+
+        <!-- Precificação -->
+        <div class="card mb-md">
+          <h3 class="card-title">Precificação</h3>
+          <dl class="data-list">
+            <div class="data-row">
+              <dt>Preço de custo</dt>
+              <dd class="fw-bold">R$ 15,00</dd>
+            </div>
+            <div class="data-row">
+              <dt>Preço de venda</dt>
+              <dd class="fw-bold">R$ 22,00</dd>
+            </div>
+            <div class="data-row data-row-total">
+              <dt class="text-primary fw-bold">Margem de lucro</dt>
+              <dd class="text-primary fw-bold">R$ 7,00 (46,7%)</dd>
+            </div>
+          </dl>
+          <p class="input-hint">
+            Margem calculada pela regra RN10: (venda − custo) ÷ venda.
+          </p>
+        </div>
+
+        <!-- Fornecedor -->
+        <div class="card mb-md">
+          <h3 class="card-title">Fornecedor</h3>
+          <p class="fw-bold">Distribuidora ABC Ltda</p>
+          <p class="data-hint mb-sm">(62) 3333-4444</p>
+          <a
+            href="fornecedores.html"
+            class="btn btn-secondary btn-sm"
+            aria-label="Ver outros produtos do fornecedor Distribuidora ABC Ltda"
+            >Ver outros produtos deste fornecedor</a
+          >
+        </div>
+
+        <!-- Histórico -->
+        <h3 class="section-title">Últimas Movimentações</h3>
+        <ul class="plain-list">
+          <li class="card mb-sm">
+            <div class="data-row">
+              <div>
+                <p class="fw-bold">Saída — Venda</p>
+                <p class="data-hint">
+                  <time datetime="2026-09-18T14:32">18/09/2026 14:32</time>
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-danger fw-bold">−5 un</p>
+                <p class="data-hint">Saldo: 50</p>
+              </div>
+            </div>
+          </li>
+
+          <li class="card mb-sm">
+            <div class="data-row">
+              <div>
+                <p class="fw-bold">Entrada — Compra</p>
+                <p class="data-hint">
+                  <time datetime="2026-09-15T09:15">15/09/2026 09:15</time>
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-primary fw-bold">+30 un</p>
+                <p class="data-hint">Saldo: 55</p>
+              </div>
+            </div>
+          </li>
+
+          <li class="card mb-md">
+            <div class="data-row">
+              <div>
+                <p class="fw-bold">Saída — Venda</p>
+                <p class="data-hint">
+                  <time datetime="2026-09-12T16:20">12/09/2026 16:20</time>
+                </p>
+              </div>
+              <div class="text-right">
+                <p class="text-danger fw-bold">−8 un</p>
+                <p class="data-hint">Saldo: 25</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <button
+          type="button"
+          class="link"
+          onclick="
+            alert(
+              'Protótipo: abriria o histórico completo deste produto, com filtro por período, tipo de movimentação e usuário responsável.',
+            )
+          "
+        >
+          Ver histórico completo
+        </button>
+
+        <!-- Ações rápidas -->
+        <div class="action-bar">
+          <a href="movimentacao.html" class="btn btn-primary"
+            >Registrar Entrada</a
+          >
+          <a href="movimentacao.html" class="btn btn-danger">Registrar Saída</a>
+        </div>
+      </main>
     </div>
-    
-    <div class="content">
-      <!-- Foto e Info Principal -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div style="width: 120px; height: 120px; margin: 0 auto 16px; background: #F5F5F5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 64px;">
-          🍚
-        </div>
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">Arroz Tipo 1 5kg</h2>
-        <div style="font-size: 14px; color: #9E9E9E; margin-bottom: 8px;">7891234567890</div>
-        <span class="chip active">Normal</span>
-      </div>
-      
-      <!-- Cards de Info -->
-      <div class="card-grid" style="margin-bottom: 24px;">
-        <div class="card">
-          <div style="font-size: 12px; color: #757575; margin-bottom: 4px;">Estoque Atual</div>
-          <div style="font-size: 24px; font-weight: bold; color: #4CAF50;">50 unidades</div>
-          <div style="font-size: 12px; color: #757575; margin-top: 4px;">Mínimo: 10 un</div>
-          <div style="width: 100%; height: 4px; background: #E0E0E0; border-radius: 2px; margin-top: 8px;">
-            <div style="width: 80%; height: 100%; background: #4CAF50; border-radius: 2px;"></div>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div style="font-size: 12px; color: #757575; margin-bottom: 4px;">Categoria</div>
-          <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Alimentos</div>
-          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; width: 100%;">Ver outros</button>
-        </div>
-      </div>
-      
-      <!-- Preços -->
-      <div class="card" style="margin-bottom: 16px;">
-        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Precificação</h3>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <span style="color: #757575;">Preço de custo</span>
-          <span style="font-weight: 600;">R$ 15,00</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <span style="color: #757575;">Preço de venda</span>
-          <span style="font-weight: 600;">R$ 22,00</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #E0E0E0;">
-          <span style="color: #4CAF50; font-weight: 600;">Margem de lucro</span>
-          <span style="color: #4CAF50; font-weight: 600;">R$ 7,00 (46,7%)</span>
-        </div>
-      </div>
-      
-      <!-- Fornecedor -->
-      <div class="card" style="margin-bottom: 16px;">
-        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Fornecedor</h3>
-        <div style="font-weight: 600; margin-bottom: 4px;">Distribuidora ABC Ltda</div>
-        <div style="font-size: 14px; color: #757575; margin-bottom: 8px;">(62) 3333-4444</div>
-        <button class="btn btn-secondary" style="padding: 8px; font-size: 12px;">Ver outros produtos deste fornecedor</button>
-      </div>
-      
-      <!-- Histórico -->
-      <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Últimas Movimentações</h3>
-      
-      <div class="card" style="margin-bottom: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-          <div>
-            <div style="font-weight: 600; margin-bottom: 4px;">Venda</div>
-            <div style="font-size: 12px; color: #757575;">18/09/2026 14:32</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="color: #F44336; font-weight: 600;">-5 un</div>
-            <div style="font-size: 12px; color: #757575;">Saldo: 50</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card" style="margin-bottom: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-          <div>
-            <div style="font-weight: 600; margin-bottom: 4px;">Compra</div>
-            <div style="font-size: 12px; color: #757575;">15/09/2026 09:15</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="color: #4CAF50; font-weight: 600;">+30 un</div>
-            <div style="font-size: 12px; color: #757575;">Saldo: 55</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="card" style="margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-          <div>
-            <div style="font-weight: 600; margin-bottom: 4px;">Venda</div>
-            <div style="font-size: 12px; color: #757575;">12/09/2026 16:20</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="color: #F44336; font-weight: 600;">-8 un</div>
-            <div style="font-size: 12px; color: #757575;">Saldo: 25</div>
-          </div>
-        </div>
-      </div>
-      
-      <a href="#" class="link">Ver histórico completo</a>
-      
-      <!-- Botões de Ação -->
-      <div style="position: sticky; bottom: 0; background: white; padding: 16px 0; margin-top: 24px; border-top: 1px solid #E0E0E0; display: flex; gap: 8px;">
-        <a href="movimentacao.html" class="btn btn-primary" style="flex: 1;">Registrar Entrada</a>
-        <a href="movimentacao.html" class="btn btn-danger" style="flex: 1;">Registrar Saída</a>
-      </div>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

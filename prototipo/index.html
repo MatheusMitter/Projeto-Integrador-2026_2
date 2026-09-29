@@ -1,37 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockEasy - Login</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="mobile-container">
-    <div class="content content-centered">
-      <!-- Logo -->
-      <div class="logo">S</div>
-      <div class="logo-text">StockEasy</div>
-      <p class="text-gray text-center mb-lg">Controle de Estoque Inteligente</p>
-      
-      <!-- Formulário de Login -->
-      <div style="width: 100%; max-width: 320px;">
-        <div class="input-group">
-          <label class="input-label">E-mail</label>
-          <input type="email" class="input-field" placeholder="seu@email.com" value="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockEasy - Login</title>
+    <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
+         barra do navegador. Nao altera o comportamento no computador. -->
+    <meta name="theme-color" content="#2e7d32" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="StockEasy" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="icons/icon-192.png"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="mobile-container">
+      <main class="content content-centered">
+        <!-- Logo (decorativo: o nome do app já está no texto ao lado) -->
+        <div class="logo" aria-hidden="true">S</div>
+        <h1 class="logo-text">StockEasy</h1>
+        <p class="text-gray text-center mb-lg">
+          Controle de Estoque Inteligente
+        </p>
+
+        <!-- Formulário de Login -->
+        <div style="width: 100%; max-width: 320px">
+          <!-- Campos pré-preenchidos: é um protótipo de interface, sem
+               autenticação real. As credenciais correspondem à carga de
+               exemplo do banco, documentada na modelagem. -->
+          <form action="dashboard.html" method="get" novalidate>
+            <div class="input-group">
+              <label class="input-label" for="login-email">E-mail</label>
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                class="input-field"
+                placeholder="seu@email.com"
+                autocomplete="email"
+                value="proprietario@stockeasy.com"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="input-label" for="login-senha">Senha</label>
+              <input
+                type="password"
+                id="login-senha"
+                name="senha"
+                class="input-field"
+                placeholder="••••••••"
+                autocomplete="current-password"
+                value="admin123"
+              />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Entrar</button>
+          </form>
+
+          <a href="recuperar-senha.html" class="link">Esqueci minha senha</a>
+          <a href="cadastro.html" class="link">Criar nova conta</a>
+
+          <p class="alert alert-info mt-md">
+            <strong>Protótipo de interface.</strong> A autenticação não está
+            implementada: qualquer valor acessa o painel. Os dois perfis
+            previstos são <code>proprietario@stockeasy.com</code>, com acesso
+            completo, e <code>operador@stockeasy.com</code>, sem acesso a custo,
+            margem e relatórios financeiros — regra RN01.
+          </p>
         </div>
-        
-        <div class="input-group">
-          <label class="input-label">Senha</label>
-          <input type="password" class="input-field" placeholder="••••••••" value="">
-        </div>
-        
-        <a href="dashboard.html" class="btn btn-primary">Entrar</a>
-        
-        <a href="#" class="link">Esqueci minha senha</a>
-        <a href="cadastro.html" class="link">Criar nova conta</a>
-      </div>
+      </main>
     </div>
-  </div>
-</body>
+  </body>
 </html>
