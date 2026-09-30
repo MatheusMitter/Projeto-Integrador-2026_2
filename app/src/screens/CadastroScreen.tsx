@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { Aviso, Botao, Campo } from "../components/base";
 import { cadastrar } from "../services/authService";
-import { TipoPerfil } from "../domain/tipos";
-import { ALVO_TOQUE, cores, espaco, fonte, raio } from "../theme/tema";
+import { cores, espaco, fonte } from "../theme/tema";
 
 interface Props {
   onCadastrou: () => void;
@@ -15,7 +14,6 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
-  const [perfil, setPerfil] = useState<TipoPerfil>("PROPRIETARIO");
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
 
@@ -23,13 +21,7 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
     setErro(null);
     setCarregando(true);
     try {
-      const r = await cadastrar({
-        nome,
-        email,
-        senha,
-        confirmacao,
-        tipoPerfil: perfil,
-      });
+      const r = await cadastrar({ nome, email, senha, confirmacao });
       if (r.sucesso) onCadastrou();
       else setErro(r.mensagem ?? "Não foi possível criar a conta.");
     } finally {
@@ -38,12 +30,20 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={e.conteudo} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={e.conteudo}
+      keyboardShouldPersistTaps="handled"
+    >
       <Text style={e.titulo}>Criar conta</Text>
 
       {!!erro && <Aviso texto={erro} tipo="erro" />}
 
-      <Campo rotulo="Nome completo" valor={nome} onChangeText={setNome} obrigatorio />
+      <Campo
+        rotulo="Nome completo"
+        valor={nome}
+        onChangeText={setNome}
+        obrigatorio
+      />
       <Campo
         rotulo="E-mail"
         valor={email}
@@ -67,44 +67,21 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
         obrigatorio
       />
 
-      <Text style={e.rotuloPerfil}>Perfil de acesso *</Text>
-      {(
-        [
-          {
-            valor: "PROPRIETARIO" as TipoPerfil,
-            titulo: "Proprietário",
-            desc: "Acesso completo, incluindo custo, margem e relatórios financeiros.",
-          },
-          {
-            valor: "OPERADOR" as TipoPerfil,
-            titulo: "Operador",
-            desc: "Registra movimentação e consulta produtos, sem ver informação financeira.",
-          },
-        ]
-      ).map((op) => {
-        const ativo = perfil === op.valor;
-        return (
-          <Pressable
-            key={op.valor}
-            onPress={() => setPerfil(op.valor)}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: ativo }}
-            accessibilityLabel={`${op.titulo}. ${op.desc}`}
-            style={[e.opcao, ativo && e.opcaoAtiva]}
-          >
-            <Text style={[e.opcaoTitulo, ativo && e.opcaoTituloAtivo]}>
-              {ativo ? "\u25CF " : "\u25CB "}
-              {op.titulo}
-            </Text>
-            <Text style={e.opcaoDesc}>{op.desc}</Text>
-          </Pressable>
-        );
-      })}
+      {/* O perfil não é escolhido aqui de propósito: se fosse, bastaria ao
+          operador criar uma conta de proprietário para contornar a RN01.
+          Quem decide é o authService, pela posse da loja. */}
+      <Aviso
+        tipo="info"
+        texto={
+          "O perfil de acesso não é escolhido no cadastro. O primeiro usuário " +
+          "da loja é o proprietário; as contas criadas depois entram como " +
+          "operador e não veem custo, margem nem valor do estoque. Só um " +
+          "proprietário pode alterar o perfil de outra pessoa."
+        }
+      />
 
-      <View style={{ marginTop: espaco.md }}>
-        <Botao titulo="Criar conta" onPress={criar} carregando={carregando} />
-        <Botao titulo="Já tenho conta" variante="secundario" onPress={voltar} />
-      </View>
+      <Botao titulo="Criar conta" onPress={criar} carregando={carregando} />
+      <Botao titulo="Já tenho conta" variante="secundario" onPress={voltar} />
     </ScrollView>
   );
 }
@@ -116,29 +93,5 @@ const e = StyleSheet.create({
     fontWeight: "700",
     color: cores.cinza900,
     marginBottom: espaco.lg,
-  },
-  rotuloPerfil: {
-    fontSize: fonte.legenda,
-    fontWeight: "600",
-    color: cores.cinza700,
-    marginBottom: espaco.sm,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  opcao: {
-    minHeight: ALVO_TOQUE,
-    borderWidth: 2,
-    borderColor: cores.cinza300,
-    borderRadius: raio.md,
-    padding: espaco.md,
-    marginBottom: espaco.sm,
-  },
-  opcaoAtiva: { borderColor: cores.primaria, backgroundColor: cores.primariaClara },
-  opcaoTitulo: { fontSize: fonte.corpo, color: cores.cinza900 },
-  opcaoTituloAtivo: { fontWeight: "700", color: cores.primariaEscura },
-  opcaoDesc: {
-    fontSize: fonte.legenda,
-    color: cores.cinza600,
-    marginTop: espaco.xs,
   },
 });

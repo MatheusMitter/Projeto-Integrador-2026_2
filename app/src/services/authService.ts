@@ -63,20 +63,36 @@ export interface DadosCadastro {
   email: string;
   senha: string;
   confirmacao: string;
-  tipoPerfil: TipoPerfil;
 }
-
 
 export function validarCadastro(d: DadosCadastro): string | null {
   if (d.nome.trim().length < 3) return "Informe o nome completo.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim()))
     return "Informe um e-mail válido.";
-  if (d.senha.length < 8)
-    return "A senha precisa ter no mínimo 8 caracteres.";
+  if (d.senha.length < 8) return "A senha precisa ter no mínimo 8 caracteres.";
   if (!/[a-zA-Z]/.test(d.senha) || !/[0-9]/.test(d.senha))
     return "A senha precisa conter letras e números.";
   if (d.senha !== d.confirmacao) return "As senhas não coincidem.";
   return null;
+}
+
+/**
+ * Decide o perfil de quem se cadastra. Quem se cadastra não escolhe.
+ *
+ * Deixar o perfil no formulário abria um furo na RN01: bastava ao operador
+ * criar uma segunda conta como proprietário para ver custo e margem. Então
+ * a regra é a posse da loja: o primeiro usuário é o proprietário, e quem
+ * chega depois entra como operador. Promover alguém é ação de proprietário,
+ * e entra com a administração de usuários no servidor.
+ */
+async function perfilDeNovoUsuario(lojaId: number): Promise<TipoPerfil> {
+  const db = await obterBanco();
+  const proprietario = await db.getFirstAsync<{ id: number }>(
+    `SELECT id FROM usuario
+      WHERE loja_id = ? AND tipo_perfil = 'PROPRIETARIO' AND ativo = 1`,
+    [lojaId],
+  );
+  return proprietario ? "OPERADOR" : "PROPRIETARIO";
 }
 
 export async function cadastrar(
@@ -101,11 +117,13 @@ export async function cadastrar(
     };
   }
 
+  const tipoPerfil = await perfilDeNovoUsuario(lojaId);
+
   try {
     const r = await db.runAsync(
       `INSERT INTO usuario (uuid, loja_id, nome, email, senha_hash, tipo_perfil)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [gerarUuid(), lojaId, d.nome.trim(), email, d.senha, d.tipoPerfil],
+      [gerarUuid(), lojaId, d.nome.trim(), email, d.senha, tipoPerfil],
     );
 
     usuarioAtual = {
@@ -113,7 +131,7 @@ export async function cadastrar(
       lojaId,
       nome: d.nome.trim(),
       email,
-      tipoPerfil: d.tipoPerfil,
+      tipoPerfil,
       ativo: true,
     };
 
