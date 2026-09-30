@@ -1,6 +1,6 @@
 // Registro de entrada e saída de estoque.
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Aviso, Botao, Campo, Cartao, Carregando } from "../components/base";
@@ -17,17 +17,23 @@ import { registrarMovimentacao } from "../services/estoqueService";
 import { classificarEstoque, validarMovimentacao } from "../services/regras";
 import { ALVO_TOQUE, cores, espaco, fonte, raio } from "../theme/tema";
 
+interface ParametrosMovimentacao {
+  produtoId?: number;
+  entrada?: boolean;
+}
+
 interface Props {
-  route?: { params?: { produtoId?: number; entrada?: boolean } };
-  navigation: { navigate: (tela: string, params?: object) => void };
+  route?: { params?: ParametrosMovimentacao };
+  navigation: {
+    navigate: (tela: string, params?: object) => void;
+    setParams: (params: ParametrosMovimentacao) => void;
+  };
 }
 
 export default function MovimentacaoScreen({ route, navigation }: Props) {
   const [produtos, setProdutos] = useState<Produto[] | null>(null);
-  const [produtoId, setProdutoId] = useState<number | null>(
-    route?.params?.produtoId ?? null,
-  );
-  const [entrada, setEntrada] = useState(route?.params?.entrada ?? true);
+  const [produtoId, setProdutoId] = useState<number | null>(null);
+  const [entrada, setEntrada] = useState(true);
   const [tipo, setTipo] = useState<TipoMovimentacao>("COMPRA");
   const [quantidade, setQuantidade] = useState("1");
   const [observacoes, setObservacoes] = useState("");
@@ -48,6 +54,29 @@ export default function MovimentacaoScreen({ route, navigation }: Props) {
       carregar();
     }, [carregar]),
   );
+
+  /**
+   * Aplica o produto e o sentido vindos da tela de detalhes.
+   *
+   * Esta aba fica montada depois da primeira visita, então ler os params
+   * apenas no valor inicial do estado faria a segunda navegação em diante
+   * cair no produto anterior. O efeito consome os params e os limpa, o que
+   * garante que a navegação seguinte volte a ser uma mudança de valor,
+   * mesmo repetindo produto e sentido.
+   */
+  useEffect(() => {
+    const p = route?.params;
+    if (!p) return;
+    if (p.produtoId === undefined && p.entrada === undefined) return;
+
+    if (typeof p.produtoId === "number") setProdutoId(p.produtoId);
+    if (typeof p.entrada === "boolean") {
+      setEntrada(p.entrada);
+      setTipo(p.entrada ? "COMPRA" : "VENDA");
+    }
+    setMensagem(null);
+    navigation.setParams({ produtoId: undefined, entrada: undefined });
+  }, [route?.params, navigation]);
 
   const produto = useMemo(
     () => produtos?.find((p) => p.id === produtoId) ?? null,
