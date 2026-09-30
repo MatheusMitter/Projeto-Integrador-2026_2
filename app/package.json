@@ -8,7 +8,9 @@
     "android": "expo start --android",
     "web": "expo start --web",
     "verificar-tipos": "tsc --noEmit",
-    "testar-regras": "node --test tests/*.test.mjs"
+    "test": "node --import ./tests/registrar-hooks.mjs --test tests/*.test.mjs",
+    "testar-regras": "npm test",
+    "verificar": "npm run verificar-tipos && npm test"
   },
   "dependencies": {
     "@expo/metro-runtime": "^3.2.3",
