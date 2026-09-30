@@ -394,6 +394,8 @@ O modelo está na **Terceira Forma Normal (3FN)**:
 
 ## Scripts SQL de Criação (PostgreSQL)
 
+> A versão executável destes scripts está em [`../banco/`](../banco/), já verificada em PostgreSQL 16. Os blocos abaixo são a mesma coisa, no contexto da explicação. **Ao alterar um, alterar o outro.**
+
 ```sql
 -- =============================================
 -- CRIAÇÃO DO BANCO DE DADOS
