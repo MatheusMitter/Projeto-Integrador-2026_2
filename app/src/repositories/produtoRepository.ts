@@ -39,8 +39,15 @@ function paraProduto(l: LinhaProduto): Produto {
   };
 }
 
+// Colunas nomeadas em vez de p.*: o esquema tem colunas de controle
+// (uuid, criado_em, atualizado_em, sincronizado) que o domínio não usa, e
+// trazê-las para depois descartar no mapeamento esconde o que a consulta
+// realmente devolve.
 const SELECAO = `
-  SELECT p.*, c.nome AS categoria_nome, f.nome AS fornecedor_nome
+  SELECT p.id, p.loja_id, p.nome, p.codigo_barras, p.categoria_id,
+         p.fornecedor_id, p.preco_custo, p.preco_venda, p.estoque_atual,
+         p.estoque_minimo, p.data_validade, p.ativo,
+         c.nome AS categoria_nome, f.nome AS fornecedor_nome
     FROM produto p
     JOIN categoria c   ON c.id = p.categoria_id
     LEFT JOIN fornecedor f ON f.id = p.fornecedor_id
@@ -73,17 +80,6 @@ export async function buscarPorId(id: number): Promise<Produto | null> {
   const linha = await db.getFirstAsync<LinhaProduto>(
     `${SELECAO} WHERE p.id = ?`,
     [id],
-  );
-  return linha ? paraProduto(linha) : null;
-}
-
-export async function buscarPorCodigoBarras(
-  codigo: string,
-): Promise<Produto | null> {
-  const db = await obterBanco();
-  const linha = await db.getFirstAsync<LinhaProduto>(
-    `${SELECAO} WHERE p.codigo_barras = ? AND p.ativo = 1`,
-    [codigo],
   );
   return linha ? paraProduto(linha) : null;
 }

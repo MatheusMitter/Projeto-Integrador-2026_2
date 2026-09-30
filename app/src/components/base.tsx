@@ -10,7 +10,14 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { ALVO_TOQUE, cores, CORES_SITUACAO, espaco, fonte, raio } from "../theme/tema";
+import {
+  ALVO_TOQUE,
+  cores,
+  CORES_SITUACAO,
+  espaco,
+  fonte,
+  raio,
+} from "../theme/tema";
 import { ROTULO_SITUACAO, SituacaoEstoque } from "../domain/tipos";
 
 // ------------------------------------------------------------------ botão
@@ -21,7 +28,6 @@ interface BotaoProps {
   variante?: "primario" | "secundario" | "perigo";
   carregando?: boolean;
   desabilitado?: boolean;
-  estilo?: ViewStyle;
 }
 
 export function Botao({
@@ -30,7 +36,6 @@ export function Botao({
   variante = "primario",
   carregando = false,
   desabilitado = false,
-  estilo,
 }: BotaoProps) {
   const fundo =
     variante === "primario"
@@ -51,7 +56,6 @@ export function Botao({
       style={({ pressed }) => [
         e.botao,
         { backgroundColor: fundo, opacity: inativo ? 0.5 : pressed ? 0.85 : 1 },
-        estilo,
       ]}
     >
       {carregando ? (
@@ -74,7 +78,6 @@ interface CampoProps {
   tipoTeclado?: "default" | "numeric" | "email-address" | "decimal-pad";
   senha?: boolean;
   ajuda?: string;
-  erro?: string;
   multilinha?: boolean;
 }
 
@@ -87,12 +90,10 @@ export function Campo({
   tipoTeclado = "default",
   senha = false,
   ajuda,
-  erro,
   multilinha = false,
 }: CampoProps) {
   return (
     <View style={e.campoGrupo}>
-
       <Text style={e.campoRotulo}>
         {rotulo}
         {obrigatorio ? " *" : ""}
@@ -110,11 +111,9 @@ export function Campo({
         style={[
           e.campo,
           multilinha && { height: 80, textAlignVertical: "top" },
-          !!erro && { borderColor: cores.perigo, borderWidth: 2 },
         ]}
       />
-      {!!erro && <Text style={e.campoErro}>{erro}</Text>}
-      {!erro && !!ajuda && <Text style={e.campoAjuda}>{ajuda}</Text>}
+      {!!ajuda && <Text style={e.campoAjuda}>{ajuda}</Text>}
     </View>
   );
 }
@@ -134,11 +133,7 @@ export function Cartao({
 // ------------------------------------------------- etiqueta de situação
 
 // mostra texto além da cor, para não depender só dela
-export function EtiquetaSituacao({
-  situacao,
-}: {
-  situacao: SituacaoEstoque;
-}) {
+export function EtiquetaSituacao({ situacao }: { situacao: SituacaoEstoque }) {
   const c = CORES_SITUACAO[situacao];
   return (
     <View style={[e.etiqueta, { backgroundColor: c.fundo }]}>
@@ -159,22 +154,32 @@ export function Aviso({
   tipo?: "info" | "erro" | "atencao" | "sucesso";
 }) {
   const mapa = {
-    info: { fundo: cores.secundariaClara, borda: cores.secundaria, texto: "#0D47A1" },
+    info: {
+      fundo: cores.secundariaClara,
+      borda: cores.secundaria,
+      texto: "#0D47A1",
+    },
     erro: { fundo: cores.perigoClaro, borda: cores.perigo, texto: "#B71C1C" },
     atencao: { fundo: cores.avisoClaro, borda: cores.aviso, texto: "#BF360C" },
-    sucesso: { fundo: cores.primariaClara, borda: cores.primaria, texto: cores.primariaEscura },
+    sucesso: {
+      fundo: cores.primariaClara,
+      borda: cores.primaria,
+      texto: cores.primariaEscura,
+    },
   }[tipo];
 
   return (
     <View
       accessibilityRole="alert"
-      style={[e.aviso, { backgroundColor: mapa.fundo, borderLeftColor: mapa.borda }]}
+      style={[
+        e.aviso,
+        { backgroundColor: mapa.fundo, borderLeftColor: mapa.borda },
+      ]}
     >
       <Text style={{ color: mapa.texto, fontSize: fonte.corpo }}>{texto}</Text>
     </View>
   );
 }
-
 
 export function ListaVazia({
   texto,
@@ -233,12 +238,6 @@ const e = StyleSheet.create({
     fontSize: fonte.legenda,
     color: cores.cinza600,
     marginTop: espaco.xs,
-  },
-  campoErro: {
-    fontSize: fonte.legenda,
-    color: cores.perigo,
-    marginTop: espaco.xs,
-    fontWeight: "600",
   },
   cartao: {
     backgroundColor: cores.branco,
