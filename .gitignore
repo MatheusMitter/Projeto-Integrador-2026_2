@@ -1,4 +1,4 @@
-# Credenciais e variáveis de ambiente — nunca versionar (R12 / Seção 6.2)
+# Credenciais e variáveis de ambiente — nunca versionar
 .env
 .env.local
 .env.*.local
@@ -24,14 +24,13 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Editores
+# Editores e ferramentas locais
 .vscode/
 .idea/
 *.swp
+.kiro/
 
-# Material de apoio da disciplina (não redistribuir no repositório público)
+# Documentos em PDF não são versionados: o material de referência da
+# disciplina não é redistribuído e os documentos do projeto são gerados
+# a partir dos arquivos Markdown em docs/
 *.pdf
-
-
-# Material interno de preparação das entregas (não versionado)
-entregas/
