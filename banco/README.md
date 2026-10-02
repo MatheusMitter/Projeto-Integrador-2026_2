@@ -1,6 +1,6 @@
 # Banco de dados
 
-Scripts SQL executáveis do banco remoto, em PostgreSQL. Requer PostgreSQL 14 ou superior.
+Scripts SQL executáveis do banco remoto, em PostgreSQL. Requer PostgreSQL 14 ou superior; a validação dos scripts foi feita em PostgreSQL 16.
 
 ## Execução
 
@@ -16,11 +16,11 @@ O primeiro script cria o banco `stockeasy_db` e conecta nele, então não precis
 
 ## Os arquivos
 
-| Arquivo                                          | O que faz                                                     |
-| ------------------------------------------------ | ------------------------------------------------------------- |
-| [`01-esquema.sql`](01-esquema.sql)               | Cria o banco, as 7 tabelas, os índices, as funções e os gatilhos |
-| [`02-carga-exemplo.sql`](02-carga-exemplo.sql)   | Insere loja, usuários, categorias, fornecedores e produtos de exemplo |
-| [`03-consultas.sql`](03-consultas.sql)           | As 6 consultas que sustentam os indicadores e relatórios      |
+| Arquivo                                        | O que faz                                                             |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| [`01-esquema.sql`](01-esquema.sql)             | Cria o banco, as 7 tabelas, os índices, as funções e os gatilhos      |
+| [`02-carga-exemplo.sql`](02-carga-exemplo.sql) | Insere loja, usuários, categorias, fornecedores e produtos de exemplo |
+| [`03-consultas.sql`](03-consultas.sql)         | As 6 consultas que sustentam os indicadores e relatórios              |
 
 ## Resultado esperado da carga
 
