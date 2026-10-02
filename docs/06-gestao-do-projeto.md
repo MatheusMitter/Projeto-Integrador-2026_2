@@ -75,15 +75,15 @@ O planejamento anterior colocava a persistência local no terceiro ciclo. A Sema
 
 Conforme a Seção 6.2 do documento norteador.
 
-| Prática                 | Definição                                                                                 |
-| ----------------------- | ----------------------------------------------------------------------------------------- |
-| Ramo principal          | `main`, protegido, sem envio direto                                                       |
-| Ramos de funcionalidade | `feat/<escopo>`, `fix/<escopo>`, `docs/<escopo>`                                          |
-| Integração              | Por requisição de incorporação, revisada por outro integrante                             |
-| Mensagem de commit      | Descreve a alteração realizada; mensagens genéricas como "ajustes" não são aceitas        |
-| Frequência              | Commits ao longo do desenvolvimento, não concentrados perto das entregas                  |
-| Autoria                 | Cada integrante versiona o próprio trabalho, com commits em seu nome                      |
-| Credenciais             | Não versionadas; variáveis de ambiente lidas de `.env`, com `.env.example` no repositório |
+| Prática                 | Definição                                                                                                      |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Ramo principal          | `main`, protegido, sem envio direto                                                                            |
+| Ramos de funcionalidade | `feat/<escopo>`, `fix/<escopo>`, `docs/<escopo>`                                                               |
+| Integração              | Por requisição de incorporação, revisada por outro integrante                                                  |
+| Mensagem de commit      | Descreve a alteração realizada; mensagens genéricas como "ajustes" não são aceitas                             |
+| Frequência              | Commits ao longo do desenvolvimento, não concentrados perto das entregas                                       |
+| Autoria                 | Cada integrante versiona o próprio trabalho, com commits em seu nome                                           |
+| Credenciais             | Não versionadas; variáveis de ambiente lidas de `.env`. O arquivo de modelo entra no Ciclo 3, com a retaguarda |
 
 ### Convenção de mensagem
 
@@ -145,8 +145,8 @@ Registro conforme a Seção 6.1: o que foi concluído, o que foi replanejado e q
 
 | Impedimento                                                                 | Encaminhamento                                                                                                      |
 | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Inconsistências entre backlog, modelagem e protótipo, detectadas na revisão | Corrigidas e registradas em [`99-historico-de-revisao.md`](99-historico-de-revisao.md)                                    |
-| Paleta do protótipo reprovava no contraste exigido pelo R11                 | Paleta substituída e verificada; registro em [`04-prototipo.md`](04-prototipo.md)                 |
+| Inconsistências entre backlog, modelagem e protótipo, detectadas na revisão | Corrigidas e registradas em [`99-historico-de-revisao.md`](99-historico-de-revisao.md)                              |
+| Paleta do protótipo reprovava no contraste exigido pelo R11                 | Paleta substituída e verificada; registro em [`04-prototipo.md`](04-prototipo.md)                                   |
 | Erros no script de banco que impediriam a execução em outros ambientes      | Corrigidos e validados por execução real em PostgreSQL                                                              |
 | Implementação da aplicação parcial concentrada no fim do ciclo              | Escopo reduzido ao mínimo verificável do item 4, com retaguarda adiada para o Ciclo 3 conforme o cronograma oficial |
 
@@ -203,13 +203,13 @@ Correção dos defeitos priorizados, refinamento de acessibilidade e tratamento 
 
 ## 10. Rastreabilidade da gestão
 
-| Exigência da Seção 6.1                                             | Onde é atendida                                                      |
-| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Exigência da Seção 6.1                                             | Onde é atendida                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------- |
 | Backlog em ferramenta de gestão, em formato de história de usuário | GitHub Projects e [`05-backlog.md`](05-backlog.md) |
-| Itens priorizados e atribuídos a responsáveis                      | 30 histórias, todas com prioridade e responsável                     |
-| Registro do concluído, replanejado e impedimentos por ciclo        | Seção 7 deste documento                                              |
-| Quadro e repositório acessíveis ao docente                         | Repositório público                                                  |
-| Estimativas de esforço                                             | Legenda e estimativa por história no backlog                         |
+| Itens priorizados e atribuídos a responsáveis                      | 30 histórias, todas com prioridade e responsável   |
+| Registro do concluído, replanejado e impedimentos por ciclo        | Seção 7 deste documento                            |
+| Quadro e repositório acessíveis ao docente                         | Repositório público                                |
+| Estimativas de esforço                                             | Legenda e estimativa por história no backlog       |
 
 ---
 

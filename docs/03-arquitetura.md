@@ -30,7 +30,7 @@ O padrão principal é o de camadas. Os outros três descrevem, respectivamente,
 
 **Porque é exigência do projeto.** O requisito R12 pede "separação de responsabilidades em camadas". Não é escolha livre.
 
-**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 21 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
+**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 38 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
 
 **Porque isola a mudança.** Trocar de banco de dados afeta apenas a camada de persistência. Nenhuma regra, nenhuma tela e nenhum teste precisariam ser alterados. Isso não é hipótese no nosso caso: já convivemos com dois bancos, SQLite no aparelho e PostgreSQL no servidor, com o mesmo modelo relacional.
 
@@ -325,14 +325,14 @@ Ambos respondem a necessidades das personas, não a demonstração técnica isol
 
 ## 9. Segurança
 
-| Aspecto        | Decisão                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
-| Senha          | Armazenada apenas como resumo criptográfico com BCrypt e fator de custo 10                           |
-| Sessão         | Token JWT com validade limitada, transmitido no cabeçalho de autorização                             |
-| Autorização    | Verificada na camada de serviço; RN01 filtra campos financeiros antes da resposta                    |
-| Transporte     | HTTPS obrigatório                                                                                    |
-| Injeção de SQL | Consultas exclusivamente parametrizadas                                                              |
-| Credenciais    | Lidas de variáveis de ambiente; `.env` fora do controle de versão, com `.env.example` no repositório |
+| Aspecto        | Decisão                                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Senha          | Armazenada apenas como resumo criptográfico com BCrypt e fator de custo 10                                                |
+| Sessão         | Token JWT com validade limitada, transmitido no cabeçalho de autorização                                                  |
+| Autorização    | Verificada na camada de serviço; RN01 filtra campos financeiros antes da resposta                                         |
+| Transporte     | HTTPS obrigatório                                                                                                         |
+| Injeção de SQL | Consultas exclusivamente parametrizadas                                                                                   |
+| Credenciais    | Lidas de variáveis de ambiente; `.env` fora do controle de versão. O arquivo de modelo entra no Ciclo 3, com a retaguarda |
 
 Ponto de atenção que a equipe assume explicitamente: a API de retaguarda precisa exigir autenticação em todos os endpoints de dados. Um endpoint de produtos ou movimentações exposto sem verificação de token permitiria leitura e escrita por qualquer cliente. A configuração de segurança será revisada como critério de aceite do Ciclo 3, quando a retaguarda entrar em operação.
 

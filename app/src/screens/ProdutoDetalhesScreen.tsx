@@ -1,18 +1,26 @@
 import React, { useCallback, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { Botao, Cartao, Carregando, EtiquetaSituacao } from "../components/base";
+import {
+  Botao,
+  Cartao,
+  Carregando,
+  EtiquetaSituacao,
+} from "../components/base";
 import { Movimentacao, Produto, ROTULO_TIPO } from "../domain/tipos";
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "../services/authService";
-import { ehEntrada, historicoDoProduto } from "../services/estoqueService";
+import { historicoDoProduto } from "../services/estoqueService";
 import {
   calcularMargem,
   classificarEstoque,
+  ehEntrada,
+  formatarDataHora,
   formatarReais,
+  paraDataBr,
   podeVerFinanceiro,
 } from "../services/regras";
-import { cores, espaco, fonte, raio } from "../theme/tema";
+import { cores, espaco, fonte } from "../theme/tema";
 
 interface Props {
   route: { params: { id: number } };
@@ -27,7 +35,9 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [historico, setHistorico] = useState<Movimentacao[]>([]);
 
-  const verFinanceiro = podeVerFinanceiro(sessaoAtual()?.tipoPerfil ?? "OPERADOR");
+  const verFinanceiro = podeVerFinanceiro(
+    sessaoAtual()?.tipoPerfil ?? "OPERADOR",
+  );
 
   const carregar = useCallback(async () => {
     const [p, h] = await Promise.all([
@@ -46,7 +56,10 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
 
   if (!produto) return <Carregando />;
 
-  const situacao = classificarEstoque(produto.estoqueAtual, produto.estoqueMinimo);
+  const situacao = classificarEstoque(
+    produto.estoqueAtual,
+    produto.estoqueMinimo,
+  );
   const margem = calcularMargem(produto.precoCusto, produto.precoVenda);
 
   /** RN12 — desativa em vez de excluir, preservando o histórico. */
@@ -90,6 +103,12 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
           <Text style={e.chave}>Estoque mínimo</Text>
           <Text style={e.valor}>{produto.estoqueMinimo} un</Text>
         </View>
+        {!!produto.dataValidade && (
+          <View style={e.linha}>
+            <Text style={e.chave}>Validade</Text>
+            <Text style={e.valor}>{paraDataBr(produto.dataValidade)}</Text>
+          </View>
+        )}
       </Cartao>
 
       {/* RN01: bloco financeiro oculto para o perfil Operador */}
@@ -139,7 +158,7 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
                     {entrada ? "ENTRADA" : "SAÍDA"} · {ROTULO_TIPO[m.tipo]}
                   </Text>
                   <Text style={e.chave}>
-                    {m.dataHora} · por {m.usuarioNome}
+                    {formatarDataHora(m.dataHora)} · por {m.usuarioNome}
                   </Text>
                 </View>
                 <View style={{ alignItems: "flex-end" }}>
@@ -164,14 +183,20 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
         <Botao
           titulo="Registrar entrada"
           onPress={() =>
-            navigation.navigate("Movimentação", { produtoId: id, entrada: true })
+            navigation.navigate("Movimentação", {
+              produtoId: id,
+              entrada: true,
+            })
           }
         />
         <Botao
           titulo="Registrar saída"
           variante="perigo"
           onPress={() =>
-            navigation.navigate("Movimentação", { produtoId: id, entrada: false })
+            navigation.navigate("Movimentação", {
+              produtoId: id,
+              entrada: false,
+            })
           }
         />
         <Botao
@@ -193,9 +218,22 @@ export default function ProdutoDetalhesScreen({ route, navigation }: Props) {
 
 const e = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cores.cinza100 },
-  nome: { fontSize: fonte.tituloGrande, fontWeight: "700", color: cores.cinza900 },
-  meta: { fontSize: fonte.legenda, color: cores.cinza600, marginTop: espaco.xs },
-  secao: { fontSize: fonte.corpo, fontWeight: "700", color: cores.cinza900, marginBottom: espaco.sm },
+  nome: {
+    fontSize: fonte.tituloGrande,
+    fontWeight: "700",
+    color: cores.cinza900,
+  },
+  meta: {
+    fontSize: fonte.legenda,
+    color: cores.cinza600,
+    marginTop: espaco.xs,
+  },
+  secao: {
+    fontSize: fonte.corpo,
+    fontWeight: "700",
+    color: cores.cinza900,
+    marginBottom: espaco.sm,
+  },
   secaoFora: {
     fontSize: fonte.tituloMedio,
     fontWeight: "700",
@@ -203,7 +241,11 @@ const e = StyleSheet.create({
     marginTop: espaco.md,
     marginBottom: espaco.md,
   },
-  linha: { flexDirection: "row", justifyContent: "space-between", marginBottom: espaco.xs },
+  linha: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: espaco.xs,
+  },
   linhaTotal: {
     borderTopWidth: 1,
     borderTopColor: cores.cinza300,
@@ -211,9 +253,21 @@ const e = StyleSheet.create({
     marginTop: espaco.xs,
   },
   chave: { fontSize: fonte.legenda, color: cores.cinza600 },
-  chaveDestaque: { fontSize: fonte.corpo, fontWeight: "700", color: cores.primariaEscura },
+  chaveDestaque: {
+    fontSize: fonte.corpo,
+    fontWeight: "700",
+    color: cores.primariaEscura,
+  },
   valor: { fontSize: fonte.corpo, color: cores.cinza900, fontWeight: "600" },
-  valorDestaque: { fontSize: fonte.tituloMedio, fontWeight: "700", color: cores.cinza900 },
-  movTipo: { fontSize: fonte.legenda, fontWeight: "700", color: cores.cinza800 },
+  valorDestaque: {
+    fontSize: fonte.tituloMedio,
+    fontWeight: "700",
+    color: cores.cinza900,
+  },
+  movTipo: {
+    fontSize: fonte.legenda,
+    fontWeight: "700",
+    color: cores.cinza800,
+  },
   movQtd: { fontSize: fonte.corpo, fontWeight: "700" },
 });

@@ -8,7 +8,14 @@ import * as cadastroRepo from "../repositories/cadastroRepository";
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "../services/authService";
 import { registrarMovimentacao } from "../services/estoqueService";
-import { avisoPreco, calcularMargem, podeVerFinanceiro } from "../services/regras";
+import {
+  avisoPreco,
+  calcularMargem,
+  paraDataBr,
+  paraDataIso,
+  podeVerFinanceiro,
+  validarDataValidade,
+} from "../services/regras";
 import { ALVO_TOQUE, cores, espaco, fonte, raio } from "../theme/tema";
 
 interface Props {
@@ -28,13 +35,16 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
   const [precoVenda, setPrecoVenda] = useState("");
   const [quantidadeInicial, setQuantidadeInicial] = useState("0");
   const [estoqueMinimo, setEstoqueMinimo] = useState("");
+  const [dataValidade, setDataValidade] = useState("");
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
-  const verFinanceiro = podeVerFinanceiro(sessaoAtual()?.tipoPerfil ?? "OPERADOR");
+  const verFinanceiro = podeVerFinanceiro(
+    sessaoAtual()?.tipoPerfil ?? "OPERADOR",
+  );
 
   const carregar = useCallback(async () => {
     const [cats, forns] = await Promise.all([
@@ -55,6 +65,7 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
         setPrecoCusto(String(p.precoCusto));
         setPrecoVenda(String(p.precoVenda));
         setEstoqueMinimo(String(p.estoqueMinimo));
+        setDataValidade(paraDataBr(p.dataValidade));
       }
     }
   }, [editando, id, categoriaId]);
@@ -79,7 +90,7 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
     const inicial = parseInt(quantidadeInicial, 10);
     if (!editando && (Number.isNaN(inicial) || inicial < 0))
       return "Informe a quantidade inicial (zero ou mais).";
-    return null;
+    return validarDataValidade(dataValidade);
   }
 
   async function salvar() {
@@ -100,7 +111,7 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
         precoCusto: custo,
         precoVenda: venda,
         estoqueMinimo: parseInt(estoqueMinimo, 10),
-        dataValidade: null,
+        dataValidade: paraDataIso(dataValidade),
       };
 
       if (editando && typeof id === "number") {
@@ -137,7 +148,12 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
     >
       {!!erro && <Aviso texto={erro} tipo="erro" />}
 
-      <Campo rotulo="Nome do produto" valor={nome} onChangeText={setNome} obrigatorio />
+      <Campo
+        rotulo="Nome do produto"
+        valor={nome}
+        onChangeText={setNome}
+        obrigatorio
+      />
       <Campo
         rotulo="Código de barras"
         valor={codigoBarras}
@@ -175,7 +191,9 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
           accessibilityState={{ selected: fornecedorId === null }}
           style={[e.chip, fornecedorId === null && e.chipAtivo]}
         >
-          <Text style={[e.chipTexto, fornecedorId === null && e.chipTextoAtivo]}>
+          <Text
+            style={[e.chipTexto, fornecedorId === null && e.chipTextoAtivo]}
+          >
             {fornecedorId === null ? "\u25CF " : ""}Sem fornecedor
           </Text>
         </Pressable>
@@ -246,12 +264,25 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
         ajuda="Você é avisado quando o estoque ficar neste valor ou abaixo dele."
       />
 
+      <Campo
+        rotulo="Data de validade"
+        valor={dataValidade}
+        onChangeText={setDataValidade}
+        placeholder="DD/MM/AAAA"
+        tipoTeclado="numeric"
+        ajuda="Opcional. Produtos a 15 dias ou menos do vencimento aparecem no painel."
+      />
+
       <Botao
         titulo={editando ? "Salvar alterações" : "Cadastrar produto"}
         onPress={salvar}
         carregando={salvando}
       />
-      <Botao titulo="Cancelar" variante="secundario" onPress={navigation.goBack} />
+      <Botao
+        titulo="Cancelar"
+        variante="secundario"
+        onPress={navigation.goBack}
+      />
     </ScrollView>
   );
 }
@@ -266,7 +297,12 @@ const e = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  opcoes: { flexDirection: "row", flexWrap: "wrap", gap: espaco.sm, marginBottom: espaco.md },
+  opcoes: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: espaco.sm,
+    marginBottom: espaco.md,
+  },
   chip: {
     minHeight: ALVO_TOQUE,
     justifyContent: "center",

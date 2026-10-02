@@ -95,15 +95,15 @@ export default function App() {
               marginBottom: espaco.md,
             }}
           >
-            Para executar no celular: instale o Expo Go pela loja de
-            aplicativos, rode{" "}
-            <Text style={{ fontWeight: "700" }}>npm start</Text> na pasta do
-            projeto e leia o código que aparece no terminal. O celular e o
-            computador precisam estar na mesma rede.
+            Para executar no celular: rode{" "}
+            <Text style={{ fontWeight: "700" }}>npx expo start</Text> na pasta
+            do projeto e abra o projeto a partir do próprio terminal, para o
+            Expo CLI instalar a versão do Expo Go compatível com este SDK. O
+            celular e o computador precisam estar na mesma rede.
           </Text>
           <Text style={{ fontSize: 14, color: cores.cinza800, lineHeight: 22 }}>
             A escolha do SQLite está justificada em{" "}
-            <Text style={{ fontWeight: "700" }}>docs/N1-arquitetura.md</Text>: o
+            <Text style={{ fontWeight: "700" }}>docs/03-arquitetura.md</Text>: o
             banco local é o que permite operar sem conexão, requisito do
             ambiente de uso, onde o sinal falha no depósito da loja.
           </Text>

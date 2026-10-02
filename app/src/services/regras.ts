@@ -1,10 +1,11 @@
 // Regras de negócio. Funções puras, sem acesso a tela ou banco.
+//
+// Os tipos entram por `import type` de propósito: assim o arquivo não tem
+// import que só existe em tempo de compilação, e os testes conseguem
+// carregá-lo direto em Node, sem passo de build.
 
-import {
-  SituacaoEstoque,
-  TipoMovimentacao,
-  TIPOS_ENTRADA,
-} from "../domain/tipos";
+import { TIPOS_ENTRADA } from "../domain/tipos";
+import type { SituacaoEstoque, TipoMovimentacao } from "../domain/tipos";
 
 export function ehEntrada(tipo: TipoMovimentacao): boolean {
   return (TIPOS_ENTRADA as readonly string[]).includes(tipo);
@@ -114,4 +115,70 @@ export function formatarReais(valor: number): string {
     style: "currency",
     currency: "BRL",
   });
+}
+
+// ------------------------------------------------------------------ datas
+//
+// O banco guarda data em ISO (AAAA-MM-DD), porque é o formato que o SQLite
+// compara e ordena como texto. A tela usa DD/MM/AAAA, que é o que o
+// comerciante lê na embalagem. A conversão vive aqui, em função pura, para
+// os dois lados não divergirem.
+
+/** "30/11/2026" → "2026-11-30". Devolve null se estiver vazio ou inválido. */
+export function paraDataIso(texto: string): string | null {
+  const limpo = texto.trim();
+  if (limpo.length === 0) return null;
+
+  const partes = limpo.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!partes) return null;
+
+  const [, dia, mes, ano] = partes;
+  const iso = `${ano}-${mes}-${dia}`;
+
+  // rejeita 31/02: o Date normaliza silenciosamente, então conferimos a volta
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return null;
+  if (
+    d.getFullYear() !== Number(ano) ||
+    d.getMonth() + 1 !== Number(mes) ||
+    d.getDate() !== Number(dia)
+  ) {
+    return null;
+  }
+
+  return iso;
+}
+
+/** "2026-11-30" → "30/11/2026". Campo vazio vira string vazia. */
+export function paraDataBr(iso: string | null): string {
+  if (!iso) return "";
+  const partes = iso.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!partes) return "";
+  const [, ano, mes, dia] = partes;
+  return `${dia}/${mes}/${ano}`;
+}
+
+/**
+ * Valida o campo de validade. Vazio é aceito: nem todo produto tem
+ * validade, e obrigar uma data inventada é pior que não ter o dado.
+ */
+export function validarDataValidade(texto: string): string | null {
+  if (texto.trim().length === 0) return null;
+  if (paraDataIso(texto) === null) {
+    return "Informe a validade no formato DD/MM/AAAA, ou deixe em branco.";
+  }
+  return null;
+}
+
+/**
+ * "2026-09-30 14:32:05" (datetime do SQLite, em UTC) → "30/09/2026 às 14:32".
+ * Sem isso o histórico mostra o timestamp cru na tela.
+ */
+export function formatarDataHora(valor: string): string {
+  const partes = valor
+    .trim()
+    .match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if (!partes) return valor;
+  const [, ano, mes, dia, hora, minuto] = partes;
+  return `${dia}/${mes}/${ano} às ${hora}:${minuto}`;
 }

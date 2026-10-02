@@ -3,7 +3,7 @@
 
 import { obterBanco, gerarUuid } from "../database/conexao";
 import { Movimentacao, TipoMovimentacao } from "../domain/tipos";
-import { ehEntrada, validarMovimentacao } from "./regras";
+import { validarMovimentacao } from "./regras";
 
 export interface PedidoMovimentacao {
   produtoId: number;
@@ -144,7 +144,6 @@ function paraMovimentacao(l: LinhaMovimentacao): Movimentacao {
   };
 }
 
-
 export async function historicoDoProduto(
   produtoId: number,
   limite = 10,
@@ -162,31 +161,21 @@ export async function historicoDoProduto(
   return linhas.map(paraMovimentacao);
 }
 
-
-export async function historicoGeral(limite = 50): Promise<Movimentacao[]> {
-  const db = await obterBanco();
-  const linhas = await db.getAllAsync<LinhaMovimentacao>(
-    `SELECT m.*, p.nome AS produto_nome, u.nome AS usuario_nome
-       FROM movimentacao m
-       JOIN produto p ON p.id = m.produto_id
-       JOIN usuario u ON u.id = m.usuario_id
-      ORDER BY m.data_hora DESC, m.id DESC
-      LIMIT ?`,
-    [limite],
-  );
-  return linhas.map(paraMovimentacao);
-}
-
-// A sincronização em si ainda não existe, mas a coluna já está no esquema
-// para não precisar migrar o banco depois.
-export async function pendentesDeSincronizacao(): Promise<number> {
+/**
+ * Quantos registros locais ainda não foram enviados ao servidor.
+ *
+ * O envio em si só existe a partir do Ciclo 3. Até lá este número nunca
+ * diminui, porque nada marca `sincronizado = 1` — e é exatamente isso que
+ * a coluna deve indicar hoje: tudo o que está no aparelho está só aqui. A
+ * coluna já entrou no esquema para não exigir migração do banco depois.
+ */
+export async function registrosNaoSincronizados(): Promise<number> {
   const db = await obterBanco();
   const l = await db.getFirstAsync<{ total: number }>(
     `SELECT (SELECT COUNT(*) FROM produto      WHERE sincronizado = 0)
           + (SELECT COUNT(*) FROM movimentacao WHERE sincronizado = 0)
-          + (SELECT COUNT(*) FROM fornecedor   WHERE sincronizado = 0) AS total`,
+          + (SELECT COUNT(*) FROM fornecedor   WHERE sincronizado = 0)
+          + (SELECT COUNT(*) FROM categoria    WHERE sincronizado = 0) AS total`,
   );
   return l?.total ?? 0;
 }
-
-export { ehEntrada };

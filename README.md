@@ -59,7 +59,11 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 │   │   └── theme/                           # Design system
 │   ├── tests/                               # Testes das regras de negócio
 │   └── README.md
-├── apresentacao/                           # Slides da defesa técnica
+├── banco/                                  # Scripts SQL do banco remoto (PostgreSQL)
+│   ├── 01-esquema.sql                       # Tabelas, índices, funções e gatilhos
+│   ├── 02-carga-exemplo.sql                 # Dados de exemplo
+│   ├── 03-consultas.sql                     # Consultas dos indicadores e relatórios
+│   └── README.md
 ├── docs/                                   # Documentação do projeto
 │   ├── 00-LEIA-PRIMEIRO.md                  # Índice: o que é cada documento
 │   ├── 01-documento-de-projeto.md           # Problema, requisitos, personas, regras de negócio
@@ -74,6 +78,8 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
     ├── styles.css
     └── README.md
 ```
+
+Quatro pastas, uma pergunta cada: `app/` é o que roda no celular, `banco/` é o que roda no servidor, `prototipo/` é o desenho das telas, `docs/` é a explicação de tudo.
 
 ---
 
@@ -95,25 +101,33 @@ Versão publicada: [matheusmitter.github.io/Projeto-Integrador-2026_2/prototipo/
 
 ### Banco de dados
 
-Os scripts de criação e a carga de exemplo estão em [`docs/02-modelagem-de-dados.md`](docs/02-modelagem-de-dados.md). Com PostgreSQL 14 ou superior disponível:
+Os scripts executáveis estão em [`banco/`](banco/). Com PostgreSQL 14 ou superior disponível:
 
 ```bash
-psql -U postgres -f scripts/schema.sql
-psql -U postgres -d stockeasy_db -f scripts/seed.sql
+psql -U postgres -f banco/01-esquema.sql
+psql -U postgres -d stockeasy_db -f banco/02-carga-exemplo.sql
 ```
+
+A carga resulta em 5 produtos, 11 movimentações e 2 alertas, com dois produtos em situação crítica. Os alertas não são inseridos: nascem do gatilho `trigger_estoque_critico`, e é assim que se verifica que ele funciona. O detalhamento está em [`banco/README.md`](banco/README.md).
+
+O diagrama, a justificativa de cada decisão e a análise de normalização ficam em [`docs/02-modelagem-de-dados.md`](docs/02-modelagem-de-dados.md).
+
+O aplicativo não depende desse banco: ele cria o próprio esquema em SQLite na primeira execução, a partir de [`app/src/database/esquema.ts`](app/src/database/esquema.ts). O PostgreSQL entra no Ciclo 3, com a retaguarda.
 
 ### Aplicação móvel
 
-Requer Node 18 ou superior.
+Requer Node 18 ou superior. Os testes exigem Node 22.18 ou superior, porque importam TypeScript diretamente.
 
 ```bash
 cd app
 npm install
-npm start          # leia o código no terminal com o Expo Go
+npx expo start     # abra o projeto pelo terminal, não pelo Expo Go da loja
 npm run android    # alternativa: emulador Android
 ```
 
 A aplicação exige celular ou emulador: o módulo de banco local não tem implementação para navegador.
+
+O projeto está no Expo SDK 51, e o Expo Go publicado nas lojas suporta apenas o SDK mais recente. Abrir o projeto pelo terminal faz o Expo CLI instalar a versão compatível no aparelho Android ou no emulador. Em iPhone físico, use um _development build_.
 
 Credenciais de teste, criadas pela carga inicial:
 
@@ -126,9 +140,12 @@ Verificação:
 
 ```bash
 cd app
+npm run verificar          # tipos e testes, em sequência
 npm run verificar-tipos    # compilação TypeScript em modo estrito
-npm run testar-regras      # 21 testes das regras de negócio
+npm test                   # 38 testes das regras de negócio
 ```
+
+Os testes importam `app/src/services/regras.ts` diretamente, e não uma cópia das funções: uma mudança de regra sem ajuste de teste quebra a suíte.
 
 Detalhes de organização, camadas e limitações em [`app/README.md`](app/README.md).
 
@@ -136,7 +153,9 @@ Detalhes de organização, camadas e limitações em [`app/README.md`](app/READM
 
 ## Configuração e credenciais
 
-Nenhuma credencial é versionada. Variáveis de ambiente são lidas de um arquivo `.env` local, não rastreado pelo Git, a partir do modelo `.env.example`. O `.gitignore` cobre `.env`, chaves `*.pem`/`*.key`, `google-services.json` e artefatos de build.
+Nenhuma credencial é versionada. O `.gitignore` cobre `.env`, chaves `*.pem`/`*.key`, `google-services.json`, arquivos de assinatura e artefatos de build.
+
+As contas de acesso da carga inicial são de exemplo e valem apenas no banco local criado no aparelho. Não são exibidas na interface nem pré-preenchidas no formulário de acesso. O arquivo de modelo `.env` entra no Ciclo 3, junto com a retaguarda, que é quando passam a existir variáveis de ambiente de fato.
 
 ---
 
@@ -144,22 +163,22 @@ Nenhuma credencial é versionada. Variáveis de ambiente são lidas de um arquiv
 
 Situação em 28/09/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
 
-| Req | Descrição                                  | Situação     | Onde é verificável                                      |
-| --- | ------------------------------------------ | ------------ | ------------------------------------------------------- |
-| R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — abas e pilha, 7 telas; protótipo com 11        |
-| R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`                       |
-| R3  | Manutenção completa de 2+ entidades        | Implementado | Produto e Fornecedor no aplicativo                      |
-| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | 5 regras em `app/src/services/regras.ts`, com 21 testes |
-| R5  | Persistência local                         | Implementado | SQLite em `app/src/database/`                           |
-| R6  | Persistência remota com sincronização      | Ciclo 3      | Spring Boot e PostgreSQL                                |
-| R7  | Consumo de serviço externo                 | Ciclo 3      | Open Food Facts                                         |
-| R8  | Recurso nativo do dispositivo              | Ciclo 3      | Câmera e notificações                                   |
-| R9  | Filtro, busca e visão consolidada          | Parcial      | Busca e painel prontos; relatórios no Ciclo 2           |
-| R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento      |
-| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 44px, rótulos acessíveis          |
-| R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                              |
-| R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                |
-| R14 | Pacote instalável em dispositivo físico    | Ciclo 4      | Até 27/11                                               |
+| Req | Descrição                                  | Situação     | Onde é verificável                                         |
+| --- | ------------------------------------------ | ------------ | ---------------------------------------------------------- |
+| R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — 8 telas em abas e pilha; protótipo com 11         |
+| R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`, com logout no cabeçalho |
+| R3  | Manutenção completa de 2+ entidades        | Implementado | Produto e Fornecedor no aplicativo                         |
+| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | 5 regras em `app/src/services/regras.ts`, com 38 testes    |
+| R5  | Persistência local                         | Implementado | SQLite em `app/src/database/`                              |
+| R6  | Persistência remota com sincronização      | Ciclo 3      | Spring Boot e PostgreSQL                                   |
+| R7  | Consumo de serviço externo                 | Ciclo 3      | Open Food Facts                                            |
+| R8  | Recurso nativo do dispositivo              | Ciclo 3      | Câmera e notificações                                      |
+| R9  | Filtro, busca e visão consolidada          | Parcial      | Busca e painel prontos; relatórios no Ciclo 2              |
+| R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento         |
+| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 44px, rótulos acessíveis             |
+| R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                                 |
+| R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                   |
+| R14 | Pacote instalável em dispositivo físico    | Ciclo 4      | Até 27/11                                                  |
 
 ---
 

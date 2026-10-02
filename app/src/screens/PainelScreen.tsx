@@ -1,12 +1,18 @@
 import React, { useCallback, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Cartao, Carregando } from "../components/base";
 import { ResumoEstoque } from "../domain/tipos";
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "../services/authService";
 import { formatarReais, podeVerFinanceiro } from "../services/regras";
-import { pendentesDeSincronizacao } from "../services/estoqueService";
+import { registrosNaoSincronizados } from "../services/estoqueService";
 import { cores, espaco, fonte, raio } from "../theme/tema";
 
 export default function PainelScreen() {
@@ -22,7 +28,7 @@ export default function PainelScreen() {
     const [r, m, p] = await Promise.all([
       produtoRepo.resumo(),
       produtoRepo.maisVendidos(5),
-      pendentesDeSincronizacao(),
+      registrosNaoSincronizados(),
     ]);
     setResumo(r);
     setRanking(m);
@@ -56,7 +62,9 @@ export default function PainelScreen() {
         />
       }
     >
-      <Text style={e.saudacao}>Olá, {usuario?.nome.split(" ")[0] ?? "usuário"}</Text>
+      <Text style={e.saudacao}>
+        Olá, {usuario?.nome.split(" ")[0] ?? "usuário"}
+      </Text>
       <Text style={e.perfil}>
         {usuario?.tipoPerfil === "PROPRIETARIO" ? "Proprietário" : "Operador"}
       </Text>
@@ -64,14 +72,18 @@ export default function PainelScreen() {
       {pendentes > 0 && (
         <View style={e.faixaPendente}>
           <Text style={e.faixaTexto}>
-            {pendentes} registro(s) aguardando envio ao servidor. Os dados estão
-            salvos neste aparelho.
+            {pendentes} registro(s) gravados somente neste aparelho. A
+            sincronização com o servidor entra no Ciclo 3; até lá nada é
+            enviado, e nada se perde.
           </Text>
         </View>
       )}
 
       <View style={e.grade}>
-        <Indicador valor={String(resumo.totalProdutos)} rotulo="produtos cadastrados" />
+        <Indicador
+          valor={String(resumo.totalProdutos)}
+          rotulo="produtos cadastrados"
+        />
 
         {/* RN01: valor do estoque é informação financeira, restrita ao
             proprietário. Quem decide é a camada de negócio. */}
@@ -135,7 +147,11 @@ function Indicador({
   cor?: string;
 }) {
   return (
-    <View style={e.indicador} accessible accessibilityLabel={`${valor} ${rotulo}`}>
+    <View
+      style={e.indicador}
+      accessible
+      accessibilityLabel={`${valor} ${rotulo}`}
+    >
       <Text style={[e.indicadorValor, !!cor && { color: cor }]}>{valor}</Text>
       <Text style={e.indicadorRotulo}>{rotulo}</Text>
     </View>
@@ -144,8 +160,16 @@ function Indicador({
 
 const e = StyleSheet.create({
   tela: { flex: 1, backgroundColor: cores.cinza100 },
-  saudacao: { fontSize: fonte.tituloMedio, fontWeight: "700", color: cores.cinza900 },
-  perfil: { fontSize: fonte.legenda, color: cores.cinza600, marginBottom: espaco.md },
+  saudacao: {
+    fontSize: fonte.tituloMedio,
+    fontWeight: "700",
+    color: cores.cinza900,
+  },
+  perfil: {
+    fontSize: fonte.legenda,
+    color: cores.cinza600,
+    marginBottom: espaco.md,
+  },
   faixaPendente: {
     backgroundColor: cores.avisoClaro,
     borderLeftWidth: 4,
@@ -166,7 +190,11 @@ const e = StyleSheet.create({
     borderColor: cores.cinza200,
   },
   indicadorValor: { fontSize: 26, fontWeight: "700", color: cores.cinza900 },
-  indicadorRotulo: { fontSize: fonte.legenda, color: cores.cinza600, marginTop: espaco.xs },
+  indicadorRotulo: {
+    fontSize: fonte.legenda,
+    color: cores.cinza600,
+    marginTop: espaco.xs,
+  },
   secao: {
     fontSize: fonte.tituloMedio,
     fontWeight: "700",
@@ -175,7 +203,11 @@ const e = StyleSheet.create({
     marginBottom: espaco.md,
   },
   vazio: { fontSize: fonte.corpo, color: cores.cinza600 },
-  barraLinha: { flexDirection: "row", alignItems: "center", marginBottom: espaco.sm },
+  barraLinha: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: espaco.sm,
+  },
   barraRotulo: { width: 110, fontSize: fonte.legenda, color: cores.cinza700 },
   barraTrilha: { flex: 1 },
   barra: {
@@ -186,5 +218,9 @@ const e = StyleSheet.create({
     alignItems: "flex-end",
     paddingHorizontal: espaco.sm,
   },
-  barraValor: { color: cores.branco, fontSize: fonte.legenda, fontWeight: "700" },
+  barraValor: {
+    color: cores.branco,
+    fontSize: fonte.legenda,
+    fontWeight: "700",
+  },
 });

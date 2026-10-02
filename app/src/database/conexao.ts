@@ -57,14 +57,6 @@ async function popularSeVazio(db: SQLite.SQLiteDatabase): Promise<void> {
   }
 }
 
-
-export async function fecharBanco(): Promise<void> {
-  if (banco) {
-    await banco.closeAsync();
-    banco = null;
-  }
-}
-
 // id gerado no aparelho, para não duplicar no reenvio ao servidor
 export function gerarUuid(): string {
   const aleatorio = () => Math.random().toString(16).slice(2, 10);

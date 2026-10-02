@@ -10,10 +10,11 @@ interface Props {
 }
 
 export default function LoginScreen({ onEntrou, irParaCadastro }: Props) {
-  // Pré-preenchido para a demonstração. As credenciais são as da carga
-  // inicial do banco, documentada em docs/checkpoint1-der-modelagem.md.
-  const [email, setEmail] = useState("proprietario@stockeasy.com");
-  const [senha, setSenha] = useState("admin123");
+  // Campos começam vazios de propósito. A senha da carga inicial não é
+  // impressa na tela: o esquema e as credenciais de teste estão em
+  // docs/02-modelagem-de-dados.md e em app/README.md.
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
 
@@ -32,7 +33,10 @@ export default function LoginScreen({ onEntrou, irParaCadastro }: Props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={e.conteudo} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      contentContainerStyle={e.conteudo}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={e.marca} accessible accessibilityLabel="StockEasy">
         <Text style={e.marcaLetra}>S</Text>
       </View>
@@ -59,11 +63,7 @@ export default function LoginScreen({ onEntrou, irParaCadastro }: Props) {
           obrigatorio
         />
 
-        <Botao
-          titulo="Entrar"
-          onPress={autenticar}
-          carregando={carregando}
-        />
+        <Botao titulo="Entrar" onPress={autenticar} carregando={carregando} />
         <Botao
           titulo="Criar nova conta"
           variante="secundario"
@@ -73,10 +73,10 @@ export default function LoginScreen({ onEntrou, irParaCadastro }: Props) {
         <Aviso
           tipo="info"
           texto={
-            "Dois perfis disponíveis nesta versão. " +
-            "proprietario@stockeasy.com tem acesso completo. " +
-            "operador@stockeasy.com não vê custo, margem nem valor do estoque, " +
-            "conforme a regra RN01. Senha de ambos: admin123."
+            "Esta versão tem dois perfis de acesso. O proprietário vê custo, " +
+            "margem e valor do estoque; o operador não, conforme a regra RN01. " +
+            "As contas criadas pela carga inicial estão listadas no README do " +
+            "aplicativo."
           }
         />
       </View>
