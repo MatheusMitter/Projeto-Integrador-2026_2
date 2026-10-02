@@ -29,6 +29,11 @@ Thumbs.db
 .idea/
 *.swp
 .kiro/
+.agents/
+
+# Material de preparação da equipe: slides, documentos de entrega e
+# norteadores da disciplina. Não é redistribuído e não compõe o projeto.
+nao-publicar/
 
 # Documentos em PDF não são versionados: o material de referência da
 # disciplina não é redistribuído e os documentos do projeto são gerados
