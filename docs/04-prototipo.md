@@ -302,3 +302,4 @@ Os valores de cor, espaçamento e área de toque são transportados sem alteraç
 | Versão | Data       | Alterações                          | Responsável      |
 | ------ | ---------- | ----------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
+| 1.1    | 19/10/2026 | Seção 4.1.1: a identidade visual do Figma registrada como segunda revisão, com as tabelas de contraste; o parágrafo sobre o logotipo passa a referir o logo definido em [`07-identidade-visual.md`](07-identidade-visual.md) | Equipe StockEasy |
