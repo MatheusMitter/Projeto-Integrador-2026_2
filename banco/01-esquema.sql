@@ -74,6 +74,7 @@ CREATE TABLE categoria (
     nome VARCHAR(60) NOT NULL,
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     -- O nome é único dentro da loja, não globalmente
     CONSTRAINT uq_categoria_loja_nome UNIQUE (loja_id, nome)
 );
@@ -113,19 +114,23 @@ CREATE TABLE produto (
     preco_custo DECIMAL(10,2) NOT NULL CHECK (preco_custo >= 0),
     preco_venda DECIMAL(10,2) NOT NULL CHECK (preco_venda >= 0),
     estoque_atual INTEGER NOT NULL DEFAULT 0 CHECK (estoque_atual >= 0),
-    estoque_min INTEGER NOT NULL DEFAULT 0 CHECK (estoque_min >= 0),
+    estoque_minimo INTEGER NOT NULL DEFAULT 0 CHECK (estoque_minimo >= 0),
     data_validade DATE,
     foto_url VARCHAR(255),
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    -- RN04: o código de barras é único dentro da loja, não globalmente.
-    -- Lojas distintas vendem o mesmo produto e usam o mesmo código EAN.
-    CONSTRAINT uq_produto_loja_codigo UNIQUE (loja_id, codigo_barras)
+    atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- RN04: o código de barras é único entre os produtos ativos da loja. Não é
+-- global, porque lojas distintas vendem o mesmo produto com o mesmo EAN, nem
+-- vale para o desativado (RN12), que fica guardado só para o histórico.
+CREATE UNIQUE INDEX uq_produto_loja_codigo ON produto(loja_id, codigo_barras)
+    WHERE ativo = TRUE;
+
 -- Índices de apoio às consultas frequentes. Não se indexa codigo_barras
--- isoladamente: a restrição UNIQUE composta acima já atende à busca.
+-- isoladamente: o índice único acima já atende à busca, que só olha os
+-- produtos ativos.
 CREATE INDEX idx_produto_loja ON produto(loja_id);
 CREATE INDEX idx_produto_categoria ON produto(categoria_id);
 CREATE INDEX idx_produto_fornecedor ON produto(fornecedor_id);
@@ -135,7 +140,9 @@ CREATE INDEX idx_produto_fornecedor ON produto(fornecedor_id);
 CREATE INDEX idx_produto_critico ON produto(loja_id, estoque_atual)
     WHERE ativo = TRUE;
 
--- Trigger para atualizar atualizado_em automaticamente
+-- atualizado_em é preenchido pelo próprio banco em toda alteração de
+-- cadastro. A sincronização decide pela alteração mais recente (docs/03,
+-- seção 7), então essa data não pode depender de quem grava lembrar dela.
 CREATE OR REPLACE FUNCTION atualizar_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -143,6 +150,26 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_loja_atualizado
+BEFORE UPDATE ON loja
+FOR EACH ROW
+EXECUTE FUNCTION atualizar_timestamp();
+
+CREATE TRIGGER trigger_usuario_atualizado
+BEFORE UPDATE ON usuario
+FOR EACH ROW
+EXECUTE FUNCTION atualizar_timestamp();
+
+CREATE TRIGGER trigger_categoria_atualizado
+BEFORE UPDATE ON categoria
+FOR EACH ROW
+EXECUTE FUNCTION atualizar_timestamp();
+
+CREATE TRIGGER trigger_fornecedor_atualizado
+BEFORE UPDATE ON fornecedor
+FOR EACH ROW
+EXECUTE FUNCTION atualizar_timestamp();
 
 CREATE TRIGGER trigger_produto_atualizado
 BEFORE UPDATE ON produto
@@ -189,7 +216,7 @@ CREATE TABLE alerta (
     id SERIAL PRIMARY KEY,
     -- CASCADE é intencional aqui, e é a única exceção no modelo: o alerta
     -- não é registro de auditoria, e sim estado derivado do saldo. Pode ser
-    -- recalculado a partir de estoque_atual e estoque_min, então perdê-lo
+    -- recalculado a partir de estoque_atual e estoque_minimo, então perdê-lo
     -- não perde informação. Todas as demais chaves são RESTRICT (RN12).
     produto_id INTEGER NOT NULL REFERENCES produto(id) ON DELETE CASCADE,
     tipo_alerta VARCHAR(30) NOT NULL CHECK (tipo_alerta IN ('ESTOQUE_CRITICO', 'VENCIMENTO_PROXIMO')),
@@ -228,8 +255,8 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    -- Se estoque ficar <= estoque_min, gerar alerta
-    IF NEW.estoque_atual <= NEW.estoque_min THEN
+    -- Se estoque ficar <= estoque_minimo, gerar alerta
+    IF NEW.estoque_atual <= NEW.estoque_minimo THEN
         -- Só cria se ainda não houver alerta pendente do mesmo tipo,
         -- para não acumular avisos repetidos do mesmo produto (RN07)
         IF NOT EXISTS (
@@ -263,6 +290,6 @@ $$ LANGUAGE plpgsql;
 -- AFTER UPDATE OF estoque_atual, então produto cadastrado já em situação
 -- crítica não gerava alerta nenhum.
 CREATE TRIGGER trigger_estoque_critico
-AFTER INSERT OR UPDATE OF estoque_atual, estoque_min, ativo ON produto
+AFTER INSERT OR UPDATE OF estoque_atual, estoque_minimo, ativo ON produto
 FOR EACH ROW
 EXECUTE FUNCTION verificar_estoque_critico();

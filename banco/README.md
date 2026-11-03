@@ -28,15 +28,17 @@ Depois de rodar `02-carga-exemplo.sql`:
 
 | Produto                  | Saldo | Mínimo | Situação |
 | ------------------------ | ----- | ------ | -------- |
-| Arroz Tipo 1 5kg         | 67    | 10     | normal   |
+| Arroz Tipo 1 5kg         | 67    | 10     | excesso  |
 | Feijão Preto 1kg         | 25    | 15     | normal   |
 | Refrigerante Cola 2L     | 5     | 20     | crítico  |
-| Detergente Líquido 500ml | 40    | 10     | normal   |
+| Detergente Líquido 500ml | 40    | 10     | excesso  |
 | Sabonete 90g             | 8     | 15     | crítico  |
 
-Mais 11 movimentações e 2 alertas. Os alertas não são inseridos pela carga: são criados pelo gatilho `trigger_estoque_critico`, e é essa a forma de verificar que o gatilho funciona.
+A situação segue as faixas da RN07: acima de três vezes o mínimo é excesso. Mais 11 movimentações e 2 alertas. Os alertas não são inseridos pela carga: são criados pelo gatilho `trigger_estoque_critico`, e é essa a forma de verificar que o gatilho funciona.
 
 Os produtos entram com saldo zero e o estoque é construído pelas movimentações, como a aplicação opera. Inserir o saldo final direto produziria um histórico que não fecha com o saldo.
+
+As datas da carga são relativas ao dia em que o script roda: o Sabonete vence sempre em 12 dias, e as consultas de período de `03-consultas.sql` (mais vendidos no último mês, baixo giro em 30 dias) devolvem resultado em qualquer data.
 
 ## Relação com os outros artefatos
 
