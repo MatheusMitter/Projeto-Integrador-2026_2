@@ -361,3 +361,21 @@ Verificação:
 - APK de release assinado e alinhado a 16 KB.
 - No emulador Android 17, o app foi instalado por cima da versão anterior, e a migração preservou os dados.
 - RN04, Voltar no fornecedor e janela de confirmação clara no modo escuro conferidos no emulador, sem erro nem travamento.
+
+## 13. Verificação de 02/11/2026
+
+Conferência antes do Checkpoint 2, três semanas depois da rodada anterior.
+
+| Achado | Correção |
+| --- | --- |
+| Saiu o Expo 57.0.31, e o `expo-doctor` passou a acusar o 57.0.29 | Atualizado com `npx expo install --fix`, sem sair do SDK 57 |
+| Os alertas do `npm audit` mudaram: o `node-forge` ganhou a versão corrigida 1.4.2, e surgiram falhas novas no `zod`, no `glob`, no `minimatch` e no `deepmerge` | `node-forge` 1.4.2 aplicado, o que eliminou 11 falhas. Restam 14 alertas, porque as correções só existem em versões maiores que o Expo 57 não aceita, ou ainda não existem. Nenhum desses pacotes entra no APK |
+| O `overrides` do `uuid` ficou sem efeito: o `xcode` 4.0.0, trazido pela atualização, não usa mais o `uuid` | Campo removido do `package.json` |
+| O APK de entrega declarava a permissão de aparecer sobre outros apps (`SYSTEM_ALERT_WINDOW`). Ela vem do modelo do Expo e o app não a usa | Bloqueada no `app.json` (`android.blockedPermissions`). Continua só na versão de desenvolvimento, onde servem as ferramentas de depuração |
+| Nada estava commitado desde 02/10 | Seis commits por assunto no ramo `revisao-pre-checkpoint-2` |
+
+Verificação:
+- 100 testes passando e tipos sem erro.
+- `expo-doctor` 21/21.
+- APK de release assinado e alinhado a 16 KB, sem a permissão bloqueada.
+- No emulador, por cima da versão anterior: login, as cinco abas e a janela de saída sem erro nem travamento, com os dados preservados.
