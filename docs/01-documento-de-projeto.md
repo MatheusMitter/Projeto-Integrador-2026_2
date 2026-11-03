@@ -8,7 +8,7 @@ Disciplina ADS1253 — Programação Orientada a Objeto com Banco de Dados
 **Domínio:** Gestão e produtividade — controle de estoque e inventário
 **Entrega:** N1 — 29/09 a 02/10/2026
 **Repositório:** https://github.com/MatheusMitter/Projeto-Integrador-2026_2
-**Versão do documento:** 1.0 — 28/09/2026
+**Versão do documento:** 1.3 — 14/10/2026
 
 ---
 
@@ -114,7 +114,7 @@ Dona de uma mercearia de bairro em Goiânia há dezoito anos. Trabalha com o mar
 
 **Frustrações:** já tentou uma planilha e abandonou em duas semanas porque dava trabalho demais; tem medo de perder os dados se trocar de celular.
 
-**Consequência para o projeto:** o cadastro precisa ser rápido, com leitura de código de barras e preenchimento automático (RF12, RF31). Os alertas precisam chegar sem que ela vá procurar (RF19, RF20). A sincronização com o servidor é o que responde ao medo de perder dados (RF27). O perfil proprietário concentra o acesso financeiro (RN01).
+**Consequência para o projeto:** o cadastro precisa ser rápido, com leitura de código de barras e preenchimento automático (RF41, RF43). Os alertas precisam chegar sem que ela vá procurar (RF25, RF27). A sincronização com o servidor é o que responde ao medo de perder dados (RF39). O perfil proprietário concentra o acesso financeiro (RN01).
 
 ---
 
@@ -126,7 +126,7 @@ Trabalha no balcão de uma loja de conveniência. É rápido no celular e não t
 
 **Frustrações:** formulários com muitos campos obrigatórios; qualquer coisa que exija digitar código manualmente; travamento quando o sinal cai no depósito.
 
-**Consequência para o projeto:** o fluxo de saída é o caminho mais curto do aplicativo, acessível direto do painel. A leitura por câmera substitui a digitação (RF31). A persistência local garante que a falta de sinal não bloqueie o registro (RF26). O perfil operador não expõe custo nem margem (RN01), o que também protege a informação do proprietário.
+**Consequência para o projeto:** o fluxo de saída é o caminho mais curto do aplicativo, acessível direto do painel. A leitura por câmera substitui a digitação (RF43). A persistência local garante que a falta de sinal não bloqueie o registro (RF37). O perfil operador não expõe custo nem margem (RN01), o que também protege a informação do proprietário.
 
 ---
 
@@ -138,7 +138,7 @@ Abriu um minimercado há dois anos e planeja um segundo ponto. Tem perfil analí
 
 **Frustrações:** não consegue saber se uma divergência de estoque foi erro de registro ou perda; não tem histórico para negociar volume com fornecedor.
 
-**Consequência para o projeto:** o histórico de movimentações precisa registrar o usuário responsável (RN05), o que sustenta a auditoria. Os relatórios de baixo giro e de mais vendidos atendem à análise (RF22, RF23). A gestão de fornecedores com histórico de compras apoia a negociação (RF15).
+**Consequência para o projeto:** o histórico de movimentações precisa registrar o usuário responsável (RN05), o que sustenta a auditoria. Os relatórios de baixo giro e de mais vendidos atendem à análise (RF33, RF34). A gestão de fornecedores com histórico de compras apoia a negociação (RF15).
 
 ---
 
@@ -150,12 +150,14 @@ Priorização pelo método MoSCoW. **Obrigatório** indica requisito sem o qual 
 
 | ID   | Requisito                                                                                                  | Prioridade  | Ciclo | Req. |
 | ---- | ---------------------------------------------------------------------------------------------------------- | ----------- | ----- | ---- |
-| RF01 | O sistema deve permitir o cadastro de usuário com nome, e-mail, senha e perfil                             | Obrigatório | 1     | R2   |
+| RF01 | O sistema deve permitir o cadastro de usuário com nome, e-mail e senha; o perfil é definido pela loja      | Obrigatório | 1     | R2   |
 | RF02 | O sistema deve autenticar o usuário por e-mail e senha, com mensagem de erro genérica em caso de falha     | Obrigatório | 1     | R2   |
 | RF03 | O sistema deve manter dois perfis de acesso, Proprietário e Operador, com permissões distintas             | Obrigatório | 1     | R2   |
 | RF04 | O sistema deve permitir que o proprietário crie, edite e desative contas de operador vinculadas à sua loja | Desejável   | 2     | R2   |
 | RF05 | O sistema deve permitir a recuperação de senha por envio de link ao e-mail cadastrado                      | Desejável   | 2     | R2   |
 | RF06 | O sistema deve encerrar a sessão do usuário mediante solicitação                                           | Obrigatório | 1     | R2   |
+
+O RF01 mudou na versão 1.3, como alteração de escopo: o perfil deixou de ser escolhido no formulário. Quem cria a loja é o proprietário, e as demais contas da loja são de operador. Com escolha livre, qualquer operador contornaria a RN01 criando uma segunda conta como proprietário.
 
 ### 5.2 Manutenção de produtos
 
@@ -296,7 +298,7 @@ _Verificável em:_ histórico de movimentações, que exibe o usuário responsá
 
 Não é permitido registrar saída de quantidade superior ao estoque disponível do produto. A validação ocorre na camada de negócio, dentro da transação que atualiza o saldo, e é reforçada por restrição de verificação no banco que impede saldo negativo.
 
-A validação apenas na interface seria insuficiente: em operação offline com sincronização posterior, duas saídas registradas em dispositivos distintos poderiam, somadas, exceder o saldo. A verificação no momento da consolidação é o que garante a consistência.
+A validação apenas na interface seria insuficiente: em operação offline com sincronização posterior, duas saídas registradas em dispositivos distintos poderiam, somadas, exceder o saldo. Na consolidação, essas saídas já aconteceram e não podem ser desfeitas: o servidor as registra, recalcula o saldo e, se ele ficar negativo, gera alerta de divergência para o proprietário corrigir com lançamento de ajuste. A consistência vem de tornar a divergência visível e corrigível, não de recusar o que já ocorreu (`03-arquitetura.md`, seção 7).
 
 _Verificável em:_ tela de movimentação, informando saída superior ao saldo. No protótipo, `prototipo/movimentacao.html` já demonstra o bloqueio.
 
@@ -327,7 +329,7 @@ O valor total do estoque corresponde à soma, entre todos os produtos ativos, do
 
 **RN09 — Resolução de conflito na sincronização**
 
-Registros criados ou alterados sem conectividade são marcados como pendentes e enviados em ordem cronológica ao restabelecimento da conexão. Em caso de conflito sobre o mesmo registro, prevalece a alteração de instante mais recente. Movimentações não entram em conflito por serem imutáveis (RN05): são apenas acrescentadas, e o saldo é recomposto a partir da sequência consolidada.
+Registros criados ou alterados sem conectividade são marcados como pendentes e enviados em ordem cronológica ao restabelecimento da conexão. Em caso de conflito sobre o mesmo registro, prevalece a alteração mais recente, segundo a hora em que o servidor a recebeu, e não o relógio do aparelho. Movimentações não entram em conflito por serem imutáveis (RN05): são apenas acrescentadas, e o servidor recompõe o saldo a partir da sequência consolidada.
 
 ---
 
@@ -430,3 +432,6 @@ OPEN FOOD FACTS. _Open Food Facts API Documentation_. Disponível em: https://op
 | Versão | Data       | Alterações                                      | Responsável      |
 | ------ | ---------- | ----------------------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial consolidada para a entrega da N1 | Equipe StockEasy |
+| 1.1    | 12/10/2026 | Referências a requisitos corrigidas nas personas | Equipe StockEasy |
+| 1.2    | 14/10/2026 | RN06 e RN09: divergência na consolidação vira alerta de ajuste, e a ordem das alterações segue a hora do servidor | Equipe StockEasy |
+| 1.3    | 14/10/2026 | RF01: o perfil deixa de ser escolhido no cadastro e passa a vir da loja (alteração de escopo) | Equipe StockEasy |

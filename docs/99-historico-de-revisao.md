@@ -295,3 +295,69 @@ A maior parte dos defeitos da modelagem não seria encontrada por revisão de te
 Pelo mesmo motivo, a conformidade de acessibilidade do protótipo foi medida, e não presumida: a declaração anterior de atendimento à WCAG era incorreta, e só a medição do contraste evidenciou isso.
 
 Essa prática fica adotada para os próximos ciclos: artefato que pode ser executado é verificado por execução antes de ser considerado pronto.
+
+---
+
+## 10. Revisão de 12/10/2026
+
+Revisão do código, do banco e da documentação antes do Checkpoint 2. Cada item abaixo corrige uma divergência entre o que os documentos afirmam e o que estava implementado.
+
+| Achado | Correção |
+| --- | --- |
+| Sete telas acessavam os repositórios direto, contra a regra "a tela chama o serviço" (`03-arquitetura.md`, seções 1.2 e 4) | Serviços de produto, cadastro, relatório e sincronização; nenhuma tela importa repositório ou banco |
+| A RN01 só escondia o custo na tela; o dado chegava à interface do operador (RN01 e RNF13 dizem que a camada de negócio filtra) | O serviço entrega ao operador o produto sem custo e o resumo sem valor do estoque |
+| "Excluir fornecedor" removia o registro, contra a RN12 | O fornecedor sem vínculo passa a ser desativado |
+| Preço vazio era gravado como zero; os preços não eram obrigatórios (US05) | Validação no serviço: preço de venda obrigatório e maior que zero; custo obrigatório para o proprietário |
+| Produto e entrada inicial eram gravados em transações separadas | Os dois na mesma transação |
+| Coluna `estoque_min` no PostgreSQL e `estoque_minimo` no SQLite | Nome único, `estoque_minimo`, nos dois bancos e na documentação; scripts validados de novo em PostgreSQL 16 |
+| Datas fixas na carga de exemplo: o produto "vencendo" já estava vencido e as consultas de período ficavam vazias | Datas relativas ao dia da carga, no aplicativo e no script PostgreSQL |
+| Tabelas de atributos do `02-modelagem-de-dados.md` em versão anterior ao esquema (sem `loja`, `categoria`, `uuid`) | Tabelas refeitas a partir do script executável |
+| Personas citavam requisitos com número errado; o backlog citava RN04, RN08 e RN09 de forma diferente do documento de projeto | Referências corrigidas |
+| `tsconfig.json` herdava `moduleResolution: node`, recusado pelo TypeScript 6 usado pelo editor | `moduleResolution: bundler`, como o Metro resolve; projeto compila no TypeScript 5.3 e no 6.0 |
+| `@expo/vector-icons` sem a dependência `expo-font` declarada (apontado pelo `expo-doctor`) | Dependência declarada na versão do SDK 51 |
+| Login do protótipo com e-mail e senha de teste pré-preenchidos, enviados na barra de endereço | Campos vazios, como no aplicativo |
+
+Verificação: tipos sem erro, 70 testes das regras passando, fluxos principais testados em emulador Android e scripts SQL executados com as regras conferidas.
+
+## 11. Revisão de 14/10/2026
+
+Revisão das decisões técnicas antes do Ciclo 3. Os pontos abaixo causariam erro na implementação da sincronização ou deixariam os documentos afirmando o que não está certo.
+
+| Achado | Correção |
+| --- | --- |
+| `03-arquitetura.md` dizia que o controle transacional é "exigido pelos eixos do Apêndice D" do norteador. O Apêndice D só lista o que pode ser perguntado na arguição | A justificativa passou a citar a fonte certa: a disciplina ADS1253, que trata JDBC, DAO e transações |
+| A consolidação recusaria o lote inteiro quando uma saída passasse do estoque. A venda offline já aconteceu e não pode ser editada (RN05): o aparelho reenviaria o mesmo lote para sempre | O servidor registra as movimentações, recalcula o saldo e gera alerta de divergência para ajuste (RN06 e RN09 no `01`; seções 3, 5.1, 6 e 7 e DA09 no `03`) |
+| "Prevalece a alteração mais recente" não dizia de qual relógio. Relógio de aparelho erra | Vale a hora em que o servidor recebe a alteração, e o servidor recalcula o saldo (RN09; DA10; `02` e `05` alinhados) |
+| Sem regra para a senha e o token no aparelho; a senha local ainda é texto puro | Senha só como resumo com sal, token no armazenamento seguro e sessão local sem rede, a implementar no Ciclo 3 (seção 9 e DA11 do `03`) |
+| Ambientes previam Expo Go e PostgreSQL em contêiner; versões da retaguarda não definidas | Build de desenvolvimento, PostgreSQL direto na máquina, Java 21, Spring Boot 4.1 e migrações com Flyway (seções 8.2, 8.3 e 11 e DA12 do `03`) |
+| Cabeçalhos de versão do `01` e do `05` não acompanhavam as tabelas de controle de versões | Alinhados |
+| Os testes cobriam só as regras; serviços e repositórios eram verificados apenas no emulador | 23 testes de serviço e repositório num banco em memória, com o esquema e a carga inicial do aplicativo; contagem atualizada nos READMEs e no `03` |
+| `README.md` e `app/README.md` citavam o Expo SDK 51, Node 18, o Expo Go da loja e a assinatura editada à mão na pasta `android/` | Atualizados para o SDK 57: Node 22.18, build de desenvolvimento (`npm run android`), `ANDROID_HOME` e `JAVA_HOME` para gerar o APK pela linha de comando, e assinatura reaplicada pelo plugin `plugins/assinatura-release.js` |
+| `03-arquitetura.md` dizia que o pacote Android sai do EAS Build | Sai do Gradle local, assinado pelo plugin do projeto; o EAS fica como alternativa (seções 8.1 e 12) |
+
+Verificação: tipos sem erro no TypeScript 6.0.3, 95 testes passando, `expo-doctor` sem pendências, APK de release assinado e alinhado a páginas de 16 KB, e fluxos principais conferidos em emulador Android 17.
+
+## 12. Correções de 14/10/2026, segunda rodada
+
+Correção de tudo o que estava pendente ou apareceu depois da revisão anterior, antes de seguir para o Checkpoint 2.
+
+| Achado | Correção |
+| --- | --- |
+| O `npm audit` acusava 23 alertas. Eram 3 falhas, todas em ferramentas de desenvolvimento; nenhuma entra no APK, o que foi conferido pelo mapa de fontes do pacote | O `uuid` 11.1.1 passou a ser forçado só para o `xcode`, pelo campo `overrides` do `app/package.json`. Restam 15 alertas do `braces` e do `node-forge`, que ainda não têm versão corrigida publicada pelos autores. O `app/README.md` explica isso e alerta contra o `npm audit fix --force`, que voltaria o Expo para a versão 44 |
+| `typescript` e `@types/react` estavam declarados duas vezes, com versões diferentes, em `dependencies` e `devDependencies` | Ficaram só em `devDependencies`, como no modelo do Expo |
+| Os botões das janelas de confirmação e o cursor de texto usavam o verde-azulado padrão do tema Android, fora da identidade visual | A cor primária foi para o `app.json` (`primaryColor`), e a cor de destaque é gravada pelo plugin `plugins/cor-de-destaque.js` |
+| `userInterfaceStyle: "light"` não tinha efeito no Android. Com o aparelho no modo escuro, as janelas do sistema ficariam escuras sobre o app claro | `expo-system-ui` instalado, na versão esperada pelo SDK 57 |
+| O Voltar do Android, com o formulário de fornecedor aberto, saía da tela | Agora fecha o formulário, como faria se ele fosse uma tela própria |
+| Os dois bancos aplicavam a RN04 também aos produtos desativados. Como o app não reativa produto, o código de barras ficava preso a um produto que não aparece em lugar nenhum | Índice único parcial, só de produtos ativos, nos dois bancos. O banco do aparelho ganhou versão de esquema e migração (`app/src/database/migracoes.ts`), que refaz a tabela de produto preservando os dados e o contador de id |
+| A `categoria` não tinha `atualizado_em`, e loja, usuário e fornecedor não tinham o gatilho que mantém essa data. A regra de conflito da sincronização depende dela | Coluna e gatilhos no PostgreSQL; `02` na versão 2.3 |
+| O RF01 previa escolher o perfil no cadastro, o que o app não faz para que ninguém contorne a RN01 | RF01 alinhado e registrado como alteração de escopo (`01` na versão 1.3) |
+| O build de release pela linha de comando avisava que `NODE_ENV` não estava definido | Comando documentado com `NODE_ENV=production` |
+
+Verificação:
+- TypeScript 6.0.3 sem erros de tipo.
+- 100 testes passando, 5 deles novos: a migração num banco do formato antigo e o reuso do código de um produto desativado.
+- `expo-doctor` 21/21, com as dependências na versão do SDK 57.
+- Scripts SQL executados em PostgreSQL 16.14, com a RN04 e os gatilhos conferidos.
+- APK de release assinado e alinhado a 16 KB.
+- No emulador Android 17, o app foi instalado por cima da versão anterior, e a migração preservou os dados.
+- RN04, Voltar no fornecedor e janela de confirmação clara no modo escuro conferidos no emulador, sem erro nem travamento.

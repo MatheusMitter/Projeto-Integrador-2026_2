@@ -4,7 +4,7 @@
 **Artefato do Checkpoint 1 (11/09/2026), revisado para a entrega N1 (29/09 a 02/10/2026)**
 **Formato:** Histórias de usuário priorizadas
 **Ferramenta:** GitHub Projects — https://github.com/MatheusMitter/Projeto-Integrador-2026_2/projects
-**Versão:** 2.0 — 28/09/2026
+**Versão:** 2.2 — 14/10/2026
 
 ---
 
@@ -194,7 +194,7 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 **Regras de Negócio:**
 
 - RN03: Preço de venda deve ser maior ou igual ao preço de custo (alerta se for menor, mas permite salvar)
-- RN04: Código de barras, se informado, deve ser único no sistema
+- RN04: Código de barras, se informado, deve ser único dentro da loja
 
 **Dependências:** US02
 
@@ -573,7 +573,7 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 
 **Regras de Negócio:**
 
-- RN08: Valor total do estoque = Σ(quantidade \* preço de custo) de todos os produtos
+- RN08: Valor total do estoque = Σ(quantidade \* preço de custo) dos produtos ativos
 
 **Dependências:** US06, US10, US11, US13
 
@@ -760,14 +760,16 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 - [ ] Sincronização manual: botão "Sincronizar agora" nas configurações
 - [ ] Upload de dados locais pendentes
 - [ ] Download de dados novos do servidor
-- [ ] Resolução de conflitos: timestamp mais recente prevalece (ou estratégia last-write-wins)
+- [ ] Resolução de conflitos: alteração mais recente prevalece, pela hora do servidor (last-write-wins)
+- [ ] Saldo recalculado pelo servidor na consolidação; divergência de estoque gera alerta de ajuste
 - [ ] Indicador visual de sincronização em andamento
 - [ ] Mensagem de confirmação: "Sincronização concluída"
 - [ ] Tratamento de erros: tentar novamente em caso de falha
 
 **Regras de Negócio:**
 
-- RN09: Sincronização é automática, mas pode ser forçada manualmente
+- RN09: em conflito sobre o mesmo registro, prevalece a alteração mais recente, pela hora do servidor; movimentações não entram em conflito, só são acrescentadas
+- RF40: a sincronização é automática, mas pode ser forçada manualmente
 
 **Dependências:** US24 e a retaguarda operante (API REST, Ciclo 3)
 
@@ -1006,3 +1008,5 @@ Cada integrante versiona o próprio trabalho, com commits em seu nome e mensagen
 | ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
 | 1.0    | 11/09/2026 | Versão inicial com 29 histórias, entregue no Checkpoint 1                                                                                                           | Equipe StockEasy |
 | 2.0    | 28/09/2026 | Ciclos alinhados ao cronograma oficial, persistência local movida para o Ciclo 1, US09 reescrita, US30 incluída, dependências entre ciclos corrigidas, R4 detalhado | Equipe StockEasy |
+| 2.1    | 12/10/2026 | RN04, RN08 e RN09 citadas como no documento de projeto                                                                                                             | Equipe StockEasy |
+| 2.2    | 14/10/2026 | Sincronização (US25): conflito pela hora do servidor; saldo recalculado na consolidação, com alerta de divergência                                                 | Equipe StockEasy |
