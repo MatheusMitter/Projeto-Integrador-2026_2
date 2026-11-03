@@ -162,7 +162,7 @@ As contas de acesso da carga inicial são de exemplo e valem apenas no banco loc
 
 ## Requisitos mínimos de complexidade técnica
 
-Situação em 12/10/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
+Situação em 02/11/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
 
 | Req | Descrição                                  | Situação     | Onde é verificável                                         |
 | --- | ------------------------------------------ | ------------ | ---------------------------------------------------------- |
@@ -179,7 +179,7 @@ Situação em 12/10/2026, conforme a Seção 5 do documento norteador. A verific
 | R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 48dp, rótulos acessíveis             |
 | R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                                 |
 | R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                   |
-| R14 | Pacote instalável em dispositivo físico    | Ciclo 4      | Até 27/11                                                  |
+| R14 | Pacote instalável em dispositivo físico    | Em andamento | APK de release assinado e gerado (`app/README.md`); comprovação em aparelho até 27/11 |
 
 ---
 
