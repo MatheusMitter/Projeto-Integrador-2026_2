@@ -305,7 +305,7 @@ _Firebase ou Supabase._ Também admitidas pelo norteador e substancialmente mais
 
 _Node.js._ Permitiria uma única linguagem no projeto. Descartada pelo mesmo motivo: não exercita o conteúdo da disciplina.
 
-**Versões:** Java 21, de suporte longo e o mesmo usado para gerar o aplicativo Android, e Spring Boot 4.1, a linha estável atual. Ficam fixadas no arquivo de build da retaguarda.
+**Versões:** Java 21, de suporte longo e o mesmo usado para gerar o aplicativo Android, e Spring Boot 3.5, a linha estável mais usada, com as bibliotecas de segurança, migração e acesso a dados testadas com ela há mais de um ano. A linha 4.x, mais nova, foi considerada e deixada de lado por ser recente demais para um ciclo de duas semanas. Ficam fixadas no arquivo de build da retaguarda.
 
 Registra-se que o documento norteador não impõe Java. A Seção 4 admite Spring Boot, Node.js, FastAPI ou plataforma gerenciada, desde que a escolha seja justificada. A opção por Java é decisão da equipe, motivada pela aderência ao conteúdo avaliado e pelo ganho na arguição — não uma obrigação normativa.
 
@@ -378,10 +378,12 @@ Mensagem de autenticação inválida é sempre genérica, para não revelar se u
 | Ambiente        | Aplicativo                    | Retaguarda                     | Banco                         |
 | --------------- | ----------------------------- | ------------------------------ | ----------------------------- |
 | Desenvolvimento | Build de desenvolvimento do próprio aplicativo | Local na porta 8080 | PostgreSQL instalado na máquina, sem contêiner |
-| Homologação     | Build de desenvolvimento      | Serviço gratuito de hospedagem | PostgreSQL gerenciado         |
+| Homologação     | Build de desenvolvimento      | Render, plano gratuito         | Neon, PostgreSQL gerenciado, plano gratuito |
 | Demonstração    | Pacote APK instalado          | Homologação                    | Homologação                   |
 
-O Expo Go das lojas só aceita a versão mais recente do SDK e deixa de servir a cada versão nova do Expo; a build de desenvolvimento não depende disso. O PostgreSQL vai direto na máquina porque um contêiner, somado ao emulador, pesa demais em computador de 8 GB. Hospedagem gratuita costuma suspender o serviço sem uso: a retaguarda deve ser acordada antes da demonstração.
+O Expo Go das lojas só aceita a versão mais recente do SDK e deixa de servir a cada versão nova do Expo; a build de desenvolvimento não depende disso. O PostgreSQL vai direto na máquina porque um contêiner, somado ao emulador, pesa demais em computador de 8 GB.
+
+A hospedagem segue a liberdade que o documento norteador dá e o critério de custo que ele pede: Render e Neon têm plano gratuito sem cartão, o Neon entrega o mesmo PostgreSQL dos scripts de `banco/`, e o Render constrói o projeto Java direto do repositório. O plano gratuito do Render suspende o serviço após quinze minutos sem uso e leva cerca de um minuto para reativar: a retaguarda deve ser acordada antes da demonstração. Como reserva, a retaguarda roda na máquina de desenvolvimento e o emulador a alcança pelo redirecionamento de porta do `adb`.
 
 Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Ciclo 3, conforme a Semana 13 do cronograma oficial.
 
@@ -459,8 +461,8 @@ Custo: o saldo mostrado no aparelho é provisório até a sincronização.
 Motivo: o banco do aparelho pode ser copiado, e o login sem rede não pode depender do servidor.
 Custo: a renovação do token só acontece na sincronização.
 
-**DA12 — Migrações com Flyway; Java 21 e Spring Boot 4.1.**
-Motivo: banco igual em todos os ambientes, sem script aplicado à mão, e versões com suporte vigente.
+**DA12 — Migrações com Flyway; Java 21 e Spring Boot 3.5.**
+Motivo: banco igual em todos os ambientes, sem script aplicado à mão, e versões com suporte vigente e bibliotecas já testadas entre si (a 4.x era recente demais para o prazo do Ciclo 3).
 Custo: uma dependência a mais na retaguarda.
 
 ---
@@ -480,3 +482,4 @@ Decisões de interface: [`04-prototipo.md`](04-prototipo.md).
 | 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
 | 1.1    | 14/10/2026 | Regras de sincronização e de credencial no aparelho (seções 3, 5.1, 6, 7, 9; DA09 a DA11); versões da retaguarda e Flyway (8.2, 8.3; DA12); ambientes (11); fonte da justificativa de JDBC corrigida (5); testes de serviço e repositório (1.2); geração do APK pelo Gradle local, não pelo EAS (8.1, 12) | Equipe StockEasy |
 | 1.2    | 02/11/2026 | Contagem dos testes de banco corrigida: 28 (serviços, repositórios e migrações), não 23 (1.2) | Equipe StockEasy |
+| 1.3    | 03/11/2026 | Spring Boot 3.5 no lugar do 4.1 (8.2, DA12); hospedagem de homologação definida: Render e Neon, com reserva local (11) | Equipe StockEasy |
