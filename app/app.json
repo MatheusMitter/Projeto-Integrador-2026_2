@@ -5,19 +5,40 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "splash": {
-      "backgroundColor": "#2E7D32"
-    },
-    "assetBundlePatterns": ["**/*"],
+    "primaryColor": "#2450D6",
+    "icon": "./assets/icon.png",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "package": "br.pucgoias.stockeasy",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#2E7D32"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2450D6"
       }
     },
     "web": {
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2450D6",
+          "image": "./assets/adaptive-icon.png",
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-status-bar",
+        {
+          "style": "dark"
+        }
+      ],
+      "./plugins/assinatura-release",
+      "./plugins/cor-de-destaque"
+    ]
   }
 }

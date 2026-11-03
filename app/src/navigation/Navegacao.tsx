@@ -1,112 +1,123 @@
-// Navegação: abas na parte de baixo, com pilha dentro da aba de produtos.
+// Navegação: cinco abas na parte de baixo, com pilhas dentro de Produtos
+// e de Ajustes.
 
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 import PainelScreen from "../screens/PainelScreen";
 import ProdutosScreen from "../screens/ProdutosScreen";
 import ProdutoFormScreen from "../screens/ProdutoFormScreen";
 import ProdutoDetalhesScreen from "../screens/ProdutoDetalhesScreen";
 import MovimentacaoScreen from "../screens/MovimentacaoScreen";
+import RelatoriosScreen from "../screens/RelatoriosScreen";
+import AjustesScreen from "../screens/AjustesScreen";
 import FornecedoresScreen from "../screens/FornecedoresScreen";
-import { ALVO_TOQUE, cores, espaco, fonte } from "../theme/tema";
+import type { NomeIcone } from "../components/base";
+import { cores, fonte } from "../theme/tema";
+import type { RotasAbas, RotasAjustes, RotasProdutos } from "./rotas";
+import { ContextoSessao } from "./sessao";
 
-const Pilha = createNativeStackNavigator();
-const Abas = createBottomTabNavigator();
+const PilhaProdutosNav = createNativeStackNavigator<RotasProdutos>();
+const PilhaAjustesNav = createNativeStackNavigator<RotasAjustes>();
+const Abas = createBottomTabNavigator<RotasAbas>();
 
-/**
- * O encerramento de sessão chega por contexto, não por prop.
- *
- * A pilha de produtos é um componente de módulo, declarado fora do
- * Navegacao para não remontar a cada render. Isso significa que ela não
- * recebe props do Navegacao — e o botão de sair precisa aparecer tanto no
- * cabeçalho das abas quanto no da pilha. O contexto resolve os dois sem
- * recriar componente.
- */
-const ContextoSessao = React.createContext<{ sair: () => void }>({
-  sair: () => {},
-});
-
-function BotaoSair() {
-  const { sair } = React.useContext(ContextoSessao);
-  return (
-    <Pressable
-      onPress={sair}
-      accessibilityRole="button"
-      accessibilityLabel="Sair da conta"
-      accessibilityHint="Encerra a sessão e volta para a tela de acesso"
-      style={{
-        minHeight: ALVO_TOQUE,
-        minWidth: ALVO_TOQUE,
-        justifyContent: "center",
-        alignItems: "flex-end",
-        paddingHorizontal: espaco.md,
-      }}
-    >
-      <Text
-        style={{
-          color: cores.primariaEscura,
-          fontSize: fonte.corpo,
-          fontWeight: "700",
-        }}
-      >
-        Sair
-      </Text>
-    </Pressable>
-  );
-}
-
+// Cabeçalho no estilo do Figma: mesmo fundo da tela, sem sombra, título
+// alinhado à esquerda.
 const cabecalho = {
-  headerStyle: { backgroundColor: cores.branco },
-  headerTintColor: cores.cinza900,
-  headerTitleStyle: { fontWeight: "700" as const },
+  headerStyle: { backgroundColor: cores.fundo },
+  headerShadowVisible: false,
+  headerTintColor: cores.texto,
+  headerTitleAlign: "left" as const,
+  headerTitleStyle: {
+    fontSize: fonte.tituloVoltar,
+    fontWeight: "800" as const,
+    color: cores.texto,
+  },
+  contentStyle: { backgroundColor: cores.fundo },
 };
 
-// Só nas telas de nível raiz. Num formulário, um "Sair" ao lado do voltar
-// convida ao toque errado e o que se perde é o que estava sendo digitado.
-const cabecalhoRaiz = { ...cabecalho, headerRight: () => <BotaoSair /> };
+const cabecalhoRaiz = {
+  ...cabecalho,
+  headerTitleStyle: { ...cabecalho.headerTitleStyle, fontSize: fonte.titulo },
+};
 
 function PilhaProdutos() {
   return (
-    <Pilha.Navigator screenOptions={cabecalho}>
-      <Pilha.Screen
+    <PilhaProdutosNav.Navigator screenOptions={cabecalho}>
+      <PilhaProdutosNav.Screen
         name="ProdutosLista"
         component={ProdutosScreen}
         options={{ title: "Produtos", ...cabecalhoRaiz }}
       />
-      <Pilha.Screen
+      <PilhaProdutosNav.Screen
         name="ProdutoForm"
         component={ProdutoFormScreen}
         options={({ route }) => ({
-          title:
-            (route.params as { id?: number } | undefined)?.id !== undefined
-              ? "Editar produto"
-              : "Novo produto",
+          title: route.params?.id !== undefined ? "Editar produto" : "Novo produto",
         })}
       />
-      {/* cast porque a tela exige params e o tipo do navigator espera
-          opcionais; tipar a lista de rotas resolve melhor, fica para depois */}
-      <Pilha.Screen
+      <PilhaProdutosNav.Screen
         name="ProdutoDetalhes"
-        component={ProdutoDetalhesScreen as React.ComponentType}
+        component={ProdutoDetalhesScreen}
         options={{ title: "Detalhes do produto" }}
       />
-    </Pilha.Navigator>
+    </PilhaProdutosNav.Navigator>
   );
 }
 
-// texto em vez de ícone, para o leitor de tela não ler símbolo estranho
-function abaIcone(texto: string) {
-  return ({ color }: { color: string }) => (
-    <Text style={{ color, fontSize: 18, fontWeight: "700" }}>{texto}</Text>
+function PilhaAjustes() {
+  return (
+    <PilhaAjustesNav.Navigator screenOptions={cabecalho}>
+      <PilhaAjustesNav.Screen
+        name="AjustesInicio"
+        component={AjustesScreen}
+        options={{ title: "Ajustes", ...cabecalhoRaiz }}
+      />
+      <PilhaAjustesNav.Screen
+        name="Fornecedores"
+        component={FornecedoresScreen}
+        options={{ title: "Fornecedores" }}
+      />
+    </PilhaAjustesNav.Navigator>
+  );
+}
+
+// ícone preenchido na aba ativa, contorno nas outras: a diferença não
+// fica só na cor
+function abaIcone(nome: string) {
+  return ({ color, focused }: { color: string; focused: boolean }) => (
+    <Ionicons
+      name={(focused ? nome : `${nome}-outline`) as NomeIcone}
+      size={22}
+      color={color}
+    />
+  );
+}
+
+function abaRotulo(texto: string) {
+  return ({ color, focused }: { color: string; focused: boolean }) => (
+    <Text
+      style={{
+        color,
+        fontSize: fonte.aba,
+        fontWeight: focused ? "700" : "400",
+      }}
+    >
+      {texto}
+    </Text>
   );
 }
 
 export default function Navegacao({ onSair }: { onSair: () => void }) {
   const sessao = React.useMemo(() => ({ sair: onSair }), [onSair]);
+  // o app desenha atrás da barra de gestos do Android; a altura dela entra
+  // na barra de abas, senão os rótulos ficam embaixo da linha de gestos
+  const { bottom } = useSafeAreaInsets();
 
   return (
     <ContextoSessao.Provider value={sessao}>
@@ -114,33 +125,65 @@ export default function Navegacao({ onSair }: { onSair: () => void }) {
         <Abas.Navigator
           screenOptions={{
             ...cabecalhoRaiz,
-            tabBarActiveTintColor: cores.primariaEscura,
-            tabBarInactiveTintColor: cores.cinza600,
-            tabBarLabelStyle: { fontSize: fonte.legenda },
+            tabBarActiveTintColor: cores.primaria,
+            // com o teclado aberto a barra só tomaria espaço do formulário
+            tabBarHideOnKeyboard: true,
+            tabBarInactiveTintColor: cores.textoSuave,
             // altura confortável: a barra é tocada com o polegar, muitas
             // vezes com a outra mão ocupada
-            tabBarStyle: { height: 64, paddingBottom: 8, paddingTop: 6 },
+            tabBarStyle: {
+              height: 64 + bottom,
+              paddingBottom: 8 + bottom,
+              paddingTop: 6,
+              backgroundColor: cores.superficie,
+              borderTopColor: cores.borda,
+            },
           }}
         >
           <Abas.Screen
             name="Início"
             component={PainelScreen}
-            options={{ title: "Início", tabBarIcon: abaIcone("|||") }}
+            options={{
+              title: "Início",
+              tabBarIcon: abaIcone("home"),
+              tabBarLabel: abaRotulo("Início"),
+            }}
           />
           <Abas.Screen
             name="Produtos"
             component={PilhaProdutos}
-            options={{ headerShown: false, tabBarIcon: abaIcone("[ ]") }}
+            options={{
+              headerShown: false,
+              tabBarIcon: abaIcone("grid"),
+              tabBarLabel: abaRotulo("Produtos"),
+            }}
           />
           <Abas.Screen
-            name="Movimentação"
+            name="Movimentar"
             component={MovimentacaoScreen}
-            options={{ title: "Movimentação", tabBarIcon: abaIcone("<>") }}
+            options={{
+              title: "Movimentar",
+              tabBarIcon: abaIcone("swap-horizontal"),
+              tabBarLabel: abaRotulo("Movimentar"),
+            }}
           />
           <Abas.Screen
-            name="Fornecedores"
-            component={FornecedoresScreen}
-            options={{ title: "Fornecedores", tabBarIcon: abaIcone("( )") }}
+            name="Relatórios"
+            component={RelatoriosScreen}
+            options={{
+              title: "Relatórios",
+              tabBarIcon: abaIcone("bar-chart"),
+              tabBarLabel: abaRotulo("Relatórios"),
+            }}
+          />
+          <Abas.Screen
+            name="Ajustes"
+            component={PilhaAjustes}
+            options={{
+              headerShown: false,
+              tabBarIcon: abaIcone("settings"),
+              tabBarLabel: abaRotulo("Ajustes"),
+            }}
           />
         </Abas.Navigator>
       </NavigationContainer>
