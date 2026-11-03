@@ -6,7 +6,7 @@
     <title>StockEasy - Novo Produto</title>
     <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
          barra do navegador. Nao altera o comportamento no computador. -->
-    <meta name="theme-color" content="#2e7d32" />
+    <meta name="theme-color" content="#2450d6" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -22,10 +22,10 @@
       <header class="header">
         <a
           href="produtos.html"
-          class="header-icon"
+          class="header-icon header-back"
           aria-label="Voltar para a lista de produtos"
         >
-          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19.5 12h-15"/><path d="m11 19.5-6.5-7.5L11 4.5"/></svg></span>
+          <span aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m14.5 5-7 7 7 7"/></svg></span>
         </a>
         <h1 class="header-title">Novo Produto</h1>
         <button
@@ -54,8 +54,8 @@
               <div class="photo-placeholder" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5h3l1.5-2.5h9L18 8.5h3v11H3v-11Z"/><circle cx="12" cy="13.5" r="3.2"/></svg></div>
               <button
                 type="button"
-                class="btn btn-secondary mt-md"
-                style="max-width: 200px; margin: 0 auto"
+                class="btn btn-secondary"
+                style="max-width: 200px; margin: var(--space-md) auto 0"
                 onclick="
                   alert(
                     'Protótipo: abriria a câmera do aparelho ou a galeria de fotos (recurso nativo — requisito R8).',
@@ -237,7 +237,7 @@
                 />
               </div>
             </div>
-            <p class="input-hint" id="ajuda-minimo">
+            <p class="input-hint mb-md" id="ajuda-minimo">
               Você será alertado quando o estoque ficar igual ou abaixo do
               mínimo (regra RN07).
             </p>
