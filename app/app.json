@@ -13,7 +13,9 @@
     "android": {
       "package": "br.pucgoias.stockeasy",
       "versionCode": 1,
-      "blockedPermissions": ["android.permission.SYSTEM_ALERT_WINDOW"],
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#2450D6"
@@ -27,8 +29,8 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#2450D6",
-          "image": "./assets/adaptive-icon.png",
+          "backgroundColor": "#F7F9FB",
+          "image": "./assets/splash.png",
           "imageWidth": 200
         }
       ],

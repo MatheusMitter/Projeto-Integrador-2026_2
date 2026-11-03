@@ -34,6 +34,7 @@ export type NomeIcone = React.ComponentProps<typeof Ionicons>["name"];
 
 type VarianteBotao =
   | "primario"
+  | "acesso"
   | "contorno"
   | "suave"
   | "perigo"
@@ -57,6 +58,12 @@ const ESTILO_BOTAO: Record<
     fundo: cores.primaria,
     texto: cores.sobrePrimaria,
     borda: cores.primaria,
+  },
+  // Entrar, Criar conta, Recuperar senha (docs/07, tabela de botões)
+  acesso: {
+    fundo: cores.azulProfundo,
+    texto: cores.whiteLilac,
+    borda: cores.azulProfundo,
   },
   contorno: {
     fundo: cores.superficie,
@@ -187,6 +194,8 @@ interface CampoProps {
   erro?: string | null;
   multilinha?: boolean;
   icone?: NomeIcone;
+  // a tela pode reagir ao foco, por exemplo rolando até o botão
+  onFocar?: () => void;
 }
 
 export function Campo({
@@ -201,6 +210,7 @@ export function Campo({
   erro,
   multilinha = false,
   icone,
+  onFocar,
 }: CampoProps) {
   const [focado, setFocado] = React.useState(false);
 
@@ -221,7 +231,10 @@ export function Campo({
         <TextInput
           value={valor}
           onChangeText={onChangeText}
-          onFocus={() => setFocado(true)}
+          onFocus={() => {
+            setFocado(true);
+            onFocar?.();
+          }}
           onBlur={() => setFocado(false)}
           placeholder={placeholder}
           placeholderTextColor={cores.textoSuave}

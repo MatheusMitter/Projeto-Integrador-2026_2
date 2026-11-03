@@ -35,6 +35,16 @@ export const cores = {
   perigo: "#CF3A3A",
   perigoTexto: "#A12A2A", // o perigo puro dá 4,45:1 sobre o fundo
   perigoSuave: "#FBE7E7",
+
+  // Identidade de 19/10 (docs/07-identidade-visual.md). Por enquanto só
+  // nas telas de acesso; o resto da paleta entra quando o redesenho
+  // chegar aos componentes.
+  marcaAzul: "#2450D6", // metade de cima do ícone
+  marcaNoite: "#0E1E4A", // metade de baixo do ícone
+  azulNoite: "#002242", // cabeçalho escuro e áreas de marca
+  azulProfundo: "#144774", // botões de acesso: Entrar, Criar conta
+  azulClaro: "#ADD8E6", // texto de apoio sobre o azul
+  whiteLilac: "#F7F9FB", // fundo das telas e do card de acesso
 } as const;
 
 export const espaco = {
