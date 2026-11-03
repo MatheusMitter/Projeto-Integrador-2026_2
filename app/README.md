@@ -25,7 +25,7 @@ npm install
 
 Para gerar o pacote instalável sem depender do servidor (R14): **Build → Generate Signed App Bundle / APK**, ou `./gradlew assembleRelease` dentro de `app/android`. Pela linha de comando, o Gradle precisa saber onde estão o SDK do Android e o JDK, porque a pasta recriada não traz o `local.properties` que o Android Studio gera: no macOS, `export ANDROID_HOME=~/Library/Android/sdk` e `JAVA_HOME` apontando para um JDK 17 ou 21. Exporte também `NODE_ENV=production`; sem ele, o empacotamento do JavaScript avisa que não sabe para qual ambiente é a versão. O APK sai em `android/app/build/outputs/apk/release/`. Para testar só no emulador, `./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a` compila uma arquitetura só e termina bem mais rápido; para a entrega, gere sem o filtro.
 
-A pasta `android/` não é versionada: ela é recriada a partir do `app.json` com `npx expo prebuild --platform android`, que a apaga e gera de novo. Ícone, cores, barra de status e tela de abertura saem do `app.json` e de `assets/`. A assinatura de release é reaplicada a cada geração pelo plugin `plugins/assinatura-release.js`, que lê as senhas do arquivo do Gradle do seu usuário, `~/.gradle/gradle.properties`, fora do projeto e do Git:
+A pasta `android/` não é versionada: ela é recriada a partir do `app.json` com `npx expo prebuild --platform android`, que a apaga e gera de novo. Ícone, cores, barra de status e tela de abertura saem do `app.json` e de `assets/`. As permissões também. O modelo do Expo declara a de aparecer sobre outros apps (`SYSTEM_ALERT_WINDOW`), que serve às ferramentas de depuração. Ela fica só na versão de desenvolvimento, porque o `app.json` a bloqueia na de entrega (`android.blockedPermissions`). A assinatura de release é reaplicada a cada geração pelo plugin `plugins/assinatura-release.js`, que lê as senhas do arquivo do Gradle do seu usuário, `~/.gradle/gradle.properties`, fora do projeto e do Git:
 
 ```properties
 STOCKEASY_RELEASE_STORE_FILE=/caminho/completo/para/app/stockeasy-release.keystore
@@ -189,13 +189,12 @@ Ainda não implementados, previstos para os Ciclos 3 e 4: persistência remota e
 
 **A carga de exemplo só roda com o banco vazio.** Um aparelho que já tinha o banco de uma versão anterior mantém os dados antigos, como o nome "Marlene Proprietária" no lugar de "Proprietário". Para ver a carga atual é preciso reinstalar o aplicativo.
 
-**O `npm install` mostra 15 alertas de segurança altos.** Eles vêm de duas bibliotecas usadas só pelas ferramentas de desenvolvimento do Expo e do React Native, e nenhuma entra no APK:
-- o `braces`, usado pelo Metro;
-- o `node-forge`, usado na assinatura de iOS e de atualizações pela internet, que o projeto não usa.
+**O `npm install` mostra 14 alertas de segurança, 2 deles altos.** Todos vêm de bibliotecas usadas só pelas ferramentas de desenvolvimento do Expo, e nenhuma entra no APK:
+- `zod`, na ferramenta de linha de comando: a correção só existe na versão 4, e o Expo 57 exige a 3;
+- `glob` e `minimatch`, em várias ferramentas: a correção só existe nas versões 14 e 11, que o Expo 57 ainda não aceita;
+- `deepmerge`, na leitura da configuração: não há versão corrigida.
 
-Os autores ainda não publicaram versão corrigida. Quando publicarem, `npm audit fix` resolve sem mexer no Expo. **Não rodar `npm audit fix --force`**: ele volta o Expo para a versão 44 e quebra o projeto.
-
-O campo `overrides` do `package.json` força o `uuid` 11.1.1 para o `xcode`. O `xcode` é uma ferramenta de projeto iOS sem atualização desde 2020, que pedia uma versão do `uuid` com falha. O campo pode sair quando o Expo deixar de usar o `xcode`.
+Forçar essas versões quebraria as ferramentas do Expo. Quando o Expo publicar versões com as correções, rode `npx expo install --fix` e depois `npm audit fix`. **Não rodar `npm audit fix --force`**: ele troca o Expo de versão maior e quebra o projeto.
 
 **A loja é fixa.** Todo registro pertence à loja de identificador 1, criada na carga inicial. O cadastro de loja entra junto com a autenticação no servidor.
 
