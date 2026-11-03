@@ -6,6 +6,9 @@
 *.pem
 google-services.json
 GoogleService-Info.plist
+# Arquivos de assinatura do Android costumam guardar senha de keystore
+gradle.properties
+keystore.properties
 
 # Dependências
 node_modules/
@@ -19,6 +22,13 @@ dist/
 *.aab
 *.keystore
 *.jks
+
+# Projeto nativo gerado pelo `expo prebuild` — artefato, não código-fonte.
+# É recriado a partir de app/app.json sempre que necessário e carrega o
+# debug.keystore e o gradle.properties do template.
+# O APK sai em app/android/app/build/outputs/apk/.
+app/android/
+app/ios/
 
 # Sistema operacional
 .DS_Store
