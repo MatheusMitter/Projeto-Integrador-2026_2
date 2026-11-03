@@ -30,7 +30,7 @@ O padrão principal é o de camadas. Os outros três descrevem, respectivamente,
 
 **Porque é exigência do projeto.** O requisito R12 pede "separação de responsabilidades em camadas". Não é escolha livre.
 
-**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 72 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados; outros 23 testam serviços e repositórios num banco em memória, também sem emulador. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
+**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 72 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados; outros 28 testam serviços, repositórios e migrações num banco em memória, também sem emulador. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
 
 **Porque isola a mudança.** Trocar de banco de dados afeta apenas a camada de persistência. Nenhuma regra, nenhuma tela e nenhum teste precisariam ser alterados. Isso não é hipótese no nosso caso: já convivemos com dois bancos, SQLite no aparelho e PostgreSQL no servidor, com o mesmo modelo relacional.
 
@@ -479,3 +479,4 @@ Decisões de interface: [`04-prototipo.md`](04-prototipo.md).
 | ------ | ---------- | ----------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
 | 1.1    | 14/10/2026 | Regras de sincronização e de credencial no aparelho (seções 3, 5.1, 6, 7, 9; DA09 a DA11); versões da retaguarda e Flyway (8.2, 8.3; DA12); ambientes (11); fonte da justificativa de JDBC corrigida (5); testes de serviço e repositório (1.2); geração do APK pelo Gradle local, não pelo EAS (8.1, 12) | Equipe StockEasy |
+| 1.2    | 02/11/2026 | Contagem dos testes de banco corrigida: 28 (serviços, repositórios e migrações), não 23 (1.2) | Equipe StockEasy |
