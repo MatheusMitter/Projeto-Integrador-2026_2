@@ -42,7 +42,7 @@ As datas da carga são relativas ao dia em que o script roda: o Sabonete vence s
 
 ## Relação com os outros artefatos
 
-Estes scripts são a versão executável do modelo descrito em [`../docs/02-modelagem-de-dados.md`](../docs/02-modelagem-de-dados.md), que traz o diagrama, a justificativa de cada decisão e a análise de normalização. **Ao alterar um, alterar o outro.**
+Estes scripts são a versão executável do modelo descrito em [`../docs/02-modelagem-de-dados.md`](../docs/02-modelagem-de-dados.md), que traz o diagrama, a justificativa de cada decisão e a análise de normalização. **Ao alterar um, alterar os três:** a retaguarda em [`../api/`](../api/) carrega este esquema pelo Flyway (`api/src/main/resources/db/migration/V1__esquema.sql` é o `01-esquema.sql` sem `CREATE DATABASE` e `\c`; `V2__sincronizacao.sql` traz os ajustes da sincronização).
 
 O aplicativo móvel **não usa este banco.** Ele cria o próprio esquema em SQLite na primeira execução, definido em [`../app/src/database/esquema.ts`](../app/src/database/esquema.ts). O PostgreSQL entra no Ciclo 3, com a retaguarda em Spring Boot.
 

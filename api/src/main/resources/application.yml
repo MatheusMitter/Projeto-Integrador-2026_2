@@ -1,0 +1,23 @@
+# Toda credencial vem de variável de ambiente; nada fica no repositório.
+# Valores padrão só para o PostgreSQL local de desenvolvimento.
+spring:
+  application:
+    name: stockeasy-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/stockeasy_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    time-zone: UTC
+
+server:
+  port: ${PORT:8080}
+
+stockeasy:
+  jwt:
+    # mínimo de 32 caracteres; em produção vem do ambiente
+    segredo: ${JWT_SECRET:troque-este-segredo-no-ambiente-de-homologacao-0000}
+    validade-horas: ${JWT_HORAS:720}
