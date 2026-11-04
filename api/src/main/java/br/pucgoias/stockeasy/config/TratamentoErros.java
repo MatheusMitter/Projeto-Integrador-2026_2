@@ -3,6 +3,7 @@ package br.pucgoias.stockeasy.config;
 import br.pucgoias.stockeasy.dto.AutenticacaoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,17 @@ public class TratamentoErros {
     public ResponseEntity<AutenticacaoDTO.Erro> dadosInvalidos(Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AutenticacaoDTO.Erro("Dados inválidos na requisição."));
+    }
+
+    /**
+     * Dado que precisa ser único já existe: código de barras de produto ativo
+     * (RN04), nome de categoria na loja ou e-mail. Nada do lote é gravado.
+     */
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<AutenticacaoDTO.Erro> duplicado(DuplicateKeyException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new AutenticacaoDTO.Erro(
+                "Já existe um registro com estes dados: código de barras de produto ativo, "
+                        + "nome de categoria ou e-mail repetido."));
     }
 
     @ExceptionHandler(Exception.class)

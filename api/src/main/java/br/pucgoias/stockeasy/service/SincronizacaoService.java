@@ -49,11 +49,11 @@ public class SincronizacaoService {
         List<RetornoLoteDTO.Divergencia> divergencias = new ArrayList<>();
 
         for (var c : lote.categorias()) {
-            dao.salvarCategoria(lojaId, c);
+            if (dao.salvarCategoria(lojaId, c) == 0) throw deOutraLoja("Categoria", c.uuid());
             categorias.add(c.uuid());
         }
         for (var f : lote.fornecedores()) {
-            dao.salvarFornecedor(lojaId, f);
+            if (dao.salvarFornecedor(lojaId, f) == 0) throw deOutraLoja("Fornecedor", f.uuid());
             fornecedores.add(f.uuid());
         }
         for (var p : lote.produtos()) {
@@ -62,11 +62,15 @@ public class SincronizacaoService {
             Long fornecedorId = p.fornecedorUuid() == null ? null
                     : dao.idFornecedor(lojaId, p.fornecedorUuid())
                             .orElseThrow(() -> new LoteInvalido("Fornecedor desconhecido no produto " + p.uuid()));
-            dao.salvarProduto(lojaId, p, categoriaId, fornecedorId);
+            if (dao.salvarProduto(lojaId, p, categoriaId, fornecedorId) == 0) {
+                throw deOutraLoja("Produto", p.uuid());
+            }
             produtos.add(p.uuid());
         }
         for (var m : lote.movimentacoes()) {
-            if (dao.movimentacaoExiste(m.uuid())) {
+            var gravada = dao.lojaDaMovimentacao(m.uuid());
+            if (gravada.isPresent()) {
+                if (gravada.get() != lojaId) throw deOutraLoja("Movimentação", m.uuid());
                 movimentacoes.add(m.uuid()); // já aplicada num envio anterior
                 continue;
             }
@@ -93,6 +97,15 @@ public class SincronizacaoService {
         return new AlteracoesDTO(dao.categorias(lojaId, desde), dao.fornecedores(lojaId, desde),
                 dao.produtos(lojaId, desde), dao.movimentacoes(lojaId, desde), dao.alertas(lojaId, desde),
                 dao.agora());
+    }
+
+    /**
+     * O uuid já existe em outra loja. Com uuid aleatório isso só acontece por
+     * erro do aparelho ou tentativa de mexer em dado alheio. O lote inteiro é
+     * recusado, em vez de o servidor dizer que aceitou algo que não gravou.
+     */
+    private static LoteInvalido deOutraLoja(String item, UUID uuid) {
+        return new LoteInvalido(item + " " + uuid + " pertence a outra loja.");
     }
 
     private static int sinal(String tipo) {

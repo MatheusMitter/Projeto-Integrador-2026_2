@@ -18,6 +18,8 @@ server:
 
 stockeasy:
   jwt:
-    # mínimo de 32 caracteres; em produção vem do ambiente
-    segredo: ${JWT_SECRET:troque-este-segredo-no-ambiente-de-homologacao-0000}
+    # Sem valor padrão de propósito: um segredo escrito aqui ficaria público
+    # no repositório e permitiria forjar token de qualquer loja. Sem
+    # JWT_SECRET no ambiente, o servidor não sobe. Mínimo de 32 caracteres.
+    segredo: ${JWT_SECRET}
     validade-horas: ${JWT_HORAS:720}

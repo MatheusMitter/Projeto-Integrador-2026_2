@@ -1,5 +1,6 @@
 package br.pucgoias.stockeasy;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -133,6 +134,39 @@ class SincronizacaoTest {
         mvc.perform(post("/sync/enviar").header("Authorization", "Bearer " + tokenB)
                         .contentType(MediaType.APPLICATION_JSON).content(soMov))
                 .andExpect(status().isUnprocessableEntity());
+
+        // B reaproveita o uuid da categoria de A: recusado, e a categoria de A não muda
+        String categoriaDeA = "{\"categorias\":[{\"uuid\":\"" + C + "\",\"nome\":\"Invadida\",\"ativo\":true}]}";
+        mvc.perform(post("/sync/enviar").header("Authorization", "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON).content(categoriaDeA))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.mensagem", containsString("outra loja")));
+
+        // B reaproveita o uuid de uma movimentação de A: recusado, não passa por "já aplicada"
+        String movimentacaoDeA = "{\"movimentacoes\":[{\"uuid\":\"" + M1 + "\",\"produtoUuid\":\""
+                + P + "\",\"tipo\":\"VENDA\",\"quantidade\":1,\"dataHora\":\"2026-11-04T20:00:00Z\"}]}";
+        mvc.perform(post("/sync/enviar").header("Authorization", "Bearer " + tokenB)
+                        .contentType(MediaType.APPLICATION_JSON).content(movimentacaoDeA))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.mensagem", containsString("outra loja")));
+
+        mvc.perform(get("/sync/baixar").header("Authorization", "Bearer " + tokenA))
+                .andExpect(jsonPath("$.categorias[0].nome", is("Bebidas")))
+                .andExpect(jsonPath("$.movimentacoes", hasSize(2)));
+    }
+
+    @Test
+    void codigoDeBarrasRepetidoEntreAtivosDaConflitoENadaGrava() throws Exception {
+        String token = registrar("dona@exemplo.com");
+        String lote = "{\"categorias\":[{\"uuid\":\"" + C + "\",\"nome\":\"Bebidas\",\"ativo\":true}],"
+                + "\"produtos\":[" + produto("22222222-2222-2222-2222-222222222221") + ","
+                + produto("22222222-2222-2222-2222-222222222222") + "]}";
+        mvc.perform(post("/sync/enviar").header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON).content(lote))
+                .andExpect(status().isConflict());
+        // rollback total: nem a categoria do mesmo lote ficou
+        mvc.perform(get("/sync/baixar").header("Authorization", "Bearer " + token))
+                .andExpect(jsonPath("$.categorias", hasSize(0)));
     }
 
     // ---- apoio ----
@@ -143,6 +177,11 @@ class SincronizacaoTest {
                 .andExpect(status().isCreated()).andReturn();
         JsonNode corpo = json.readTree(r.getResponse().getContentAsString());
         return corpo.get("token").asText();
+    }
+
+    private static String produto(String uuid) {
+        return "{\"uuid\":\"" + uuid + "\",\"nome\":\"Refrigerante 2L\",\"codigoBarras\":\"7894900011517\","
+                + "\"categoriaUuid\":\"" + C + "\",\"precoCusto\":5.5,\"precoVenda\":9.9,\"estoqueMinimo\":2,\"ativo\":true}";
     }
 
     private static String registro(String email) {

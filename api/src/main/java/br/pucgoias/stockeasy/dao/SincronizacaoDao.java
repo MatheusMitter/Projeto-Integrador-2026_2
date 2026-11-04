@@ -26,16 +26,19 @@ public class SincronizacaoDao {
 
     // ---- envio (upsert por uuid; o mais recente pela chegada vence, RN09) ----
 
-    public void salvarCategoria(long lojaId, LoteDTO.Categoria c) {
-        jdbc.update("""
+    // Os três salvar* devolvem 0 quando o uuid já pertence a outra loja: o
+    // WHERE do ON CONFLICT impede a alteração e o serviço recusa o lote.
+
+    public int salvarCategoria(long lojaId, LoteDTO.Categoria c) {
+        return jdbc.update("""
                 INSERT INTO categoria (uuid, loja_id, nome, ativo) VALUES (?, ?, ?, ?)
                 ON CONFLICT (uuid) DO UPDATE SET nome = EXCLUDED.nome, ativo = EXCLUDED.ativo
                 WHERE categoria.loja_id = EXCLUDED.loja_id""",
                 c.uuid(), lojaId, c.nome(), c.ativo());
     }
 
-    public void salvarFornecedor(long lojaId, LoteDTO.Fornecedor f) {
-        jdbc.update("""
+    public int salvarFornecedor(long lojaId, LoteDTO.Fornecedor f) {
+        return jdbc.update("""
                 INSERT INTO fornecedor (uuid, loja_id, nome, telefone, email, ativo) VALUES (?, ?, ?, ?, ?, ?)
                 ON CONFLICT (uuid) DO UPDATE SET nome = EXCLUDED.nome, telefone = EXCLUDED.telefone,
                     email = EXCLUDED.email, ativo = EXCLUDED.ativo
@@ -44,8 +47,8 @@ public class SincronizacaoDao {
     }
 
     /** estoque_atual não vem do aparelho: só as movimentações o alteram. */
-    public void salvarProduto(long lojaId, LoteDTO.Produto p, long categoriaId, Long fornecedorId) {
-        jdbc.update("""
+    public int salvarProduto(long lojaId, LoteDTO.Produto p, long categoriaId, Long fornecedorId) {
+        return jdbc.update("""
                 INSERT INTO produto (uuid, loja_id, nome, codigo_barras, categoria_id, fornecedor_id,
                     preco_custo, preco_venda, estoque_minimo, data_validade, ativo)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -82,9 +85,11 @@ public class SincronizacaoDao {
                 uuid, lojaId).stream().findFirst();
     }
 
-    public boolean movimentacaoExiste(UUID uuid) {
-        return Boolean.TRUE.equals(jdbc.queryForObject(
-                "SELECT EXISTS (SELECT 1 FROM movimentacao WHERE uuid = ?)", Boolean.class, uuid));
+    /** Loja da movimentação já gravada com este uuid, ou vazio se ela é nova. */
+    public Optional<Long> lojaDaMovimentacao(UUID uuid) {
+        return jdbc.queryForList("""
+                SELECT p.loja_id FROM movimentacao m JOIN produto p ON p.id = m.produto_id
+                WHERE m.uuid = ?""", Long.class, uuid).stream().findFirst();
     }
 
     public void inserirMovimentacao(LoteDTO.Movimentacao m, long produtoId, long usuarioId, int saldoApos) {
