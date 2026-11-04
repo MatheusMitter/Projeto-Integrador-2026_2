@@ -194,8 +194,10 @@ interface CampoProps {
   erro?: string | null;
   multilinha?: boolean;
   icone?: NomeIcone;
-  // a tela pode reagir ao foco, por exemplo rolando até o botão
+  // a tela pode reagir ao foco (rolar até o botão) e à saída do campo
+  // (consultar um serviço com o valor digitado)
   onFocar?: () => void;
+  onDesfocar?: () => void;
 }
 
 export function Campo({
@@ -211,6 +213,7 @@ export function Campo({
   multilinha = false,
   icone,
   onFocar,
+  onDesfocar,
 }: CampoProps) {
   const [focado, setFocado] = React.useState(false);
 
@@ -235,7 +238,10 @@ export function Campo({
             setFocado(true);
             onFocar?.();
           }}
-          onBlur={() => setFocado(false)}
+          onBlur={() => {
+            setFocado(false);
+            onDesfocar?.();
+          }}
           placeholder={placeholder}
           placeholderTextColor={cores.textoSuave}
           keyboardType={tipoTeclado}
