@@ -19,6 +19,7 @@ import {
 } from "../services/cadastroService";
 import { buscarProduto, salvarProduto } from "../services/produtoService";
 import { buscarPorCodigo, casarCategoria } from "../services/produtoExternoService";
+import { LeitorCodigo } from "../components/LeitorCodigo";
 import {
   avisoPreco,
   calcularMargem,
@@ -42,7 +43,8 @@ export default function ProdutoFormScreen({
   const editando = id !== undefined;
 
   const [nome, setNome] = useState("");
-  const [codigoBarras, setCodigoBarras] = useState("");
+  // vindo da movimentação, o código lido pela câmera já chega preenchido
+  const [codigoBarras, setCodigoBarras] = useState(route.params?.codigoBarras ?? "");
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [fornecedorId, setFornecedorId] = useState<number | null>(null);
   const [precoCusto, setPrecoCusto] = useState("");
@@ -63,6 +65,7 @@ export default function ProdutoFormScreen({
   const [ultimoCodigoBuscado, setUltimoCodigoBuscado] = useState("");
   // a categoria pré-selecionada não conta como escolha do usuário
   const [categoriaEscolhida, setCategoriaEscolhida] = useState(false);
+  const [leitorAberto, setLeitorAberto] = useState(false);
 
   // RN01 na interface: o operador não vê nem informa o custo
   const verFinanceiro = podeVerFinanceiro(
@@ -108,8 +111,8 @@ export default function ProdutoFormScreen({
 
   // Sugere nome e categoria a partir do código, sem apagar o que o usuário
   // já digitou. Falha, demora ou código desconhecido só mostram um aviso.
-  async function consultarCodigo() {
-    const codigo = codigoBarras.replace(/\D/g, "");
+  async function consultarCodigo(valor = codigoBarras) {
+    const codigo = valor.replace(/\D/g, "");
     if (codigo.length < 8 || codigo === ultimoCodigoBuscado) return;
     setUltimoCodigoBuscado(codigo);
     setAvisoCodigo(null);
@@ -193,9 +196,11 @@ export default function ProdutoFormScreen({
           setCodigoBarras(t);
           setAvisoCodigo(null);
         }}
-        onDesfocar={consultarCodigo}
+        onDesfocar={() => consultarCodigo()}
         tipoTeclado="numeric"
         icone="barcode-outline"
+        onPressIcone={() => setLeitorAberto(true)}
+        rotuloIcone="Ler código de barras com a câmera"
         ajuda={
           buscandoCodigo
             ? "Buscando na base externa..."
@@ -203,6 +208,16 @@ export default function ProdutoFormScreen({
         }
       />
       {!!avisoCodigo && <Aviso tipo="info" texto={avisoCodigo} />}
+      <LeitorCodigo
+        aberto={leitorAberto}
+        onCancelar={() => setLeitorAberto(false)}
+        onLer={(codigo) => {
+          setLeitorAberto(false);
+          setCodigoBarras(codigo);
+          setAvisoCodigo(null);
+          consultarCodigo(codigo);
+        }}
+      />
 
       {/* RN01: preço de custo e margem só para o proprietário */}
       <View style={e.linha}>
