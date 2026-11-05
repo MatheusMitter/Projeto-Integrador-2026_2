@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS categoria (
   nome          TEXT    NOT NULL,
   ativo         INTEGER NOT NULL DEFAULT 1,
   sincronizado  INTEGER NOT NULL DEFAULT 0,
+  sincronizado_em TEXT,
   UNIQUE (loja_id, nome)
 );
 
@@ -49,7 +50,8 @@ CREATE TABLE IF NOT EXISTS fornecedor (
   observacoes   TEXT,
   ativo         INTEGER NOT NULL DEFAULT 1,
   criado_em     TEXT    NOT NULL DEFAULT (datetime('now')),
-  sincronizado  INTEGER NOT NULL DEFAULT 0
+  sincronizado  INTEGER NOT NULL DEFAULT 0,
+  sincronizado_em TEXT
 );
 
 CREATE TABLE IF NOT EXISTS produto (
@@ -69,7 +71,8 @@ CREATE TABLE IF NOT EXISTS produto (
   ativo          INTEGER NOT NULL DEFAULT 1,
   criado_em      TEXT    NOT NULL DEFAULT (datetime('now')),
   atualizado_em  TEXT    NOT NULL DEFAULT (datetime('now')),
-  sincronizado   INTEGER NOT NULL DEFAULT 0
+  sincronizado   INTEGER NOT NULL DEFAULT 0,
+  sincronizado_em TEXT
 );
 
 CREATE TABLE IF NOT EXISTS movimentacao (
@@ -86,7 +89,8 @@ CREATE TABLE IF NOT EXISTS movimentacao (
   saldo_apos    INTEGER NOT NULL CHECK (saldo_apos >= 0),
   data_hora     TEXT    NOT NULL DEFAULT (datetime('now')),
   observacoes   TEXT,
-  sincronizado  INTEGER NOT NULL DEFAULT 0
+  sincronizado  INTEGER NOT NULL DEFAULT 0,
+  sincronizado_em TEXT
 );
 
 -- RN04: o código de barras não se repete entre os produtos ativos da loja.
@@ -98,6 +102,26 @@ CREATE INDEX IF NOT EXISTS idx_produto_loja      ON produto(loja_id);
 CREATE INDEX IF NOT EXISTS idx_produto_categoria ON produto(categoria_id);
 CREATE INDEX IF NOT EXISTS idx_mov_produto_data  ON movimentacao(produto_id, data_hora DESC);
 CREATE INDEX IF NOT EXISTS idx_mov_pendente      ON movimentacao(sincronizado);
+
+-- Sincronização com a retaguarda (R6b). Nas quatro tabelas que vão ao
+-- servidor, sincronizado vale 0 para pendente, 2 para o que está no lote em
+-- envio e 1 para o que o servidor aceitou; sincronizado_em guarda o instante
+-- do servidor no aceite. A linha única abaixo guarda a loja do servidor a que
+-- o aparelho está ligado, o corte do último download e o último resultado.
+CREATE TABLE IF NOT EXISTS sincronizacao (
+  id               INTEGER PRIMARY KEY CHECK (id = 1),
+  loja_uuid        TEXT,
+  corte            TEXT,
+  ultimo_resultado TEXT,
+  ultimo_em        TEXT
+);
+INSERT OR IGNORE INTO sincronizacao (id) VALUES (1);
+
+-- Preferências do aparelho, como o prazo do alerta de vencimento (US14).
+CREATE TABLE IF NOT EXISTS preferencia (
+  chave TEXT PRIMARY KEY,
+  valor TEXT NOT NULL
+);
 `;
 
 // Carga inicial. Produtos entram com saldo zero: o saldo é construído

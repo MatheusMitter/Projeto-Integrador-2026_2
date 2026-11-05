@@ -2,7 +2,8 @@
 
 import * as SQLite from "expo-sqlite";
 import { CARGA_INICIAL, ENTRADAS_INICIAIS, ESQUEMA } from "./esquema";
-import { migrar, VERSAO_ESQUEMA } from "./migracoes";
+import { novoUuid } from "./cripto";
+import { migrar, normalizarUuidsESenhas, VERSAO_ESQUEMA } from "./migracoes";
 
 const NOME_BANCO = "stockeasy.db";
 
@@ -85,11 +86,14 @@ async function popularSeVazio(db: SQLite.SQLiteDatabase): Promise<void> {
         ],
       );
     }
+
+    // a carga usa uuid legível e a senha de teste em texto, para o arquivo
+    // ser fácil de ler; aqui viram uuid aleatório e resumo, como o resto
+    await normalizarUuidsESenhas(db);
   });
 }
 
 // id gerado no aparelho, para não duplicar no reenvio ao servidor
 export function gerarUuid(): string {
-  const aleatorio = () => Math.random().toString(16).slice(2, 10);
-  return `${Date.now().toString(16)}-${aleatorio()}-${aleatorio()}`;
+  return novoUuid();
 }

@@ -6,6 +6,7 @@ import * as cadastroRepo from "../repositories/cadastroRepository";
 import { sessaoAtual } from "./authService";
 import type { ResultadoOperacao } from "./produtoService";
 import { podeGerenciarCadastros, validarFornecedor } from "./regras";
+import { pedirSincronizacao } from "./sincronizacaoService";
 
 const SEM_PERMISSAO: ResultadoOperacao = {
   sucesso: false,
@@ -49,6 +50,7 @@ export async function salvarFornecedor(
   try {
     if (id === null) await cadastroRepo.inserirFornecedor(limpos);
     else await cadastroRepo.atualizarFornecedor(id, limpos);
+    pedirSincronizacao();
     return { sucesso: true };
   } catch {
     return {
@@ -74,6 +76,7 @@ export async function excluirFornecedor(id: number): Promise<ResultadoOperacao> 
     }
     // RN12: sai das listas, mas o registro continua para o histórico
     await cadastroRepo.desativarFornecedor(id);
+    pedirSincronizacao();
     return { sucesso: true };
   } catch {
     return {

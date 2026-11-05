@@ -47,7 +47,8 @@
         }
       ],
       "./plugins/assinatura-release",
-      "./plugins/cor-de-destaque"
+      "./plugins/cor-de-destaque",
+      "expo-secure-store"
     ]
   }
 }

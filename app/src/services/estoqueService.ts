@@ -7,6 +7,7 @@ import * as movimentacaoRepo from "../repositories/movimentacaoRepository";
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "./authService";
 import { validarMovimentacao } from "./regras";
+import { pedirSincronizacao } from "./sincronizacaoService";
 
 export interface PedidoMovimentacao {
   produtoId: number;
@@ -80,7 +81,10 @@ export async function registrarMovimentacao(
   }
 
   try {
-    return await emTransacao(() => aplicarMovimentacao(pedido, usuario.id));
+    const r = await emTransacao(() => aplicarMovimentacao(pedido, usuario.id));
+    // sem esperar: com rede, vai ao servidor em segundo plano
+    if (r.sucesso) pedirSincronizacao();
+    return r;
   } catch (erro) {
     // se caiu aqui, o CHECK do banco pegou algo que passou da validação
     const texto = erro instanceof Error ? erro.message : String(erro);

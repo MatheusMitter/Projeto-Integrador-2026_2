@@ -1,11 +1,14 @@
 // Migração do banco local (src/database/migracoes.ts). Cada teste monta um
 // banco como os criados antes do controle de versão, com o código de barras
-// único também entre os desativados, e confere a passagem para a RN04.
+// único também entre os desativados, e confere a passagem para a RN04
+// (versão 1) e para a sincronização, com uuid padrão e senha só como resumo
+// (versão 2).
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { openDatabaseAsync } from "./apoio/expo-sqlite-node.mjs";
+import { conferirSenha, ehUuid } from "../src/database/cripto.ts";
 import { CARGA_INICIAL, ESQUEMA } from "../src/database/esquema.ts";
 import { migrar, VERSAO_ESQUEMA } from "../src/database/migracoes.ts";
 
@@ -71,7 +74,23 @@ async function abrir(db) {
   await db.execAsync(`PRAGMA user_version = ${VERSAO_ESQUEMA};`);
 }
 
-const todos = (db) => db.getAllAsync("SELECT * FROM produto ORDER BY id");
+// uuid e sincronizado_em ficam fora da comparação: a versão 2 troca o uuid
+// antigo pelo formato padrão e acrescenta a coluna; o resto chega igual
+const COLUNAS_COMPARADAS = `id, loja_id, nome, codigo_barras, categoria_id, fornecedor_id,
+  preco_custo, preco_venda, estoque_atual, estoque_minimo, data_validade, ativo,
+  criado_em, atualizado_em, sincronizado`;
+const todos = (db) => db.getAllAsync(`SELECT ${COLUNAS_COMPARADAS} FROM produto ORDER BY id`);
+
+const TABELAS_COM_UUID = ["loja", "usuario", "categoria", "fornecedor", "produto", "movimentacao"];
+
+async function uuidsESenhas(db) {
+  const uuids = [];
+  for (const t of TABELAS_COM_UUID) {
+    for (const l of await db.getAllAsync(`SELECT uuid FROM ${t} ORDER BY id`)) uuids.push(l.uuid);
+  }
+  const senhas = (await db.getAllAsync("SELECT senha_hash FROM usuario ORDER BY id")).map((l) => l.senha_hash);
+  return { uuids, senhas };
+}
 
 test("banco antigo migra sem perder produto nem movimentação", async () => {
   const db = await bancoNaVersao0();
@@ -81,8 +100,9 @@ test("banco antigo migra sem perder produto nem movimentação", async () => {
 
   assert.deepEqual(await todos(db), antes);
   assert.deepEqual(await db.getAllAsync("PRAGMA foreign_key_check"), []);
+  // a única movimentação do banco antigo; o uuid dela muda na versão 2
   const mov = await db.getFirstAsync(
-    "SELECT produto_id FROM movimentacao WHERE uuid = 'mov-0001'",
+    "SELECT produto_id FROM movimentacao ORDER BY id LIMIT 1",
   );
   assert.equal(mov.produto_id, REFRIGERANTE);
   assert.equal((await db.getFirstAsync("PRAGMA user_version")).user_version, VERSAO_ESQUEMA);
@@ -124,4 +144,45 @@ test("banco novo já nasce na versão atual, com o índice parcial da RN04", asy
     "SELECT sql FROM sqlite_master WHERE name = 'uq_produto_loja_codigo'",
   );
   assert.match(indice.sql, /WHERE ativo = 1/);
+});
+
+test("versão 2: uuid no formato padrão, senha só como resumo e o login com a mesma senha", async () => {
+  const db = await bancoNaVersao0();
+
+  await abrir(db);
+
+  const { uuids, senhas } = await uuidsESenhas(db);
+  assert.ok(uuids.length > 0);
+  assert.ok(uuids.every(ehUuid), "algum uuid ficou fora do formato padrão");
+  assert.equal(new Set(uuids).size, uuids.length);
+  assert.ok(senhas.every((s) => s.startsWith("sha256$")), "alguma senha ficou em texto puro");
+  // a senha de teste da carga inicial continua a mesma para quem entra
+  assert.equal(await conferirSenha("admin123", senhas[0]), true);
+  assert.equal(await conferirSenha("errada", senhas[0]), false);
+});
+
+test("versão 2: colunas e tabelas da sincronização existem, com a linha única do estado", async () => {
+  const db = await bancoNaVersao0();
+
+  await abrir(db);
+
+  for (const t of ["categoria", "fornecedor", "produto", "movimentacao"]) {
+    const colunas = (await db.getAllAsync(`PRAGMA table_info(${t})`)).map((c) => c.name);
+    assert.ok(colunas.includes("sincronizado_em"), `${t} sem sincronizado_em`);
+  }
+  const estado = await db.getAllAsync("SELECT id, loja_uuid, corte FROM sincronizacao");
+  assert.deepEqual(estado.map((l) => ({ ...l })), [{ id: 1, loja_uuid: null, corte: null }]);
+  await db.runAsync("INSERT INTO preferencia (chave, valor) VALUES ('dias_vencimento', '30')");
+});
+
+test("versão 2 rodada de novo não troca uuid nem resumo já convertidos", async () => {
+  const db = await bancoNaVersao0();
+  await abrir(db);
+  const antes = await uuidsESenhas(db);
+
+  // simula a abertura seguinte de um banco que parou antes de gravar a versão
+  await db.execAsync("PRAGMA user_version = 1;");
+  await abrir(db);
+
+  assert.deepEqual(await uuidsESenhas(db), antes);
 });

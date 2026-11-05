@@ -7,6 +7,7 @@ import type { ProdutoVisivel, ResumoEstoque, TipoPerfil } from "../domain/tipos"
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "./authService";
 import { aplicarMovimentacao } from "./estoqueService";
+import { pedirSincronizacao } from "./sincronizacaoService";
 import {
   type EntradaProduto,
   podeGerenciarCadastros,
@@ -102,6 +103,8 @@ export async function salvarProduto(
         }
       });
     }
+    // sem esperar: com rede, vai ao servidor em segundo plano
+    pedirSincronizacao();
     return { sucesso: true };
   } catch (erro) {
     const texto = erro instanceof Error ? erro.message : String(erro);
@@ -132,6 +135,7 @@ export async function desativarProduto(id: number): Promise<ResultadoOperacao> {
   }
   try {
     await produtoRepo.desativar(id);
+    pedirSincronizacao();
     return { sucesso: true };
   } catch {
     return {

@@ -7,8 +7,9 @@
 // ESQUEMA: se a tabela mudar de novo, a migração antiga continua válida.
 
 import type { SQLiteDatabase } from "expo-sqlite";
+import { ehResumo, ehUuid, novoUuid, resumirSenha } from "./cripto";
 
-export const VERSAO_ESQUEMA = 1;
+export const VERSAO_ESQUEMA = 2;
 
 /**
  * Leva um banco antigo até a versão atual. Roda antes do ESQUEMA, que depois
@@ -28,6 +29,73 @@ export async function migrar(db: SQLiteDatabase): Promise<void> {
   if (!produto) return;
 
   if (versao < 1) await codigoDeBarrasUnicoSoEntreAtivos(db);
+  if (versao < 2) await prepararSincronizacao(db);
+}
+
+const TABELAS_QUE_SINCRONIZAM = ["categoria", "fornecedor", "produto", "movimentacao"];
+const TABELAS_COM_UUID = ["loja", "usuario", ...TABELAS_QUE_SINCRONIZAM];
+
+// Versão 2 (R6b e DA11). Coluna com o instante do aceite do servidor nas
+// tabelas que sincronizam, tabelas da sincronização e das preferências, uuid
+// no formato que a retaguarda aceita e senha guardada só como resumo. Cada
+// passo confere antes de agir, para a migração poder rodar de novo se for
+// interrompida antes de gravar a versão.
+async function prepararSincronizacao(db: SQLiteDatabase): Promise<void> {
+  await db.withTransactionAsync(async () => {
+    for (const tabela of TABELAS_QUE_SINCRONIZAM) {
+      const colunas = await db.getAllAsync<{ name: string }>(
+        `PRAGMA table_info(${tabela})`,
+      );
+      if (!colunas.some((c) => c.name === "sincronizado_em")) {
+        await db.execAsync(`ALTER TABLE ${tabela} ADD COLUMN sincronizado_em TEXT;`);
+      }
+    }
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS sincronizacao (
+        id               INTEGER PRIMARY KEY CHECK (id = 1),
+        loja_uuid        TEXT,
+        corte            TEXT,
+        ultimo_resultado TEXT,
+        ultimo_em        TEXT
+      );
+      INSERT OR IGNORE INTO sincronizacao (id) VALUES (1);
+      CREATE TABLE IF NOT EXISTS preferencia (
+        chave TEXT PRIMARY KEY,
+        valor TEXT NOT NULL
+      );
+    `);
+    await normalizarUuidsESenhas(db);
+  });
+}
+
+/**
+ * Troca o uuid fora do formato padrão por um aleatório e a senha em texto
+ * puro pelo resumo. Serve à migração e à carga inicial; quem chama abre a
+ * transação. As chaves estrangeiras usam o id, então trocar o uuid não quebra
+ * nenhuma ligação.
+ */
+export async function normalizarUuidsESenhas(db: SQLiteDatabase): Promise<void> {
+  for (const tabela of TABELAS_COM_UUID) {
+    const linhas = await db.getAllAsync<{ id: number; uuid: string }>(
+      `SELECT id, uuid FROM ${tabela}`,
+    );
+    for (const l of linhas) {
+      if (!ehUuid(l.uuid)) {
+        await db.runAsync(`UPDATE ${tabela} SET uuid = ? WHERE id = ?`, [novoUuid(), l.id]);
+      }
+    }
+  }
+  const usuarios = await db.getAllAsync<{ id: number; senha_hash: string }>(
+    "SELECT id, senha_hash FROM usuario",
+  );
+  for (const u of usuarios) {
+    if (!ehResumo(u.senha_hash)) {
+      await db.runAsync("UPDATE usuario SET senha_hash = ? WHERE id = ?", [
+        await resumirSenha(u.senha_hash),
+        u.id,
+      ]);
+    }
+  }
 }
 
 const COLUNAS_PRODUTO = `id, uuid, loja_id, nome, codigo_barras, categoria_id,
