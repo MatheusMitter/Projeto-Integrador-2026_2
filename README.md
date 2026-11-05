@@ -51,6 +51,11 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 .
 ├── README.md                               # Este arquivo: visão técnica e como executar
 ├── SOBRE-O-STOCKEASY.md                    # O produto explicado para quem não é da área
+├── api/                                    # Retaguarda (Spring Boot): autenticação e sincronização
+│   ├── src/main/java/                       # Controladores, serviços, DAO com JDBC
+│   ├── src/main/resources/db/migration/     # Migrações do banco (Flyway)
+│   ├── Dockerfile                           # Imagem para a hospedagem
+│   └── README.md
 ├── app/                                    # Aplicação móvel (React Native com Expo)
 │   ├── src/
 │   │   ├── screens/                         # Apresentação: telas
@@ -83,7 +88,7 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
     └── README.md
 ```
 
-Quatro pastas, uma pergunta cada: `app/` é o que roda no celular, `banco/` é o que roda no servidor, `prototipo/` é o desenho das telas, `docs/` é a explicação de tudo.
+Cinco pastas, uma pergunta cada: `app/` é o que roda no celular, `api/` é o servidor que o celular chama para sincronizar, `banco/` é o banco desse servidor, `prototipo/` é o desenho das telas, `docs/` é a explicação de tudo.
 
 ---
 
@@ -116,7 +121,21 @@ A carga resulta em 5 produtos, 11 movimentações e 2 alertas, com dois produtos
 
 O diagrama, a justificativa de cada decisão e a análise de normalização ficam em [`docs/02-modelagem-de-dados.md`](docs/02-modelagem-de-dados.md).
 
-O aplicativo não depende desse banco: ele cria o próprio esquema em SQLite na primeira execução, a partir de [`app/src/database/esquema.ts`](app/src/database/esquema.ts). O PostgreSQL entra no Ciclo 3, com a retaguarda.
+O aplicativo funciona sem esse banco: ele cria o próprio esquema em SQLite na primeira execução, a partir de [`app/src/database/esquema.ts`](app/src/database/esquema.ts), e opera sem rede. O PostgreSQL é o banco da retaguarda, que aplica o mesmo esquema pelas migrações de `api/`.
+
+### Retaguarda
+
+Requer Java 21 e PostgreSQL 16. O Maven vem com o projeto.
+
+```bash
+cd api
+cp .env.example .env          # preencha a senha do banco e um JWT_SECRET próprio
+set -a; source .env; set +a
+./mvnw spring-boot:run        # sobe em http://localhost:8080 e aplica as migrações
+./mvnw test                   # testes de integração contra o PostgreSQL local
+```
+
+A versão de homologação está publicada em `https://projeto-integrador-2026-2.onrender.com`, com o banco no Neon. No plano gratuito, ela dorme depois de 15 minutos sem uso e leva cerca de 1 minuto para acordar. Os quatro endpoints, os comandos `curl` para testá-los e a publicação estão em [`api/README.md`](api/README.md).
 
 ### Aplicação móvel
 
@@ -143,7 +162,7 @@ Verificação:
 cd app
 npm run verificar          # tipos e testes, em sequência
 npm run verificar-tipos    # compilação TypeScript em modo estrito
-npm test                   # 100 testes: 72 das regras e 28 do banco
+npm test                   # 151 testes: 81 das regras, 31 do banco, 33 da sincronização e do serviço externo, 6 das notificações
 ```
 
 Os testes importam `app/src/services/regras.ts` diretamente, e não uma cópia das funções: uma mudança de regra sem ajuste de teste quebra a suíte. Os testes de banco rodam serviços e repositórios de verdade num SQLite em memória, com o esquema e a carga inicial do aplicativo; detalhes em [`app/README.md`](app/README.md#verificação).
@@ -156,24 +175,26 @@ Detalhes de organização, camadas e limitações em [`app/README.md`](app/READM
 
 Nenhuma credencial é versionada. O `.gitignore` cobre `.env`, chaves `*.pem`/`*.key`, `google-services.json`, arquivos de assinatura e artefatos de build.
 
-As contas de acesso da carga inicial são de exemplo e valem apenas no banco local criado no aparelho. Não são exibidas na interface nem pré-preenchidas no formulário de acesso. O arquivo de modelo `.env` entra no Ciclo 3, junto com a retaguarda, que é quando passam a existir variáveis de ambiente de fato.
+As contas de acesso da carga inicial são de exemplo e valem apenas no banco local criado no aparelho: entram sem rede, mas não sincronizam. Não são exibidas na interface nem pré-preenchidas no formulário de acesso. Uma conta criada no aplicativo com a internet ligada é criada também na retaguarda e liga o aparelho à loja dela; a partir daí, o aparelho sincroniza.
+
+No aparelho, a senha fica só como resumo com sal, e o token da retaguarda fica no armazenamento seguro do Android. Na retaguarda, a senha fica como resumo BCrypt. As variáveis da retaguarda estão no modelo [`api/.env.example`](api/.env.example); na hospedagem, ficam só no painel do provedor. Sem `JWT_SECRET`, a retaguarda não sobe.
 
 ---
 
 ## Requisitos mínimos de complexidade técnica
 
-Situação em 02/11/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
+Situação em 05/11/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
 
 | Req | Descrição                                  | Situação     | Onde é verificável                                         |
 | --- | ------------------------------------------ | ------------ | ---------------------------------------------------------- |
 | R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — 11 telas em abas e pilha; protótipo com 11        |
 | R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`, com logout em Ajustes   |
 | R3  | Manutenção completa de 2+ entidades        | Implementado | Produto e Fornecedor no aplicativo                         |
-| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | RN01, RN06, RN07, RN12 e RN13 em `app/src/services/`, com 100 testes |
+| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | RN01, RN06, RN07, RN12 e RN13 em `app/src/services/`, com 81 testes de regra |
 | R5  | Persistência local                         | Implementado | SQLite em `app/src/database/`                              |
-| R6  | Persistência remota com sincronização      | Ciclo 3      | Spring Boot e PostgreSQL                                   |
-| R7  | Consumo de serviço externo                 | Ciclo 3      | Open Food Facts                                            |
-| R8  | Recurso nativo do dispositivo              | Ciclo 3      | Câmera e notificações                                      |
+| R6  | Persistência remota com sincronização      | Implementado | Retaguarda em `api/` (Spring Boot e PostgreSQL), publicada em homologação; sincronização em `app/src/services/sincronizacaoService.ts` |
+| R7  | Consumo de serviço externo                 | Implementado | Open Food Facts no cadastro de produto: `app/src/services/produtoExternoService.ts` |
+| R8  | Recurso nativo do dispositivo              | Implementado | Câmera no código de barras (`app/src/components/LeitorCodigo.tsx`) e notificações (`app/src/services/notificacoesService.ts`) |
 | R9  | Filtro, busca e visão consolidada          | Implementado | Busca, filtro por situação, painel e relatórios por período |
 | R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento         |
 | R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 48dp, rótulos acessíveis             |

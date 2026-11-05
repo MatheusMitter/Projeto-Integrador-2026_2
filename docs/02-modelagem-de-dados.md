@@ -896,8 +896,8 @@ Para o requisito de funcionamento offline (R5), o aplicativo móvel mantém uma 
 | Chaves estrangeiras | Ativas por padrão                  | Precisam ser habilitadas com `PRAGMA foreign_keys = ON;` |
 | Triggers            | Usados: alerta e `atualizado_em`   | Suportado, mas não usado                                 |
 | CHECK constraints   | Suportado                          | Suportado (com limitações)                               |
-| Tabelas             | 7, incluindo `alerta`              | 6: sem `alerta`; a situação é calculada na hora (RN07)   |
-| Foto do produto     | Coluna `foto_url`                  | Ainda não existe; entra com a câmera                     |
+| Tabelas             | 7, incluindo `alerta`              | 6 do domínio, sem `alerta`, porque a situação é calculada na hora (RN07); e 2 de controle, `sincronizacao` e `preferencia` |
+| Foto do produto     | Coluna `foto_url`                  | Ainda não existe; a câmera entrou para o código de barras, e a foto ficou para depois |
 | Tipo `OUTROS`       | Permitido no CHECK da movimentação | Não existe                                               |
 | `atualizado_em`     | Todas as de cadastro, por gatilho  | Só em produto, gravada pelo aplicativo                   |
 | `categoria.criado_em` | Existe                           | Não existe                                               |
@@ -1138,7 +1138,7 @@ Alertas gerados pelo gatilho: dois, ambos pendentes, correspondentes aos dois pr
 
 A função `registrar_movimentacao` usa `SELECT ... FOR UPDATE` para bloquear a linha do produto antes de calcular o saldo. Sem esse bloqueio, duas movimentações simultâneas leriam o mesmo saldo inicial e a segunda sobrescreveria o resultado da primeira, com perda de atualização.
 
-O teste executado é sequencial e não exercita concorrência real. A verificação com transações simultâneas está prevista para o Ciclo 3, quando a retaguarda entrar em operação, e é o cenário tratado na disciplina em transações e concorrência.
+O teste executado é sequencial e não exercita concorrência real. No Ciclo 3 a retaguarda entrou em operação aplicando o mesmo bloqueio no lote da sincronização (`api/`, `SincronizacaoService`); os testes de integração dela também são sequenciais, e a verificação com transações simultâneas de verdade, cenário tratado na disciplina em transações e concorrência, continua por fazer.
 
 ---
 

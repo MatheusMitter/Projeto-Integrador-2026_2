@@ -186,6 +186,44 @@ Requisitos fechados no ciclo, conforme o planejamento: R2, R3, R4 e R9.
 | O Expo Go das lojas deixou de abrir o projeto no SDK 51                                        | Atualização para o SDK 57 e build de desenvolvimento própria, sem depender do Expo Go                  |
 | Alertas do `npm audit` em ferramentas do Expo, sem correção compatível com o SDK                | Conferido que nenhum pacote afetado entra no APK; registro no `99`, seções 12 e 13                     |
 
+## 7.2 Registro do Ciclo 3 (26/10 a 06/11)
+
+Registro feito em 05/11/2026, véspera do Checkpoint 2, a partir do histórico do repositório e de [`99-historico-de-revisao.md`](99-historico-de-revisao.md), seção 14.
+
+### Concluído no ciclo
+
+| Entrega                                         | Situação                                                                                                                                  |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Serviço externo (US23)                          | Concluído — o código de barras preenche nome e categoria pelo Open Food Facts; sem resposta em 5 segundos, o cadastro segue manual          |
+| Câmera (US21)                                   | Concluído — leitura do código de barras no cadastro de produto e na movimentação                                                           |
+| Retaguarda (base para US25)                     | Concluído — Spring Boot 3.5 com quatro endpoints (registrar, entrar, enviar e baixar), Flyway e token JWT; publicada no Render, banco no Neon |
+| Sincronização (US25)                            | Concluído — login e criação de conta pela retaguarda, fila de pendentes, envio e download automáticos e botão "Sincronizar agora"            |
+| Senha e token no aparelho (DA11)                | Concluído — senha só como resumo com sal; token no armazenamento seguro do Android                                                          |
+| Notificações (US22)                             | Concluído — aviso de estoque crítico na hora da saída e resumo diário de vencimento, com interruptor em Ajustes                              |
+| Alerta de vencimento completo (US14)            | Concluído — prazo de 7, 15 ou 30 dias escolhido em Ajustes, usado no Painel, na lista e no resumo diário                                    |
+| Identidade visual nas telas de acesso           | Concluído — ícone, abertura e login com a identidade de 19/10 ([`07-identidade-visual.md`](07-identidade-visual.md))                        |
+
+Requisitos fechados no ciclo, conforme o planejamento: R6, R7 e R8.
+
+### Replanejado no ciclo
+
+| Item                                              | De      | Para      | Motivo                                                                                                                     |
+| ------------------------------------------------- | ------- | --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Criar e renomear categoria (US30)                 | Ciclo 3 | A definir | O ciclo priorizou R6, R7 e R8, cobrados no Checkpoint 2                                                                    |
+| Identidade visual nas demais telas                | Ciclo 3 | A definir | Aplicada depois das telas novas de sincronização e notificação, para não desenhar duas vezes                              |
+| Comprovação em aparelho físico (R14)              | Ciclo 3 | Ciclo 4   | A demonstração do Checkpoint 2 é no emulador; o aparelho físico fica até o congelamento, em 27/11                           |
+| Contas de operador na retaguarda                  | —       | A definir | Uma conta criada num aparelho já ligado a uma loja fica só nele; criar operadores no servidor depende da administração de usuários |
+
+### Impedimentos identificados
+
+| Impedimento                                                                                       | Encaminhamento                                                                                     |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| O gerador oficial de projetos Spring passou a oferecer só a versão 4, e a decisão era a 3.5          | Projeto Maven montado à mão, com o Maven Wrapper                                                    |
+| A hospedagem escolhida não tem Java nativo                                                         | Imagem em `api/Dockerfile`                                                                          |
+| A hospedagem gratuita dorme sem uso e leva cerca de 1 minuto para acordar                          | Acordar antes da demonstração; login com limite de 8 segundos; reserva com a retaguarda local       |
+| Os identificadores criados no aparelho não estavam no formato UUID do banco do servidor            | Migração 2 do banco do aparelho, com identificadores no formato padrão                              |
+| A senha ficava em texto no banco do aparelho                                                       | Resumo com sal, aplicado pela mesma migração                                                        |
+
 ---
 
 ## 8. Planejamento dos ciclos seguintes
@@ -255,3 +293,4 @@ Correção dos defeitos priorizados, refinamento de acessibilidade e tratamento 
 | ------ | ---------- | ----------------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial, com o registro do Ciclo 1 | Equipe StockEasy |
 | 1.1    | 02/11/2026 | Registro do Ciclo 2 (seção 7.1), a partir do histórico do repositório e do `99` | Equipe StockEasy |
+| 1.2    | 05/11/2026 | Registro do Ciclo 3 (seção 7.2), na véspera do Checkpoint 2 | Equipe StockEasy |

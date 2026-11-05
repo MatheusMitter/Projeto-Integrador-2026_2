@@ -30,7 +30,7 @@ O padrão principal é o de camadas. Os outros três descrevem, respectivamente,
 
 **Porque é exigência do projeto.** O requisito R12 pede "separação de responsabilidades em camadas". Não é escolha livre.
 
-**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 72 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados; outros 28 testam serviços, repositórios e migrações num banco em memória, também sem emulador. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
+**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 81 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados; outros 28 testam serviços, repositórios e migrações num banco em memória, também sem emulador. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
 
 **Porque isola a mudança.** Trocar de banco de dados afeta apenas a camada de persistência. Nenhuma regra, nenhuma tela e nenhum teste precisariam ser alterados. Isso não é hipótese no nosso caso: já convivemos com dois bancos, SQLite no aparelho e PostgreSQL no servidor, com o mesmo modelo relacional.
 
@@ -160,7 +160,7 @@ src/
 └── utils/          # formatação e validadores
 ```
 
-Na implementação, `api/` e `utils/` ainda não existem: o cliente HTTP entra com a retaguarda, e a formatação e as validações estão em `services/regras.ts`, como funções puras testadas.
+Na implementação, `api/` e `utils/` não existem como pastas: o cliente HTTP ficou em `services/apiClient.ts`, junto dos outros serviços, e a formatação e as validações estão em `services/regras.ts`, como funções puras testadas.
 
 ---
 
@@ -341,14 +341,14 @@ Ambos respondem a necessidades das personas, não a demonstração técnica isol
 | Aspecto        | Decisão                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Senha no servidor | Armazenada apenas como resumo criptográfico com BCrypt e fator de custo 10                                             |
-| Senha no aparelho | Guardada só como resumo criptográfico com sal, para permitir o login sem rede. Hoje ainda é texto puro; a troca entra no Ciclo 3, antes de sincronizar usuários |
+| Senha no aparelho | Guardada só como resumo criptográfico com sal (SHA-256 com sal aleatório por usuário, `app/src/database/cripto.ts`), para permitir o login sem rede. A migração 2 do banco do aparelho converteu as senhas que estavam em texto |
 | Sessão         | Token JWT com validade limitada, transmitido no cabeçalho de autorização                                                  |
 | Token no aparelho | No armazenamento seguro do sistema (`expo-secure-store`), nunca no SQLite                                              |
 | Sessão sem rede | O aplicativo funciona com a sessão local; o token só é exigido para sincronizar. Se tiver expirado, o aplicativo pede a senha de novo na sincronização seguinte |
 | Autorização    | Verificada na camada de serviço; RN01 filtra campos financeiros antes da resposta                                         |
 | Transporte     | HTTPS obrigatório                                                                                                         |
 | Injeção de SQL | Consultas exclusivamente parametrizadas                                                                                   |
-| Credenciais    | Lidas de variáveis de ambiente; `.env` fora do controle de versão. O arquivo de modelo entra no Ciclo 3, com a retaguarda |
+| Credenciais    | Lidas de variáveis de ambiente; `.env` fora do controle de versão. Modelo em `api/.env.example`; sem `JWT_SECRET` no ambiente, a retaguarda não sobe |
 
 Ponto de atenção que a equipe assume explicitamente: a API de retaguarda precisa exigir autenticação em todos os endpoints de dados. Um endpoint de produtos ou movimentações exposto sem verificação de token permitiria leitura e escrita por qualquer cliente. A configuração de segurança será revisada como critério de aceite do Ciclo 3, quando a retaguarda entrar em operação.
 
@@ -383,9 +383,9 @@ Mensagem de autenticação inválida é sempre genérica, para não revelar se u
 
 O Expo Go das lojas só aceita a versão mais recente do SDK e deixa de servir a cada versão nova do Expo; a build de desenvolvimento não depende disso. O PostgreSQL vai direto na máquina porque um contêiner, somado ao emulador, pesa demais em computador de 8 GB.
 
-A hospedagem segue a liberdade que o documento norteador dá e o critério de custo que ele pede: Render e Neon têm plano gratuito sem cartão, o Neon entrega o mesmo PostgreSQL dos scripts de `banco/`, e o Render constrói o projeto Java direto do repositório. O plano gratuito do Render suspende o serviço após quinze minutos sem uso e leva cerca de um minuto para reativar: a retaguarda deve ser acordada antes da demonstração. Como reserva, a retaguarda roda na máquina de desenvolvimento e o emulador a alcança pelo redirecionamento de porta do `adb`.
+A hospedagem segue a liberdade que o documento norteador dá e o critério de custo que ele pede: Render e Neon têm plano gratuito sem cartão, o Neon entrega o mesmo PostgreSQL dos scripts de `banco/`, e o Render constrói o projeto Java direto do repositório, pelo `Dockerfile` de `api/`, porque não tem Java nativo. O plano gratuito do Render suspende o serviço após quinze minutos sem uso e leva cerca de um minuto para reativar: a retaguarda deve ser acordada antes da demonstração. Como reserva, a retaguarda roda na máquina de desenvolvimento e o emulador a alcança pelo redirecionamento de porta do `adb`. Essa reserva exige a build de desenvolvimento, com `EXPO_PUBLIC_API_URL` apontando para a máquina: o APK de release só aceita HTTPS.
 
-Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Ciclo 3, conforme a Semana 13 do cronograma oficial.
+Na N1, o aplicativo operava apenas com a base local. No Ciclo 3 a retaguarda entrou em homologação, em `https://projeto-integrador-2026-2.onrender.com`, e o aplicativo passou a sincronizar com ela; sem rede, continua operando com a base local.
 
 ---
 
@@ -451,7 +451,7 @@ As quatro decisões seguintes foram registradas na revisão de 14/10/2026, antes
 
 **DA09 — Divergência de estoque registrada, não recusada.**
 Motivo: uma venda feita sem rede já aconteceu. Recusar o lote travaria a sincronização daquele aparelho e deixaria saldos diferentes sem saída.
-Custo: o saldo consolidado pode ficar negativo até o ajuste, e a restrição `estoque_atual >= 0` dos dois bancos muda no Ciclo 3.
+Custo: o saldo consolidado pode ficar negativo até o ajuste. No servidor, a restrição `estoque_atual >= 0` saiu na migração `V2`; no aparelho ela continua, porque a RN06 vale ali, e o saldo negativo que vem do servidor fica 0 com um aviso de divergência no Painel.
 
 **DA10 — Relógio do servidor define ordem e corte; o servidor recalcula o saldo.**
 Motivo: relógio de aparelho erra, e dois aparelhos sem rede calculam saldos diferentes para o mesmo produto.
@@ -483,3 +483,4 @@ Decisões de interface: [`04-prototipo.md`](04-prototipo.md).
 | 1.1    | 14/10/2026 | Regras de sincronização e de credencial no aparelho (seções 3, 5.1, 6, 7, 9; DA09 a DA11); versões da retaguarda e Flyway (8.2, 8.3; DA12); ambientes (11); fonte da justificativa de JDBC corrigida (5); testes de serviço e repositório (1.2); geração do APK pelo Gradle local, não pelo EAS (8.1, 12) | Equipe StockEasy |
 | 1.2    | 02/11/2026 | Contagem dos testes de banco corrigida: 28 (serviços, repositórios e migrações), não 23 (1.2) | Equipe StockEasy |
 | 1.3    | 03/11/2026 | Spring Boot 3.5 no lugar do 4.1 (8.2, DA12); hospedagem de homologação definida: Render e Neon, com reserva local (11) | Equipe StockEasy |
+| 1.4    | 05/11/2026 | Situação depois do Ciclo 3: senha no aparelho como resumo e modelo de `.env` (9), retaguarda publicada pelo `Dockerfile` e reserva local pela build de desenvolvimento (11), restrição de saldo no servidor e no aparelho (DA09) | Equipe StockEasy |

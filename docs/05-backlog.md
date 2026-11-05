@@ -346,7 +346,7 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 
 **Dependências:** US05
 
-**Dependência postergada:** a seleção por leitura de código de barras (US21) entra no Ciclo 3. No Ciclo 1 o produto é selecionado por busca textual.
+**Dependência entregue no Ciclo 3:** a seleção por leitura de código de barras (US21) já funciona na movimentação; a busca textual do Ciclo 1 continua disponível.
 
 ---
 
@@ -379,7 +379,7 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 
 **Dependências:** US05
 
-**Dependência postergada:** a seleção por leitura de código de barras (US21) entra no Ciclo 3. No Ciclo 1 o produto é selecionado por busca textual.
+**Dependência entregue no Ciclo 3:** a seleção por leitura de código de barras (US21) já funciona na movimentação; a busca textual do Ciclo 1 continua disponível.
 
 ---
 
@@ -435,7 +435,7 @@ A Semana 15 (09 a 13/11) é de verificação: testes funcionais e sessões de us
 
 **Dependências:** US06, US10, US11
 
-**Dependência postergada:** a notificação no dispositivo (US22) entra no Ciclo 3. No Ciclo 2 o alerta aparece no painel e na lista de produtos, sem envio de notificação.
+**Dependência entregue no Ciclo 3:** a notificação no dispositivo (US22) avisa o estoque crítico na hora da saída; no Ciclo 2 o alerta aparecia só no painel e na lista de produtos.
 
 ---
 
@@ -1010,3 +1010,4 @@ Cada integrante versiona o próprio trabalho, com commits em seu nome e mensagen
 | 2.0    | 28/09/2026 | Ciclos alinhados ao cronograma oficial, persistência local movida para o Ciclo 1, US09 reescrita, US30 incluída, dependências entre ciclos corrigidas, R4 detalhado | Equipe StockEasy |
 | 2.1    | 12/10/2026 | RN04, RN08 e RN09 citadas como no documento de projeto                                                                                                             | Equipe StockEasy |
 | 2.2    | 14/10/2026 | Sincronização (US25): conflito pela hora do servidor; saldo recalculado na consolidação, com alerta de divergência                                                 | Equipe StockEasy |
+| 2.3    | 05/11/2026 | Dependências de US21 e US22 entregues no Ciclo 3                                                                                                                    | Equipe StockEasy |
