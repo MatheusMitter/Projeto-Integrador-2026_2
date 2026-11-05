@@ -52,14 +52,14 @@ export default function AjustesScreen({ navigation }: TelaAjustes<"AjustesInicio
   }, []);
 
   // recarrega ao abrir a aba e quando uma sincronização termina, inclusive a
-  // disparada sozinha em segundo plano. O aviso do último toque sai nessa
-  // hora, senão "Sem internet agora" ficaria ao lado de "Tudo enviado"; o
-  // resultado do próprio toque chega depois e volta a aparecer.
+  // disparada sozinha em segundo plano. Se houver aviso na tela, ele passa a
+  // mostrar o resultado mais novo, senão "Sem internet agora" ficaria ao
+  // lado de "Tudo enviado".
   useFocusEffect(
     useCallback(() => {
       carregarEstado();
-      return aoTerminarSincronizacao(() => {
-        setResultado(null);
+      return aoTerminarSincronizacao((r) => {
+        setResultado((atual) => (atual ? avisoDoResultado(r) : null));
         carregarEstado();
       });
     }, [carregarEstado]),
