@@ -144,6 +144,7 @@ export function valorEmEstoque(
 export function resumirEstoque(
   produtos: Pick<Produto, "estoqueAtual" | "estoqueMinimo" | "precoCusto" | "dataValidade">[],
   hoje: Date = new Date(),
+  diasAlerta: number = DIAS_ALERTA_VENCIMENTO,
 ): ResumoEstoque {
   return {
     totalProdutos: produtos.length,
@@ -151,7 +152,7 @@ export function resumirEstoque(
     produtosCriticos: produtos.filter(
       (p) => classificarEstoque(p.estoqueAtual, p.estoqueMinimo) === "CRITICO",
     ).length,
-    produtosVencendo: produtos.filter((p) => estaVencendo(p.dataValidade, hoje))
+    produtosVencendo: produtos.filter((p) => estaVencendo(p.dataValidade, hoje, diasAlerta))
       .length,
   };
 }
@@ -221,8 +222,22 @@ export function validarDataValidade(texto: string): string | null {
   return null;
 }
 
-/** Mesma janela que o painel usa na consulta de produtos vencendo. */
-export const DIAS_ALERTA_VENCIMENTO = 15;
+/**
+ * Prazo do alerta de vencimento, escolhido em Ajustes (US14): 7, 15 ou 30
+ * dias. O painel, o filtro da lista e a notificação diária usam o mesmo.
+ */
+export const PRAZOS_VENCIMENTO = [7, 15, 30] as const;
+export type PrazoVencimento = (typeof PRAZOS_VENCIMENTO)[number];
+
+/** Prazo de quem nunca escolheu. */
+export const DIAS_ALERTA_VENCIMENTO: PrazoVencimento = 15;
+
+export function lerPrazoVencimento(valor: string | null | undefined): PrazoVencimento {
+  const n = Number(valor);
+  return (PRAZOS_VENCIMENTO as readonly number[]).includes(n)
+    ? (n as PrazoVencimento)
+    : DIAS_ALERTA_VENCIMENTO;
+}
 
 /**
  * Dias até a validade, contando em datas de calendário. Negativo se já
@@ -244,9 +259,35 @@ export function diasParaVencer(
 export function estaVencendo(
   validadeIso: string | null,
   hoje: Date = new Date(),
+  diasAlerta: number = DIAS_ALERTA_VENCIMENTO,
 ): boolean {
   const dias = diasParaVencer(validadeIso, hoje);
-  return dias !== null && dias <= DIAS_ALERTA_VENCIMENTO;
+  return dias !== null && dias <= diasAlerta;
+}
+
+// ---------------------------------------------------------- notificações
+//
+// Quando avisar e o que dizer (R8b). Ficam aqui, sem o módulo nativo, para
+// serem testadas; o serviço de notificações só entrega.
+
+/** Avisa só na passagem para crítico, e não a cada saída de quem já estava. */
+export function deveAvisarCritico(
+  antes: SituacaoEstoque,
+  depois: SituacaoEstoque,
+): boolean {
+  return antes !== "CRITICO" && depois === "CRITICO";
+}
+
+export function mensagemEstoqueCritico(nome: string, saldo: number, minimo: number): string {
+  const unidades = saldo === 1 ? "1 unidade" : `${saldo} unidades`;
+  return `${nome} ficou com estoque crítico: ${unidades}, mínimo ${minimo}.`;
+}
+
+/** Texto do resumo diário; sem produto dentro do prazo, não há aviso. */
+export function mensagemResumoVencimento(quantidade: number, diasAlerta: number): string | null {
+  if (quantidade <= 0) return null;
+  const produtos = quantidade === 1 ? "1 produto" : `${quantidade} produtos`;
+  return `Você tem ${produtos} vencendo nos próximos ${diasAlerta} dias.`;
 }
 
 /**

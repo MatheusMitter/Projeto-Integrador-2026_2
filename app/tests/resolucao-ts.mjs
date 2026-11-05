@@ -12,14 +12,16 @@
 // Os módulos nativos do Expo só rodam no aparelho. Nos testes, cada um é
 // trocado por um substituto sobre o Node: o expo-sqlite pelo SQLite do Node,
 // para os repositórios e serviços rodarem o SQL de verdade; o expo-crypto
-// pelo crypto do Node; o expo-secure-store por um cofre em memória; e o
-// expo-network por um estado de rede que o teste liga e desliga.
+// pelo crypto do Node; o expo-secure-store por um cofre em memória; o
+// expo-network por um estado de rede que o teste liga e desliga; e o
+// expo-notifications por um registro do que o app agendou.
 
 const SUBSTITUTOS = {
   "expo-sqlite": "./apoio/expo-sqlite-node.mjs",
   "expo-crypto": "./apoio/expo-crypto-node.mjs",
   "expo-secure-store": "./apoio/expo-secure-store-node.mjs",
   "expo-network": "./apoio/expo-network-node.mjs",
+  "expo-notifications": "./apoio/expo-notifications-node.mjs",
 };
 
 export async function resolve(especificador, contexto, proximaResolucao) {

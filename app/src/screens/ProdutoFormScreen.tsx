@@ -17,6 +17,7 @@ import {
   listarCategorias,
   listarFornecedores,
 } from "../services/cadastroService";
+import { prazoVencimento } from "../services/preferenciaService";
 import { buscarProduto, salvarProduto } from "../services/produtoService";
 import { buscarPorCodigo, casarCategoria } from "../services/produtoExternoService";
 import { LeitorCodigo } from "../components/LeitorCodigo";
@@ -66,6 +67,13 @@ export default function ProdutoFormScreen({
   // a categoria pré-selecionada não conta como escolha do usuário
   const [categoriaEscolhida, setCategoriaEscolhida] = useState(false);
   const [leitorAberto, setLeitorAberto] = useState(false);
+  // o texto de ajuda cita o prazo escolhido em Ajustes (US14)
+  const [prazo, setPrazo] = useState<number>(DIAS_ALERTA_VENCIMENTO);
+  useEffect(() => {
+    prazoVencimento()
+      .then(setPrazo)
+      .catch(() => undefined);
+  }, []);
 
   // RN01 na interface: o operador não vê nem informa o custo
   const verFinanceiro = podeVerFinanceiro(
@@ -283,7 +291,7 @@ export default function ProdutoFormScreen({
       </View>
       <Text style={e.ajuda}>
         Você é avisado quando o estoque chegar ao mínimo e quando faltarem{" "}
-        {DIAS_ALERTA_VENCIMENTO} dias ou menos para a validade, que é opcional.
+        {prazo} dias ou menos para a validade, que é opcional.
       </Text>
 
       {!editando && (

@@ -6,7 +6,8 @@ import type { Movimentacao, TipoMovimentacao } from "../domain/tipos";
 import * as movimentacaoRepo from "../repositories/movimentacaoRepository";
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "./authService";
-import { validarMovimentacao } from "./regras";
+import { avisarCritico, semEsperar } from "./notificacoesService";
+import { classificarEstoque, deveAvisarCritico, validarMovimentacao } from "./regras";
 import { pedirSincronizacao } from "./sincronizacaoService";
 
 export interface PedidoMovimentacao {
@@ -21,6 +22,8 @@ export interface ResultadoMovimentacao {
   mensagem?: string;
   aviso?: string;
   saldoResultante?: number;
+  // preenchido quando esta saída deixou o produto crítico (R8b)
+  ficouCritico?: { nome: string; saldo: number; minimo: number };
 }
 
 /**
@@ -65,7 +68,16 @@ export async function aplicarMovimentacao(
     observacoes: pedido.observacoes?.trim() || null,
   });
 
-  return { sucesso: true, aviso: validacao.aviso, saldoResultante: saldo };
+  const antes = classificarEstoque(produto.estoqueAtual, produto.estoqueMinimo);
+  const depois = classificarEstoque(saldo, produto.estoqueMinimo);
+  return {
+    sucesso: true,
+    aviso: validacao.aviso,
+    saldoResultante: saldo,
+    ficouCritico: deveAvisarCritico(antes, depois)
+      ? { nome: produto.nome, saldo, minimo: produto.estoqueMinimo }
+      : undefined,
+  };
 }
 
 export async function registrarMovimentacao(
@@ -84,6 +96,8 @@ export async function registrarMovimentacao(
     const r = await emTransacao(() => aplicarMovimentacao(pedido, usuario.id));
     // sem esperar: com rede, vai ao servidor em segundo plano
     if (r.sucesso) pedirSincronizacao();
+    // depois da transação, para o aviso só sair do que ficou gravado
+    if (r.ficouCritico) semEsperar(avisarCritico(r.ficouCritico));
     return r;
   } catch (erro) {
     // se caiu aqui, o CHECK do banco pegou algo que passou da validação

@@ -2,7 +2,7 @@
 // e de Ajustes.
 
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
@@ -19,7 +19,14 @@ import AjustesScreen from "../screens/AjustesScreen";
 import FornecedoresScreen from "../screens/FornecedoresScreen";
 import type { NomeIcone } from "../components/base";
 import { cores, fonte } from "../theme/tema";
-import type { RotasAbas, RotasAjustes, RotasProdutos } from "./rotas";
+import type { FiltroProdutos, RotasAbas, RotasAjustes, RotasProdutos } from "./rotas";
+
+/** Pedido para abrir a lista de produtos filtrada, vindo de uma notificação. */
+export interface PedidoDeLista {
+  filtro: FiltroProdutos;
+  // muda a cada toque, para o mesmo filtro poder ser pedido de novo
+  vez: number;
+}
 import { ContextoSessao } from "./sessao";
 
 const PilhaProdutosNav = createNativeStackNavigator<RotasProdutos>();
@@ -113,15 +120,32 @@ function abaRotulo(texto: string) {
   );
 }
 
-export default function Navegacao({ onSair }: { onSair: () => void }) {
+export default function Navegacao({
+  onSair,
+  abrirLista,
+}: {
+  onSair: () => void;
+  abrirLista?: PedidoDeLista | null;
+}) {
   const sessao = React.useMemo(() => ({ sair: onSair }), [onSair]);
   // o app desenha atrás da barra de gestos do Android; a altura dela entra
   // na barra de abas, senão os rótulos ficam embaixo da linha de gestos
   const { bottom } = useSafeAreaInsets();
+  const navegacao = useNavigationContainerRef<RotasAbas>();
+  const [pronta, setPronta] = React.useState(false);
+
+  // toque numa notificação: abre Produtos com o filtro dela (AC8b.4)
+  React.useEffect(() => {
+    if (!pronta || !abrirLista) return;
+    navegacao.navigate("Produtos", {
+      screen: "ProdutosLista",
+      params: { filtro: abrirLista.filtro },
+    });
+  }, [pronta, abrirLista, navegacao]);
 
   return (
     <ContextoSessao.Provider value={sessao}>
-      <NavigationContainer>
+      <NavigationContainer ref={navegacao} onReady={() => setPronta(true)}>
         <Abas.Navigator
           screenOptions={{
             ...cabecalhoRaiz,

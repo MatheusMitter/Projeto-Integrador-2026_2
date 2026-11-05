@@ -8,12 +8,20 @@ import { AppState, BackHandler, Platform, ScrollView, Text, View } from "react-n
 import LoginScreen from "./src/screens/LoginScreen";
 import CadastroScreen from "./src/screens/CadastroScreen";
 import RecuperarSenhaScreen from "./src/screens/RecuperarSenhaScreen";
-import Navegacao from "./src/navigation/Navegacao";
+import Navegacao, { type PedidoDeLista } from "./src/navigation/Navegacao";
 import { Aviso, Botao, Carregando } from "./src/components/base";
 import { obterBanco } from "./src/database/conexao";
 import { encerrarSessao } from "./src/services/authService";
+import {
+  aoTocarNotificacao,
+  atualizarResumoDiario,
+  semEsperar,
+} from "./src/services/notificacoesService";
 import { aoVoltarARede } from "./src/services/rede";
-import { pedirSincronizacao } from "./src/services/sincronizacaoService";
+import {
+  aoTerminarSincronizacao,
+  pedirSincronizacao,
+} from "./src/services/sincronizacaoService";
 import { cores, espaco } from "./src/theme/tema";
 
 type Tela =
@@ -29,6 +37,14 @@ export default function App() {
   const [tela, setTela] = useState<Tela>("carregando");
   const [erro, setErro] = useState<string | null>(null);
   const [tentativa, setTentativa] = useState(0);
+  const [abrirLista, setAbrirLista] = useState<PedidoDeLista | null>(null);
+
+  // notificação tocada, inclusive a que abriu o app: o pedido fica guardado
+  // e é atendido assim que a área autenticada estiver na tela
+  useEffect(
+    () => aoTocarNotificacao((filtro) => setAbrirLista({ filtro, vez: Date.now() })),
+    [],
+  );
 
   // abrir o banco cria o esquema e a carga inicial na primeira vez
   useEffect(() => {
@@ -73,13 +89,19 @@ export default function App() {
   useEffect(() => {
     if (tela !== "app") return;
     pedirSincronizacao(0);
+    // o resumo de vencimento das 9h sai com a contagem atualizada (R8b)
+    semEsperar(atualizarResumoDiario());
     const assinatura = AppState.addEventListener("change", (estado) => {
       if (estado === "active") pedirSincronizacao(0);
     });
     const pararDeOuvirRede = aoVoltarARede(() => pedirSincronizacao(0));
+    const pararDeOuvirSincronizacao = aoTerminarSincronizacao(() =>
+      semEsperar(atualizarResumoDiario()),
+    );
     return () => {
       assinatura.remove();
       pararDeOuvirRede();
+      pararDeOuvirSincronizacao();
     };
   }, [tela]);
 
@@ -190,7 +212,7 @@ export default function App() {
         <RecuperarSenhaScreen voltar={() => setTela("login")} />
       )}
 
-      {tela === "app" && <Navegacao onSair={sair} />}
+      {tela === "app" && <Navegacao onSair={sair} abrirLista={abrirLista} />}
     </SafeAreaProvider>
   );
 }

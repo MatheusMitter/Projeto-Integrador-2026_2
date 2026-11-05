@@ -48,7 +48,14 @@
       ],
       "./plugins/assinatura-release",
       "./plugins/cor-de-destaque",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notificacao.png",
+          "color": "#2450D6"
+        }
+      ]
     ]
   }
 }

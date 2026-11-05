@@ -7,6 +7,8 @@ import type { ProdutoVisivel, ResumoEstoque, TipoPerfil } from "../domain/tipos"
 import * as produtoRepo from "../repositories/produtoRepository";
 import { sessaoAtual } from "./authService";
 import { aplicarMovimentacao } from "./estoqueService";
+import { atualizarResumoDiario, semEsperar } from "./notificacoesService";
+import { prazoVencimento } from "./preferenciaService";
 import { pedirSincronizacao } from "./sincronizacaoService";
 import {
   type EntradaProduto,
@@ -42,9 +44,10 @@ export async function buscarProduto(id: number): Promise<ProdutoVisivel | null> 
   return produto ? produtoParaPerfil(produto, perfilAtual()) : null;
 }
 
-// RN08, visível só ao proprietário (RN01)
+// RN08, visível só ao proprietário (RN01). "Vencendo" usa o prazo de Ajustes.
 export async function resumoDoEstoque(): Promise<ResumoEstoque> {
-  const resumo = resumirEstoque(await produtoRepo.listar());
+  const [produtos, dias] = await Promise.all([produtoRepo.listar(), prazoVencimento()]);
+  const resumo = resumirEstoque(produtos, new Date(), dias);
   return podeVerFinanceiro(perfilAtual())
     ? resumo
     : { ...resumo, valorTotalEstoque: null };
@@ -103,8 +106,10 @@ export async function salvarProduto(
         }
       });
     }
-    // sem esperar: com rede, vai ao servidor em segundo plano
+    // sem esperar: com rede, vai ao servidor em segundo plano; e a validade
+    // pode ter mudado o resumo de vencimento das 9h
     pedirSincronizacao();
+    semEsperar(atualizarResumoDiario());
     return { sucesso: true };
   } catch (erro) {
     const texto = erro instanceof Error ? erro.message : String(erro);
@@ -136,6 +141,7 @@ export async function desativarProduto(id: number): Promise<ResultadoOperacao> {
   try {
     await produtoRepo.desativar(id);
     pedirSincronizacao();
+    semEsperar(atualizarResumoDiario());
     return { sucesso: true };
   } catch {
     return {

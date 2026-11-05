@@ -20,6 +20,7 @@ import type { FiltroProdutos, TelaAba } from "../navigation/rotas";
 import { sessaoAtual } from "../services/authService";
 import { resumoDoEstoque } from "../services/produtoService";
 import { type ItemRanking, maisVendidos } from "../services/relatorioService";
+import { prazoVencimento } from "../services/preferenciaService";
 import { DIAS_ALERTA_VENCIMENTO, formatarReais } from "../services/regras";
 import {
   aoTerminarSincronizacao,
@@ -34,6 +35,8 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
   const [ranking, setRanking] = useState<ItemRanking[]>([]);
   // desenho aprovado em 05/11 (item 02): um aviso de sincronização por vez
   const [avisoSincronizacao, setAvisoSincronizacao] = useState<AvisoDeTela | null>(null);
+  // prazo escolhido em Ajustes, o mesmo usado na contagem (US14)
+  const [prazo, setPrazo] = useState<number>(DIAS_ALERTA_VENCIMENTO);
   const [atualizando, setAtualizando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -41,14 +44,16 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
 
   const carregar = useCallback(async () => {
     try {
-      const [r, m, s] = await Promise.all([
+      const [r, m, s, dias] = await Promise.all([
         resumoDoEstoque(),
         maisVendidos(5),
         estadoDaSincronizacao(),
+        prazoVencimento(),
       ]);
       setResumo(r);
       setRanking(m);
       setAvisoSincronizacao(avisoDoPainel(s));
+      setPrazo(dias);
       setErro(null);
     } catch {
       setErro("Não foi possível carregar o resumo do estoque.");
@@ -154,7 +159,7 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
         />
         <Indicador
           valor={resumo.produtosVencendo}
-          rotulo={`Vencendo em ${DIAS_ALERTA_VENCIMENTO} dias`}
+          rotulo={`Vencendo em ${prazo} dias`}
           cor={resumo.produtosVencendo > 0 ? cores.aviso : cores.texto}
           onPress={() => abrirProdutos("VENCENDO")}
         />

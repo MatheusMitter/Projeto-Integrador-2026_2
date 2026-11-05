@@ -15,6 +15,7 @@ import {
   classificarEstoque,
   avisoPreco,
   descreverMomento,
+  deveAvisarCritico,
   diasParaVencer,
   ehEntrada,
   emailValido,
@@ -23,7 +24,10 @@ import {
   formatarPercentual,
   formatarReais,
   lerInteiro,
+  lerPrazoVencimento,
   lerValor,
+  mensagemEstoqueCritico,
+  mensagemResumoVencimento,
   paraDataBr,
   paraDataIso,
   podeGerenciarCadastros,
@@ -558,5 +562,85 @@ describe("Formatação de valores na tela", () => {
 
   test("percentual com vírgula e uma casa", () => {
     assert.equal(formatarPercentual(31.8181), "31,8%");
+  });
+});
+
+describe("US14 — prazo do alerta de vencimento escolhido em Ajustes", () => {
+  const hoje = new Date(2026, 10, 5); // 05/11/2026, hora local
+  const daqui = (dias) => {
+    const d = new Date(hoje);
+    d.setDate(hoje.getDate() + dias);
+    const dois = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
+  };
+
+  test("com 7 dias, o que vence em 10 dias ainda não entra; com 15 e 30, entra", () => {
+    assert.equal(estaVencendo(daqui(10), hoje, 7), false);
+    assert.equal(estaVencendo(daqui(10), hoje, 15), true);
+    assert.equal(estaVencendo(daqui(10), hoje, 30), true);
+    assert.equal(estaVencendo(daqui(7), hoje, 7), true);
+  });
+
+  test("com 30 dias, entra até o 30º dia, e o já vencido continua entrando", () => {
+    assert.equal(estaVencendo(daqui(30), hoje, 30), true);
+    assert.equal(estaVencendo(daqui(31), hoje, 30), false);
+    assert.equal(estaVencendo(daqui(-2), hoje, 30), true);
+  });
+
+  test("sem prazo informado, vale o padrão de 15 dias", () => {
+    assert.equal(estaVencendo(daqui(15), hoje), true);
+    assert.equal(estaVencendo(daqui(16), hoje), false);
+  });
+
+  test("o resumo do painel conta com o prazo escolhido", () => {
+    const produtos = [10, 20, 40].map((dias) => ({
+      estoqueAtual: 5,
+      estoqueMinimo: 1,
+      precoCusto: 1,
+      dataValidade: daqui(dias),
+    }));
+    assert.equal(resumirEstoque(produtos, hoje, 7).produtosVencendo, 0);
+    assert.equal(resumirEstoque(produtos, hoje, 15).produtosVencendo, 1);
+    assert.equal(resumirEstoque(produtos, hoje, 30).produtosVencendo, 2);
+  });
+
+  test("prazo guardado fora das opções volta ao padrão", () => {
+    assert.equal(lerPrazoVencimento("7"), 7);
+    assert.equal(lerPrazoVencimento("30"), 30);
+    assert.equal(lerPrazoVencimento(null), 15);
+    assert.equal(lerPrazoVencimento("99"), 15);
+  });
+});
+
+describe("R8b — quando notificar e o que dizer", () => {
+  test("avisa só na passagem para crítico", () => {
+    assert.equal(deveAvisarCritico("NORMAL", "CRITICO"), true);
+    assert.equal(deveAvisarCritico("BAIXO", "CRITICO"), true);
+    assert.equal(deveAvisarCritico("CRITICO", "CRITICO"), false);
+    assert.equal(deveAvisarCritico("CRITICO", "NORMAL"), false);
+    assert.equal(deveAvisarCritico("NORMAL", "BAIXO"), false);
+  });
+
+  test("texto do aviso de estoque crítico", () => {
+    assert.equal(
+      mensagemEstoqueCritico("Feijão Preto 1kg", 8, 15),
+      "Feijão Preto 1kg ficou com estoque crítico: 8 unidades, mínimo 15.",
+    );
+    assert.equal(
+      mensagemEstoqueCritico("Sabonete 90g", 1, 15),
+      "Sabonete 90g ficou com estoque crítico: 1 unidade, mínimo 15.",
+    );
+  });
+
+  test("texto do resumo diário, e nada quando não há produto no prazo", () => {
+    assert.equal(
+      mensagemResumoVencimento(2, 15),
+      "Você tem 2 produtos vencendo nos próximos 15 dias.",
+    );
+    assert.equal(
+      mensagemResumoVencimento(1, 7),
+      "Você tem 1 produto vencendo nos próximos 7 dias.",
+    );
+    assert.equal(mensagemResumoVencimento(0, 15), null);
   });
 });

@@ -1,15 +1,32 @@
-// Ajustes: perfil, cadastros auxiliares, sincronização e saída. A
-// sincronização segue o desenho aprovado em 05/11 (item 01): o botão fica
-// no cartão do estado que ele muda, e "Sair" fica sozinho no fim.
+// Ajustes: perfil, cadastros auxiliares, sincronização, avisos e saída. A
+// sincronização segue o desenho aprovado em 05/11 (item 01 da 4.3.2): o
+// botão fica no cartão do estado que ele muda, e "Sair" fica sozinho no fim.
+// O cartão "Avisos" segue o desenho da Fase 5 (item 01), aprovado em 05/11.
 
 import { useCallback, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Aviso, Botao, Cartao, type NomeIcone } from "../components/base";
+import { Aviso, Botao, Cartao, Segmentado, type NomeIcone } from "../components/base";
 import type { TelaAjustes } from "../navigation/rotas";
 import { useSessao } from "../navigation/sessao";
 import { sessaoAtual } from "../services/authService";
+import {
+  atualizarResumoDiario,
+  desligarNotificacoes,
+  ligarNotificacoes,
+  semEsperar,
+} from "../services/notificacoesService";
+import {
+  gravarPrazoVencimento,
+  notificacoesLigadas,
+  prazoVencimento,
+} from "../services/preferenciaService";
+import {
+  DIAS_ALERTA_VENCIMENTO,
+  PRAZOS_VENCIMENTO,
+  type PrazoVencimento,
+} from "../services/regras";
 import {
   aoTerminarSincronizacao,
   avisoDoResultado,
@@ -41,6 +58,11 @@ export default function AjustesScreen({ navigation }: TelaAjustes<"AjustesInicio
   const [falhaEstado, setFalhaEstado] = useState(false);
   const [sincronizando, setSincronizando] = useState(false);
   const [resultado, setResultado] = useState<AvisoDeTela | null>(null);
+  // avisos (R8b, US14): null enquanto lê a preferência
+  const [notificacoes, setNotificacoes] = useState<boolean | null>(null);
+  const [mudandoNotificacoes, setMudandoNotificacoes] = useState(false);
+  const [prazo, setPrazo] = useState<PrazoVencimento>(DIAS_ALERTA_VENCIMENTO);
+  const [avisoAvisos, setAvisoAvisos] = useState<AvisoDeTela | null>(null);
 
   const carregarEstado = useCallback(() => {
     estadoDaSincronizacao()
@@ -49,7 +71,51 @@ export default function AjustesScreen({ navigation }: TelaAjustes<"AjustesInicio
         setFalhaEstado(false);
       })
       .catch(() => setFalhaEstado(true));
+    Promise.all([notificacoesLigadas(), prazoVencimento()])
+      .then(([ligadas, dias]) => {
+        setNotificacoes(ligadas);
+        setPrazo(dias);
+      })
+      .catch(() => setNotificacoes(false));
   }, []);
+
+  // Ligar pede a permissão do Android na primeira vez; negada, o
+  // interruptor volta e o aviso explica onde liberar.
+  async function alternarNotificacoes(ligar: boolean) {
+    setMudandoNotificacoes(true);
+    setAvisoAvisos(null);
+    try {
+      if (ligar) {
+        const permitido = await ligarNotificacoes();
+        setNotificacoes(permitido);
+        if (!permitido) {
+          setAvisoAvisos({
+            tipo: "atencao",
+            texto:
+              "O Android não permitiu as notificações do StockEasy. Para ligar, libere em " +
+              "Configurações, Apps, StockEasy, Notificações.",
+          });
+        }
+      } else {
+        await desligarNotificacoes();
+        setNotificacoes(false);
+      }
+    } catch {
+      setAvisoAvisos({ tipo: "erro", texto: "Não foi possível mudar as notificações. Tente de novo." });
+    } finally {
+      setMudandoNotificacoes(false);
+    }
+  }
+
+  async function escolherPrazo(dias: PrazoVencimento) {
+    setPrazo(dias);
+    try {
+      await gravarPrazoVencimento(dias);
+      semEsperar(atualizarResumoDiario());
+    } catch {
+      setAvisoAvisos({ tipo: "erro", texto: "Não foi possível salvar o prazo. Tente de novo." });
+    }
+  }
 
   // recarrega ao abrir a aba e quando uma sincronização termina, inclusive a
   // disparada sozinha em segundo plano. Se houver aviso na tela, ele passa a
@@ -146,6 +212,51 @@ export default function AjustesScreen({ navigation }: TelaAjustes<"AjustesInicio
       {resultado && <Aviso tipo={resultado.tipo} texto={resultado.texto} />}
 
       <Cartao estilo={e.grupo}>
+        {/* a linha inteira liga e desliga, com área de toque de 48 dp */}
+        <Pressable
+          onPress={() => alternarNotificacoes(!notificacoes)}
+          disabled={notificacoes === null || mudandoNotificacoes}
+          accessibilityRole="switch"
+          accessibilityLabel="Notificações"
+          accessibilityHint="Avisa estoque crítico na hora e, às 9h, os produtos perto do vencimento"
+          accessibilityState={{
+            checked: notificacoes === true,
+            disabled: notificacoes === null || mudandoNotificacoes,
+          }}
+          style={({ pressed }) => [e.linha, { borderBottomWidth: 0 }, pressed && { opacity: 0.6 }]}
+        >
+          <Ionicons
+            name={notificacoes ? "notifications-outline" : "notifications-off-outline"}
+            size={22}
+            color={cores.primaria}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={e.linhaTitulo}>Notificações</Text>
+            <Text style={e.meta}>
+              Avisa estoque crítico na hora e, às 9h, os produtos perto do vencimento, mesmo com o
+              app fechado.
+            </Text>
+          </View>
+          <Switch
+            value={notificacoes === true}
+            onValueChange={alternarNotificacoes}
+            disabled={notificacoes === null || mudandoNotificacoes}
+            trackColor={{ false: cores.bordaCampo, true: cores.primaria }}
+            thumbColor={cores.fundo}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          />
+        </Pressable>
+        <Text style={e.subtitulo}>Prazo do alerta de vencimento</Text>
+        <Segmentado
+          opcoes={PRAZOS_VENCIMENTO.map((d) => ({ valor: String(d), rotulo: `${d} dias` }))}
+          valor={String(prazo)}
+          onChange={(v) => escolherPrazo(Number(v) as PrazoVencimento)}
+        />
+      </Cartao>
+      {avisoAvisos && <Aviso tipo={avisoAvisos.tipo} texto={avisoAvisos.texto} />}
+
+      <Cartao estilo={e.grupo}>
         <Linha
           icone="information-circle-outline"
           titulo="Versão do aplicativo"
@@ -235,6 +346,11 @@ const e = StyleSheet.create({
   },
   grupo: { paddingVertical: 0 },
   botaoNoCartao: { marginBottom: espaco.md },
+  subtitulo: {
+    fontSize: fonte.legenda,
+    color: cores.textoSuave,
+    marginBottom: espaco.sm,
+  },
   linha: {
     minHeight: ALVO_TOQUE + 8,
     flexDirection: "row",

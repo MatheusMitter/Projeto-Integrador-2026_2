@@ -15,9 +15,11 @@ import {
 } from "../components/base";
 import type { ProdutoVisivel } from "../domain/tipos";
 import type { FiltroProdutos, TelaProdutos } from "../navigation/rotas";
+import { prazoVencimento } from "../services/preferenciaService";
 import { listarProdutos } from "../services/produtoService";
 import {
   classificarEstoque,
+  DIAS_ALERTA_VENCIMENTO,
   diasParaVencer,
   estaVencendo,
 } from "../services/regras";
@@ -30,9 +32,10 @@ const FILTROS: { valor: FiltroProdutos; rotulo: string }[] = [
   { valor: "VENCENDO", rotulo: "Vencendo" },
 ];
 
-function passaNoFiltro(p: ProdutoVisivel, filtro: FiltroProdutos): boolean {
+// o prazo é o escolhido em Ajustes (US14), o mesmo do Painel
+function passaNoFiltro(p: ProdutoVisivel, filtro: FiltroProdutos, prazo: number): boolean {
   if (filtro === "TODOS") return true;
-  if (filtro === "VENCENDO") return estaVencendo(p.dataValidade);
+  if (filtro === "VENCENDO") return estaVencendo(p.dataValidade, new Date(), prazo);
   return classificarEstoque(p.estoqueAtual, p.estoqueMinimo) === filtro;
 }
 
@@ -50,6 +53,7 @@ export default function ProdutosScreen({
   const [erro, setErro] = useState<string | null>(null);
   const [termo, setTermo] = useState("");
   const [filtro, setFiltro] = useState<FiltroProdutos>("TODOS");
+  const [prazo, setPrazo] = useState<number>(DIAS_ALERTA_VENCIMENTO);
   const [tentativa, setTentativa] = useState(0);
 
   // Recarrega ao focar a tela e a cada letra da busca. Se uma busca antiga
@@ -57,10 +61,11 @@ export default function ProdutosScreen({
   useFocusEffect(
     useCallback(() => {
       let atual = true;
-      listarProdutos(termo)
-        .then((lista) => {
+      Promise.all([listarProdutos(termo), prazoVencimento()])
+        .then(([lista, dias]) => {
           if (!atual) return;
           setProdutos(lista);
+          setPrazo(dias);
           setErro(null);
         })
         .catch(() => {
@@ -82,8 +87,8 @@ export default function ProdutosScreen({
   }, [route.params?.filtro, navigation]);
 
   const visiveis = useMemo(
-    () => (produtos ?? []).filter((p) => passaNoFiltro(p, filtro)),
-    [produtos, filtro],
+    () => (produtos ?? []).filter((p) => passaNoFiltro(p, filtro, prazo)),
+    [produtos, filtro, prazo],
   );
 
   const tentarDeNovo = () => setTentativa((t) => t + 1);
@@ -152,7 +157,7 @@ export default function ProdutosScreen({
         renderItem={({ item }) => {
           const situacao = classificarEstoque(item.estoqueAtual, item.estoqueMinimo);
           const dias = diasParaVencer(item.dataValidade);
-          const vencendo = estaVencendo(item.dataValidade);
+          const vencendo = estaVencendo(item.dataValidade, new Date(), prazo);
           return (
             <Pressable
               onPress={() => navigation.navigate("ProdutoDetalhes", { id: item.id })}
