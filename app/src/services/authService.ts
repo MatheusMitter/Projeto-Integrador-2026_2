@@ -17,6 +17,10 @@ const LOJA = 1;
 // o login não prende a pessoa esperando o servidor acordar: passado o
 // limite, entra pelo caminho local e a sincronização tenta depois
 const TEMPO_LIMITE_MS = 8000;
+// criar conta acontece uma vez e não tem caminho local equivalente com
+// internet; logo depois de acordar, a primeira gravação do servidor no
+// banco passou de 8 s no teste de 05/11, então aqui a espera é maior
+const TEMPO_LIMITE_CADASTRO_MS = 30000;
 const CREDENCIAL_INVALIDA = "E-mail ou senha inválidos.";
 
 let usuarioAtual: Usuario | null = null;
@@ -142,7 +146,7 @@ export async function cadastrar(d: DadosCadastro, lojaId = LOJA): Promise<Result
     const r = await chamarApi<ContaDoServidor>("/auth/registrar", {
       metodo: "POST",
       corpo: { nomeLoja: await usuarioRepo.nomeDaLoja(lojaId), nome, email, senha: d.senha },
-      tempoLimiteMs: TEMPO_LIMITE_MS,
+      tempoLimiteMs: TEMPO_LIMITE_CADASTRO_MS,
     });
     if (r.tipo === "ok") return adotarContaDoServidor(r.corpo, d.senha);
     if (r.tipo === "erro" && r.status === 409) {
@@ -151,7 +155,14 @@ export async function cadastrar(d: DadosCadastro, lojaId = LOJA): Promise<Result
         mensagem: "Já existe uma conta com este e-mail no servidor. Entre com ela na tela de login.",
       };
     }
-    // sem resposta ou outro erro: segue o cadastro só no aparelho
+    // Com internet, a conta nasce no servidor ou não nasce. Criar só no
+    // aparelho deixaria duas contas com o mesmo e-mail, uma de cada lado. O
+    // servidor pode ter criado a conta mesmo sem responder a tempo; aí a nova
+    // tentativa recebe "já existe" e a pessoa entra pela tela de login.
+    return {
+      sucesso: false,
+      mensagem: "O servidor não respondeu a tempo. Tente de novo em instantes.",
+    };
   }
 
   const tipoPerfil = await perfilDeNovoUsuario(lojaId);

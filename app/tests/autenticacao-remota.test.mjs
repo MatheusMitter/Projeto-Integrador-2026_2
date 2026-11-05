@@ -140,3 +140,24 @@ test("criar conta com e-mail que já existe no servidor avisa e não cria nada",
   assert.match(r.mensagem, /no servidor/);
   assert.equal(await linha("SELECT id FROM usuario WHERE email = 'repetida@exemplo.com'"), null);
 });
+
+test("com internet, servidor sem resposta ao criar conta: avisa e não cria a conta só no aparelho", async () => {
+  // aparelho ainda sem loja no servidor, como no teste anterior
+  derrubarServidor();
+
+  const r = await cadastrar({ ...NOVA_CONTA, nome: "Pessoa Sem Resposta", email: "semresposta@exemplo.com" });
+
+  assert.equal(r.sucesso, false);
+  assert.match(r.mensagem, /não respondeu a tempo/);
+  assert.equal(await linha("SELECT id FROM usuario WHERE email = 'semresposta@exemplo.com'"), null);
+});
+
+test("sem internet, criar conta continua só no aparelho, como antes", async () => {
+  definirRedeParaTeste(false);
+  const chamadas = instalarServidorFalso({});
+
+  const r = await cadastrar({ ...NOVA_CONTA, nome: "Pessoa Sem Rede", email: "semrede@exemplo.com" });
+
+  assert.equal(r.sucesso, true, r.mensagem);
+  assert.equal(chamadas.length, 0);
+});
