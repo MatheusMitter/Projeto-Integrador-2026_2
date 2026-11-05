@@ -21,13 +21,19 @@ import { sessaoAtual } from "../services/authService";
 import { resumoDoEstoque } from "../services/produtoService";
 import { type ItemRanking, maisVendidos } from "../services/relatorioService";
 import { DIAS_ALERTA_VENCIMENTO, formatarReais } from "../services/regras";
-import { registrosNaoSincronizados } from "../services/sincronizacaoService";
+import {
+  aoTerminarSincronizacao,
+  avisoDoPainel,
+  estadoDaSincronizacao,
+  type AvisoDeTela,
+} from "../services/sincronizacaoService";
 import { cores, espaco, fonte, raio } from "../theme/tema";
 
 export default function PainelScreen({ navigation }: TelaAba<"Início">) {
   const [resumo, setResumo] = useState<ResumoEstoque | null>(null);
   const [ranking, setRanking] = useState<ItemRanking[]>([]);
-  const [pendentes, setPendentes] = useState(0);
+  // desenho aprovado em 05/11 (item 02): um aviso de sincronização por vez
+  const [avisoSincronizacao, setAvisoSincronizacao] = useState<AvisoDeTela | null>(null);
   const [atualizando, setAtualizando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -35,25 +41,29 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
 
   const carregar = useCallback(async () => {
     try {
-      const [r, m, p] = await Promise.all([
+      const [r, m, s] = await Promise.all([
         resumoDoEstoque(),
         maisVendidos(5),
-        registrosNaoSincronizados(),
+        estadoDaSincronizacao(),
       ]);
       setResumo(r);
       setRanking(m);
-      setPendentes(p);
+      setAvisoSincronizacao(avisoDoPainel(s));
       setErro(null);
     } catch {
       setErro("Não foi possível carregar o resumo do estoque.");
     }
   }, []);
 
-  // Recarrega ao voltar para a aba: uma movimentação em outra tela muda
-  // esses números.
+  // Recarrega ao voltar para a aba, porque uma movimentação em outra tela
+  // muda esses números, e quando uma sincronização termina, porque o saldo
+  // pode ter vindo do servidor.
   useFocusEffect(
     useCallback(() => {
       carregar();
+      return aoTerminarSincronizacao(() => {
+        void carregar();
+      });
     }, [carregar]),
   );
 
@@ -150,14 +160,8 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
         />
       </View>
 
-      {pendentes > 0 && (
-        <Aviso
-          tipo="atencao"
-          texto={
-            `${pendentes} registro(s) gravados só neste aparelho. O envio ` +
-            "ao servidor ainda não está disponível nesta versão."
-          }
-        />
+      {avisoSincronizacao && (
+        <Aviso tipo={avisoSincronizacao.tipo} texto={avisoSincronizacao.texto} />
       )}
 
       <Cartao>

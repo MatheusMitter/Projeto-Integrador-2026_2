@@ -14,6 +14,7 @@ import {
   calcularMargem,
   classificarEstoque,
   avisoPreco,
+  descreverMomento,
   diasParaVencer,
   ehEntrada,
   emailValido,
@@ -282,6 +283,25 @@ describe("conversão de datas entre a tela e o banco", () => {
 
   test("timestamp fora do padrão é devolvido como veio, sem quebrar", () => {
     assert.equal(formatarDataHora("sem data"), "sem data");
+  });
+
+  test("momento recente é dito como hoje ou ontem, pelo dia do aparelho", () => {
+    // o instante da retaguarda vem em ISO e em UTC; o esperado é calculado
+    // no fuso de quem roda o teste
+    const momento = "2026-11-04T23:25:43.596Z";
+    const local = new Date(momento);
+    const dois = (n) => String(n).padStart(2, "0");
+    const horario = `${dois(local.getHours())}:${dois(local.getMinutes())}`;
+    const diasDepois = (n) => {
+      const d = new Date(local);
+      d.setDate(local.getDate() + n);
+      return d;
+    };
+
+    assert.equal(descreverMomento(momento, diasDepois(0)), `hoje, ${horario}`);
+    assert.equal(descreverMomento(momento, diasDepois(1)), `ontem, ${horario}`);
+    assert.equal(descreverMomento(momento, diasDepois(5)), formatarDataHora(momento));
+    assert.equal(descreverMomento("sem data"), "sem data");
   });
 });
 

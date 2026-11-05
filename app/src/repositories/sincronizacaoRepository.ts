@@ -313,6 +313,18 @@ export async function aplicarAlteracoes(a: Alteracoes): Promise<{
         ignorados++;
         continue;
       }
+      // com movimentação ainda não enviada, o saldo do servidor está atrasado
+      // em relação ao daqui; o produto volta no próximo download, já certo
+      if (atual) {
+        const vendaPendente = await db.getFirstAsync<{ id: number }>(
+          "SELECT id FROM movimentacao WHERE produto_id = ? AND sincronizado <> 1 LIMIT 1",
+          [atual.id],
+        );
+        if (vendaPendente) {
+          ignorados++;
+          continue;
+        }
+      }
       const categoriaId = await idPorUuid("categoria", p.categoriaUuid);
       if (categoriaId === null) {
         ignorados++;

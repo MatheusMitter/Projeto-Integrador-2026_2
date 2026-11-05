@@ -13,6 +13,7 @@ import type {
 } from "../repositories/sincronizacaoRepository";
 import { chamarApi, type Resposta } from "./apiClient";
 import { temInternet } from "./rede";
+import { descreverMomento } from "./regras";
 import { apagarToken, lerToken } from "./sessaoRemota";
 
 // o plano gratuito da hospedagem dorme e leva perto de 1 minuto para acordar
@@ -173,7 +174,10 @@ export interface EstadoDaSincronizacao {
   pendentes: number;
   temConta: boolean;
   emAndamento: boolean;
+  // última tentativa, com qualquer resultado
   ultimoEm: string | null;
+  // última sincronização que chegou ao fim: o corte, no relógio do servidor
+  ultimaConcluidaEm: string | null;
   ultimoResultado: ResultadoGuardado | null;
 }
 
@@ -188,7 +192,101 @@ export async function estadoDaSincronizacao(): Promise<EstadoDaSincronizacao> {
     temConta: token !== null,
     emAndamento: emAndamento !== null,
     ultimoEm: estado.ultimoEm,
+    ultimaConcluidaEm: estado.corte,
     ultimoResultado: estado.ultimoResultado,
+  };
+}
+
+// ---- textos para as telas (desenho aprovado em 05/11, itens 01 e 02) ----
+
+export interface AvisoDeTela {
+  tipo: "info" | "atencao" | "erro" | "sucesso";
+  texto: string;
+}
+
+function registros(n: number): string {
+  return n === 1 ? "1 registro" : `${n} registros`;
+}
+
+/** A frase do cartão "Sincronização", em Ajustes. */
+export function descricaoDaSincronizacao(e: EstadoDaSincronizacao, agora = new Date()): string {
+  if (!e.temConta) {
+    return e.ultimoResultado?.situacao === "sessao-expirada"
+      ? MENSAGENS["sessao-expirada"]
+      : MENSAGENS["sem-conta"];
+  }
+  const situacao =
+    e.pendentes > 0 ? `${registros(e.pendentes)} aguardando envio.` : "Tudo enviado ao servidor.";
+  const ultima = e.ultimaConcluidaEm
+    ? ` Última sincronização: ${descreverMomento(e.ultimaConcluidaEm, agora)}.`
+    : " Ainda não sincronizado.";
+  return situacao + ultima;
+}
+
+/** O aviso logo abaixo do botão "Sincronizar agora", depois de apertado. */
+export function avisoDoResultado(r: ResultadoSincronizacao): AvisoDeTela {
+  if (r.situacao === "ok") {
+    const partes: string[] = [];
+    if (r.enviados > 0) partes.push(`${r.enviados} ${r.enviados === 1 ? "enviado" : "enviados"}`);
+    if (r.recebidos > 0) partes.push(`${r.recebidos} ${r.recebidos === 1 ? "recebido" : "recebidos"}`);
+    return {
+      tipo: "sucesso",
+      texto: partes.length
+        ? `Sincronização concluída. ${partes.join(" e ")}.`
+        : "Sincronização concluída. Tudo já estava em dia.",
+    };
+  }
+  if (r.situacao === "sem-rede" || r.situacao === "sem-conta") return { tipo: "info", texto: r.mensagem };
+  return { tipo: "erro", texto: r.mensagem };
+}
+
+/**
+ * O aviso do Painel: um de cada vez, o mais importante do momento, nesta
+ * ordem: divergência, recusa do servidor, pendentes com conta, pendentes sem
+ * conta. Com tudo enviado, nenhum.
+ */
+export function avisoDoPainel(e: EstadoDaSincronizacao): AvisoDeTela | null {
+  const r = e.ultimoResultado;
+  // divergência já resolvida no servidor, com saldo de volta a zero ou mais, não aparece
+  const divergencias = (r?.divergencias ?? []).filter((d) => d.saldo === null || d.saldo < 0);
+  if (divergencias.length === 1) {
+    const [d] = divergencias;
+    const saldo = d.saldo === null ? "o saldo lá ficou negativo" : `o saldo lá ficou em ${d.saldo}`;
+    return {
+      tipo: "atencao",
+      texto:
+        `${d.produto}: o servidor recebeu mais saídas do que havia em estoque, e ${saldo}. ` +
+        "Aqui ficou 0. Confira o estoque e registre um ajuste.",
+    };
+  }
+  if (divergencias.length > 1) {
+    return {
+      tipo: "atencao",
+      texto:
+        `${divergencias.map((d) => d.produto).join(", ")}: o servidor recebeu mais saídas do que ` +
+        "havia em estoque, e o saldo lá ficou negativo. Aqui ficou 0. Confira o estoque e registre um ajuste.",
+    };
+  }
+  if (r?.situacao === "recusado") {
+    return {
+      tipo: "erro",
+      texto: `A última sincronização não foi aceita: ${r.mensagem.charAt(0).toLowerCase()}${r.mensagem.slice(1)}`,
+    };
+  }
+  if (r?.situacao === "sessao-expirada" && !e.temConta) return { tipo: "erro", texto: r.mensagem };
+  if (e.pendentes === 0) return null;
+  if (e.temConta) {
+    return {
+      tipo: "info",
+      texto:
+        e.pendentes === 1
+          ? "1 registro aguardando envio ao servidor. Ele vai sozinho quando houver internet."
+          : `${e.pendentes} registros aguardando envio ao servidor. Eles vão sozinhos quando houver internet.`,
+    };
+  }
+  return {
+    tipo: "info",
+    texto: `${registros(e.pendentes)} só neste aparelho. Entre com a internet ligada para sincronizar.`,
   };
 }
 

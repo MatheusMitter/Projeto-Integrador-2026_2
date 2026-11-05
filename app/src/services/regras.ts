@@ -255,18 +255,48 @@ export function estaVencendo(
  * Sem isso o histórico mostra o timestamp cru na tela.
  */
 export function formatarDataHora(valor: string): string {
-  const partes = valor
-    .trim()
-    .match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
-  if (!partes) return valor;
+  const d = lerMomentoUtc(valor);
+  if (!d) return valor;
+  return `${dois(d.getDate())}/${dois(d.getMonth() + 1)}/${d.getFullYear()} às ${horario(d)}`;
+}
+
+/**
+ * Momento recente dito como se fala: "hoje, 20:31", "ontem, 18:02" ou, mais
+ * antigo, "03/11/2026 às 18:02". Aceita o datetime do SQLite ou o ISO da
+ * retaguarda, os dois em UTC.
+ */
+export function descreverMomento(valor: string, agora: Date = new Date()): string {
+  const d = lerMomentoUtc(valor);
+  if (!d) return valor;
+  if (mesmoDia(d, agora)) return `hoje, ${horario(d)}`;
+  const ontem = new Date(agora);
+  ontem.setDate(agora.getDate() - 1);
+  if (mesmoDia(d, ontem)) return `ontem, ${horario(d)}`;
+  return formatarDataHora(valor);
+}
+
+// o banco grava em UTC; a tela mostra no fuso do aparelho, senão o
+// registro feito às 16h aparece como 19h em Goiânia
+function lerMomentoUtc(valor: string): Date | null {
+  const partes = valor.trim().match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if (!partes) return null;
   const [, ano, mes, dia, hora, minuto] = partes.map(Number);
-  // o banco grava em UTC; a tela mostra no fuso do aparelho, senão o
-  // registro feito às 16h aparece como 19h em Goiânia
-  const d = new Date(Date.UTC(ano, mes - 1, dia, hora, minuto));
-  const dois = (n: number) => String(n).padStart(2, "0");
+  return new Date(Date.UTC(ano, mes - 1, dia, hora, minuto));
+}
+
+function dois(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function horario(d: Date): string {
+  return `${dois(d.getHours())}:${dois(d.getMinutes())}`;
+}
+
+function mesmoDia(a: Date, b: Date): boolean {
   return (
-    `${dois(d.getDate())}/${dois(d.getMonth() + 1)}/${d.getFullYear()} ` +
-    `às ${dois(d.getHours())}:${dois(d.getMinutes())}`
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
   );
 }
 

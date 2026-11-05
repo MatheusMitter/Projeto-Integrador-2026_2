@@ -178,11 +178,13 @@ export async function lerSaldo(
   return l ? { estoqueAtual: l.estoque_atual, estoqueMinimo: l.estoque_minimo } : null;
 }
 
+// O saldo não marca o produto como pendente: ele não vai ao servidor, que o
+// recalcula pelas movimentações (DA10). Quem vai é a movimentação.
 export async function gravarSaldo(id: number, saldo: number): Promise<void> {
   const db = await obterBanco();
   await db.runAsync(
     `UPDATE produto
-        SET estoque_atual = ?, atualizado_em = datetime('now'), sincronizado = 0
+        SET estoque_atual = ?, atualizado_em = datetime('now')
       WHERE id = ?`,
     [saldo, id],
   );

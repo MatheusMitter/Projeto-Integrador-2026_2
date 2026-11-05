@@ -46,6 +46,8 @@ interface BotaoProps {
   variante?: VarianteBotao;
   icone?: NomeIcone;
   carregando?: boolean;
+  // texto ao lado do indicador enquanto carrega; sem ele, só o indicador
+  textoCarregando?: string;
   desabilitado?: boolean;
   estilo?: ViewStyle;
 }
@@ -93,6 +95,7 @@ export function Botao({
   variante = "primario",
   icone,
   carregando = false,
+  textoCarregando,
   desabilitado = false,
   estilo,
 }: BotaoProps) {
@@ -104,7 +107,7 @@ export function Botao({
       onPress={onPress}
       disabled={inativo}
       accessibilityRole="button"
-      accessibilityLabel={titulo}
+      accessibilityLabel={carregando && textoCarregando ? textoCarregando : titulo}
       accessibilityState={{ disabled: inativo, busy: carregando }}
       style={({ pressed }) => [
         e.botao,
@@ -119,7 +122,12 @@ export function Botao({
         estilo,
       ]}
     >
-      {carregando ? (
+      {carregando && textoCarregando ? (
+        <View style={e.botaoConteudo}>
+          <ActivityIndicator color={v.texto} />
+          <Text style={[e.botaoTexto, { color: v.texto }]}>{textoCarregando}</Text>
+        </View>
+      ) : carregando ? (
         <ActivityIndicator color={v.texto} />
       ) : (
         <View style={e.botaoConteudo}>

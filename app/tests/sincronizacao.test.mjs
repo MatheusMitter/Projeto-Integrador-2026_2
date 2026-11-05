@@ -9,9 +9,13 @@ import assert from "node:assert/strict";
 import { definirRedeParaTeste } from "./apoio/expo-network-node.mjs";
 import { limparCofreParaTeste } from "./apoio/expo-secure-store-node.mjs";
 import { derrubarServidor, instalarServidorFalso } from "./apoio/servidor-falso.mjs";
-import { obterBanco } from "../src/database/conexao.ts";
+import { emTransacao, obterBanco } from "../src/database/conexao.ts";
+import { aplicarMovimentacao } from "../src/services/estoqueService.ts";
 import { guardarToken, lerToken } from "../src/services/sessaoRemota.ts";
 import {
+  avisoDoPainel,
+  avisoDoResultado,
+  descricaoDaSincronizacao,
   estadoDaSincronizacao,
   registrosNaoSincronizados,
   sincronizar,
@@ -233,6 +237,32 @@ test("duas sincronizações pedidas juntas viram uma só, e a alteração penden
   assert.equal(await registrosNaoSincronizados(), 0);
 });
 
+test("venda feita aqui durante o download conta como um registro e não perde o saldo", async () => {
+  const feijao = await produtoDoServidor("Feijão Preto 1kg");
+  const idFeijao = (await linha("SELECT id FROM produto WHERE uuid = ?", [feijao.uuid])).id;
+  const dono = await linha("SELECT id FROM usuario WHERE email = 'proprietario@stockeasy.com'");
+  instalarServidorFalso({
+    "GET /sync/baixar": async () => {
+      // a venda acontece enquanto o download está a caminho, e o servidor
+      // devolve o produto com o saldo de antes dela
+      const venda = await emTransacao(() =>
+        aplicarMovimentacao({ produtoId: idFeijao, tipo: "VENDA", quantidade: 2 }, dono.id),
+      );
+      assert.equal(venda.sucesso, true);
+      return alteracoes({ produtos: [feijao], instanteServidor: "2026-11-04T23:20:00Z" });
+    },
+  });
+
+  const r = await sincronizar();
+
+  assert.equal(r.situacao, "ok");
+  const atual = await linha("SELECT estoque_atual, sincronizado FROM produto WHERE id = ?", [idFeijao]);
+  assert.equal(atual.estoque_atual, feijao.estoqueAtual - 2);
+  // só a venda fica pendente; o saldo do produto não vai ao servidor
+  assert.equal(atual.sincronizado, 1);
+  assert.equal(await registrosNaoSincronizados(), 1);
+});
+
 test("divergência do servidor: o aparelho fica com zero e o aviso guarda o saldo de lá", async () => {
   const detergente = await produtoDoServidor("Detergente Líquido 500ml", { estoqueAtual: -3 });
   const dono = await linha("SELECT id FROM usuario WHERE email = 'proprietario@stockeasy.com'");
@@ -308,4 +338,95 @@ test("servidor recusa o token: ele sai do aparelho e o pendente continua", async
   assert.equal(await lerToken(), null);
   assert.equal(await registrosNaoSincronizados(), 1);
   assert.equal((await estadoDaSincronizacao()).temConta, false);
+});
+
+// ---- textos das telas, no desenho aprovado em 05/11 (itens 01 e 02) ----
+
+function estado(parte = {}) {
+  return {
+    pendentes: 0,
+    temConta: true,
+    emAndamento: false,
+    ultimoEm: null,
+    ultimaConcluidaEm: null,
+    ultimoResultado: null,
+    ...parte,
+  };
+}
+
+function resultado(parte = {}) {
+  return {
+    situacao: "ok",
+    mensagem: "Sincronização concluída.",
+    enviados: 0,
+    recebidos: 0,
+    divergencias: [],
+    ...parte,
+  };
+}
+
+test("Painel mostra um aviso por vez: divergência, recusa, pendentes com conta, pendentes sem conta", () => {
+  const divergencia = resultado({ divergencias: [{ produto: "Detergente Líquido 500ml", saldo: -3 }] });
+  const recusa = resultado({
+    situacao: "recusado",
+    mensagem: "Já existe um registro com estes dados. Os dados continuam salvos neste aparelho.",
+  });
+
+  assert.deepEqual(avisoDoPainel(estado({ pendentes: 3, ultimoResultado: divergencia })), {
+    tipo: "atencao",
+    texto:
+      "Detergente Líquido 500ml: o servidor recebeu mais saídas do que havia em estoque, e o saldo " +
+      "lá ficou em -3. Aqui ficou 0. Confira o estoque e registre um ajuste.",
+  });
+  assert.deepEqual(avisoDoPainel(estado({ pendentes: 3, ultimoResultado: recusa })), {
+    tipo: "erro",
+    texto:
+      "A última sincronização não foi aceita: já existe um registro com estes dados. Os dados " +
+      "continuam salvos neste aparelho.",
+  });
+  assert.deepEqual(avisoDoPainel(estado({ pendentes: 3 })), {
+    tipo: "info",
+    texto: "3 registros aguardando envio ao servidor. Eles vão sozinhos quando houver internet.",
+  });
+  assert.deepEqual(avisoDoPainel(estado({ pendentes: 1, temConta: false })), {
+    tipo: "info",
+    texto: "1 registro só neste aparelho. Entre com a internet ligada para sincronizar.",
+  });
+  assert.equal(avisoDoPainel(estado()), null);
+  // divergência que já voltou a zero ou mais no servidor não aparece
+  const resolvida = resultado({ divergencias: [{ produto: "Arroz", saldo: 2 }] });
+  assert.equal(avisoDoPainel(estado({ ultimoResultado: resolvida })), null);
+});
+
+test("cartão de Ajustes diz o estado e a última sincronização", () => {
+  const momento = "2026-11-04T23:25:00Z";
+  const agora = new Date(momento);
+  const dois = (n) => String(n).padStart(2, "0");
+  const horario = `${dois(agora.getHours())}:${dois(agora.getMinutes())}`;
+
+  assert.equal(
+    descricaoDaSincronizacao(estado({ pendentes: 3, ultimaConcluidaEm: momento }), agora),
+    `3 registros aguardando envio. Última sincronização: hoje, ${horario}.`,
+  );
+  assert.equal(
+    descricaoDaSincronizacao(estado({ ultimaConcluidaEm: momento }), agora),
+    `Tudo enviado ao servidor. Última sincronização: hoje, ${horario}.`,
+  );
+  assert.match(descricaoDaSincronizacao(estado({ temConta: false })), /ainda não está ligado ao servidor/);
+  const expirada = resultado({ situacao: "sessao-expirada", mensagem: "x" });
+  assert.match(
+    descricaoDaSincronizacao(estado({ temConta: false, ultimoResultado: expirada })),
+    /sessão com o servidor expirou/,
+  );
+});
+
+test("aviso do botão Sincronizar agora", () => {
+  assert.deepEqual(avisoDoResultado(resultado({ enviados: 3, recebidos: 2 })), {
+    tipo: "sucesso",
+    texto: "Sincronização concluída. 3 enviados e 2 recebidos.",
+  });
+  assert.equal(avisoDoResultado(resultado({ enviados: 1 })).texto, "Sincronização concluída. 1 enviado.");
+  assert.equal(avisoDoResultado(resultado()).texto, "Sincronização concluída. Tudo já estava em dia.");
+  assert.equal(avisoDoResultado(resultado({ situacao: "sem-rede", mensagem: "Sem internet." })).tipo, "info");
+  assert.equal(avisoDoResultado(resultado({ situacao: "falha", mensagem: "Falhou." })).tipo, "erro");
 });
