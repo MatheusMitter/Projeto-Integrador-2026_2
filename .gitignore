@@ -40,6 +40,9 @@ Thumbs.db
 *.swp
 .kiro/
 .agents/
+# Instruções de condução do trabalho com o assistente: organização da
+# equipe, não parte do projeto
+CLAUDE.md
 
 # Material de preparação da equipe: slides, documentos de entrega e
 # norteadores da disciplina. Não é redistribuído e não compõe o projeto.
