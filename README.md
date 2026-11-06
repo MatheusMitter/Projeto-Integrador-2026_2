@@ -197,7 +197,7 @@ Situação em 05/11/2026, conforme a Seção 5 do documento norteador. A verific
 | R8  | Recurso nativo do dispositivo              | Implementado | Câmera no código de barras (`app/src/components/LeitorCodigo.tsx`) e notificações (`app/src/services/notificacoesService.ts`) |
 | R9  | Filtro, busca e visão consolidada          | Implementado | Busca, filtro por situação, painel e relatórios por período |
 | R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento         |
-| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 48dp, rótulos acessíveis             |
+| R11 | Usabilidade e acessibilidade               | Em andamento | Contraste AA, alvo de 48dp e rótulos acessíveis; teste com TalkBack e ajuste da fonte grande até 27/11 |
 | R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                                 |
 | R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                   |
 | R14 | Pacote instalável em dispositivo físico    | Em andamento | APK de release assinado e gerado (`app/README.md`); comprovação em aparelho até 27/11 |

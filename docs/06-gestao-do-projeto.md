@@ -16,7 +16,7 @@ Atende ao item 5 da composição da N1: backlog priorizado, distribuição de re
 | Domínio do problema     | Gestão e produtividade — controle de estoque e inventário para pequenos comércios |
 | Pilha adotada           | React Native com Expo · SQLite · Spring Boot · PostgreSQL · Open Food Facts       |
 | Endereço do repositório | https://github.com/MatheusMitter/Projeto-Integrador-2026_2                        |
-| Ciclo de referência     | Ciclo 1 — semanas 7 e 8, de 14 a 25/09/2026                                       |
+| Ciclo de referência     | Ciclo 3 — semanas 13 e 14, de 26/10 a 06/11/2026                                  |
 
 ---
 
@@ -223,6 +223,7 @@ Requisitos fechados no ciclo, conforme o planejamento: R6, R7 e R8.
 | A hospedagem gratuita dorme sem uso e leva cerca de 1 minuto para acordar                          | Acordar antes da demonstração; login com limite de 8 segundos; reserva com a retaguarda local       |
 | Os identificadores criados no aparelho não estavam no formato UUID do banco do servidor            | Migração 2 do banco do aparelho, com identificadores no formato padrão                              |
 | A senha ficava em texto no banco do aparelho                                                       | Resumo com sal, aplicado pela mesma migração                                                        |
+| Até 05/11, o código entrou no `main` por envio direto ou por pull request sem revisão de outro integrante | A partir de 06/11, toda integração no `main` passa por pull request revisado por outro integrante, a começar pelo dos Ciclos 2 e 3 |
 
 ---
 
@@ -294,3 +295,4 @@ Correção dos defeitos priorizados, refinamento de acessibilidade e tratamento 
 | 1.0    | 28/09/2026 | Versão inicial, com o registro do Ciclo 1 | Equipe StockEasy |
 | 1.1    | 02/11/2026 | Registro do Ciclo 2 (seção 7.1), a partir do histórico do repositório e do `99` | Equipe StockEasy |
 | 1.2    | 05/11/2026 | Registro do Ciclo 3 (seção 7.2), na véspera do Checkpoint 2 | Equipe StockEasy |
+| 1.3    | 05/11/2026 | Ciclo de referência da identificação (seção 1) e impedimento da integração sem revisão (seção 7.2) | Equipe StockEasy |

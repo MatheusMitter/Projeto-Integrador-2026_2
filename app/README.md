@@ -195,6 +195,8 @@ Ainda não comprovado: o pacote instalável em aparelho físico (R14), previsto 
 
 **Um aparelho guarda uma loja só.** A loja do aparelho se liga à do servidor na primeira conta criada ou confirmada com internet, e conta de outra loja é recusada. Uma conta criada depois, num aparelho já ligado, fica só nele, como operador, até a administração de usuários na retaguarda. Por isso, no servidor, a movimentação feita por uma conta que só existe no aparelho fica no nome da conta que ligou o aparelho.
 
+**Recuperar os dados num celular novo ainda não é automático.** O que foi sincronizado fica guardado no servidor. Mas um celular recém-instalado já vem com a carga de exemplo, pendente de envio. Ao entrar com uma conta cuja loja já tem dados no servidor, esses exemplos colidem com os cadastros da loja (mesmo nome de categoria e mesmo código de barras), o servidor recusa o envio e a sincronização para antes de baixar os dados da loja. A correção prevista para o Ciclo 4: quando um aparelho novo se liga a uma loja que já tem dados no servidor, os dados do aparelho dão lugar aos da loja.
+
 **As contas da carga inicial não sincronizam.** Elas só existem no aparelho: entram sem rede, mas sincronizar pede uma conta criada com internet.
 
 **Saldo negativo do servidor vira 0 no aparelho.** Se vendas de aparelhos diferentes passarem do estoque, o servidor registra a divergência (DA09). No aparelho, onde a RN06 vale, o saldo fica 0, e o Painel mostra o valor do servidor até a sincronização seguinte.
