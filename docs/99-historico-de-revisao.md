@@ -379,3 +379,34 @@ Verificação:
 - `expo-doctor` 21/21.
 - APK de release assinado e alinhado a 16 KB, sem a permissão bloqueada.
 - No emulador, por cima da versão anterior: login, as cinco abas e a janela de saída sem erro nem travamento, com os dados preservados.
+
+## 14. Entrega do Checkpoint 2 (04 e 05/11/2026)
+
+O que mudou para o Checkpoint 2 e como cada parte foi conferida.
+
+| Mudança | Como foi verificado |
+| --- | --- |
+| Cadastro preenchido pelo código de barras, com o Open Food Facts (R7) | 8 testes com resposta simulada. No emulador, o código `7894900011517` trouxe "Refrigerante Coca-Cola 2Lt" e a categoria Bebidas; código desconhecido e modo avião mostraram aviso, e o cadastro seguiu manual |
+| Leitura do código de barras pela câmera (R8) | No emulador: pedido de permissão e leitor aberto. A leitura de um código real fica para o aparelho físico (R14) |
+| Retaguarda em `api/` (R6) | 6 testes de integração contra PostgreSQL. Os comandos `curl` do `api/README.md`, na máquina e na hospedagem, com as respostas esperadas: conta criada, e-mail repetido recusado, senha errada recusada, lote com divergência registrada e reenvio sem duplicar. Sem `JWT_SECRET`, o servidor recusa subir |
+| Sincronização no aplicativo (R6) | 25 testes com a retaguarda simulada. No emulador, contra a hospedagem: a venda feita em modo avião chegou ao servidor quando a rede voltou, com o mesmo saldo dos dois lados; um produto renomeado no servidor apareceu no aplicativo |
+| Banco do aparelho na versão 2: identificador no formato padrão e senha só como resumo | 7 testes de migração. No emulador, instalação por cima da versão anterior sem perder dados; a conta de teste entrou com a senha já convertida |
+| Notificações e prazo do vencimento (R8, US14) | 14 testes, 8 de regra e 6 do serviço. No emulador: permissão pedida ao ligar; a venda que deixou um produto no mínimo mostrou o aviso na barra; o toque abriu a lista filtrada; o prazo de 30 dias mudou o Painel; desligar cancelou o resumo das 9h |
+| Expo 57.0.32 | `expo-doctor` 21/21 |
+
+Achados durante os testes e corrigidos antes da entrega:
+
+| Achado | Correção |
+| --- | --- |
+| O servidor respondia "aceito" a um item com identificador de outra loja, sem gravá-lo | O lote é recusado com o motivo, e nada dele é gravado |
+| Código de barras repetido entre produtos ativos dava "falha no servidor" | Resposta de conflito, com explicação |
+| O segredo do token tinha valor padrão escrito no código | Valor removido; sem a variável no ambiente, o servidor não sobe |
+| Uma venda contava como dois registros pendentes | O saldo deixou de marcar o produto como pendente; quem vai ao servidor é a venda |
+| O download podia sobrescrever o saldo de uma venda ainda não enviada | O produto com venda pendente fica para o download seguinte |
+| O aviso "Sem internet agora" continuava ao lado de "Tudo enviado" | O aviso acompanha a sincronização automática |
+| No ensaio do roteiro, criar conta logo depois de o servidor acordar passou dos 8 segundos de espera: o servidor criou a conta, e o aplicativo, sem resposta, criou outra só no aparelho, como operador | Criar conta espera até 30 segundos; com internet e sem resposta, o aplicativo pede nova tentativa e não cria conta só no aparelho |
+
+Verificação:
+- 151 testes no aplicativo e 6 na retaguarda, passando; tipos sem erro.
+- `expo-doctor` 21/21.
+- APK de release gerado do zero e conferido no emulador, com o roteiro da demonstração executado de ponta a ponta numa instalação limpa.

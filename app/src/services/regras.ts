@@ -144,6 +144,7 @@ export function valorEmEstoque(
 export function resumirEstoque(
   produtos: Pick<Produto, "estoqueAtual" | "estoqueMinimo" | "precoCusto" | "dataValidade">[],
   hoje: Date = new Date(),
+  diasAlerta: number = DIAS_ALERTA_VENCIMENTO,
 ): ResumoEstoque {
   return {
     totalProdutos: produtos.length,
@@ -151,7 +152,7 @@ export function resumirEstoque(
     produtosCriticos: produtos.filter(
       (p) => classificarEstoque(p.estoqueAtual, p.estoqueMinimo) === "CRITICO",
     ).length,
-    produtosVencendo: produtos.filter((p) => estaVencendo(p.dataValidade, hoje))
+    produtosVencendo: produtos.filter((p) => estaVencendo(p.dataValidade, hoje, diasAlerta))
       .length,
   };
 }
@@ -221,8 +222,22 @@ export function validarDataValidade(texto: string): string | null {
   return null;
 }
 
-/** Mesma janela que o painel usa na consulta de produtos vencendo. */
-export const DIAS_ALERTA_VENCIMENTO = 15;
+/**
+ * Prazo do alerta de vencimento, escolhido em Ajustes (US14): 7, 15 ou 30
+ * dias. O painel, o filtro da lista e a notificação diária usam o mesmo.
+ */
+export const PRAZOS_VENCIMENTO = [7, 15, 30] as const;
+export type PrazoVencimento = (typeof PRAZOS_VENCIMENTO)[number];
+
+/** Prazo de quem nunca escolheu. */
+export const DIAS_ALERTA_VENCIMENTO: PrazoVencimento = 15;
+
+export function lerPrazoVencimento(valor: string | null | undefined): PrazoVencimento {
+  const n = Number(valor);
+  return (PRAZOS_VENCIMENTO as readonly number[]).includes(n)
+    ? (n as PrazoVencimento)
+    : DIAS_ALERTA_VENCIMENTO;
+}
 
 /**
  * Dias até a validade, contando em datas de calendário. Negativo se já
@@ -244,9 +259,35 @@ export function diasParaVencer(
 export function estaVencendo(
   validadeIso: string | null,
   hoje: Date = new Date(),
+  diasAlerta: number = DIAS_ALERTA_VENCIMENTO,
 ): boolean {
   const dias = diasParaVencer(validadeIso, hoje);
-  return dias !== null && dias <= DIAS_ALERTA_VENCIMENTO;
+  return dias !== null && dias <= diasAlerta;
+}
+
+// ---------------------------------------------------------- notificações
+//
+// Quando avisar e o que dizer (R8b). Ficam aqui, sem o módulo nativo, para
+// serem testadas; o serviço de notificações só entrega.
+
+/** Avisa só na passagem para crítico, e não a cada saída de quem já estava. */
+export function deveAvisarCritico(
+  antes: SituacaoEstoque,
+  depois: SituacaoEstoque,
+): boolean {
+  return antes !== "CRITICO" && depois === "CRITICO";
+}
+
+export function mensagemEstoqueCritico(nome: string, saldo: number, minimo: number): string {
+  const unidades = saldo === 1 ? "1 unidade" : `${saldo} unidades`;
+  return `${nome} ficou com estoque crítico: ${unidades}, mínimo ${minimo}.`;
+}
+
+/** Texto do resumo diário; sem produto dentro do prazo, não há aviso. */
+export function mensagemResumoVencimento(quantidade: number, diasAlerta: number): string | null {
+  if (quantidade <= 0) return null;
+  const produtos = quantidade === 1 ? "1 produto" : `${quantidade} produtos`;
+  return `Você tem ${produtos} vencendo nos próximos ${diasAlerta} dias.`;
 }
 
 /**
@@ -255,18 +296,48 @@ export function estaVencendo(
  * Sem isso o histórico mostra o timestamp cru na tela.
  */
 export function formatarDataHora(valor: string): string {
-  const partes = valor
-    .trim()
-    .match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
-  if (!partes) return valor;
+  const d = lerMomentoUtc(valor);
+  if (!d) return valor;
+  return `${dois(d.getDate())}/${dois(d.getMonth() + 1)}/${d.getFullYear()} às ${horario(d)}`;
+}
+
+/**
+ * Momento recente dito como se fala: "hoje, 20:31", "ontem, 18:02" ou, mais
+ * antigo, "03/11/2026 às 18:02". Aceita o datetime do SQLite ou o ISO da
+ * retaguarda, os dois em UTC.
+ */
+export function descreverMomento(valor: string, agora: Date = new Date()): string {
+  const d = lerMomentoUtc(valor);
+  if (!d) return valor;
+  if (mesmoDia(d, agora)) return `hoje, ${horario(d)}`;
+  const ontem = new Date(agora);
+  ontem.setDate(agora.getDate() - 1);
+  if (mesmoDia(d, ontem)) return `ontem, ${horario(d)}`;
+  return formatarDataHora(valor);
+}
+
+// o banco grava em UTC; a tela mostra no fuso do aparelho, senão o
+// registro feito às 16h aparece como 19h em Goiânia
+function lerMomentoUtc(valor: string): Date | null {
+  const partes = valor.trim().match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if (!partes) return null;
   const [, ano, mes, dia, hora, minuto] = partes.map(Number);
-  // o banco grava em UTC; a tela mostra no fuso do aparelho, senão o
-  // registro feito às 16h aparece como 19h em Goiânia
-  const d = new Date(Date.UTC(ano, mes - 1, dia, hora, minuto));
-  const dois = (n: number) => String(n).padStart(2, "0");
+  return new Date(Date.UTC(ano, mes - 1, dia, hora, minuto));
+}
+
+function dois(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function horario(d: Date): string {
+  return `${dois(d.getHours())}:${dois(d.getMinutes())}`;
+}
+
+function mesmoDia(a: Date, b: Date): boolean {
   return (
-    `${dois(d.getDate())}/${dois(d.getMonth() + 1)}/${d.getFullYear()} ` +
-    `às ${dois(d.getHours())}:${dois(d.getMinutes())}`
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
   );
 }
 

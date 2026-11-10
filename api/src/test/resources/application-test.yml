@@ -1,0 +1,13 @@
+# Testes de integração contra o PostgreSQL local, num banco separado.
+spring:
+  datasource:
+    url: ${DB_TEST_URL:jdbc:postgresql://localhost:5432/stockeasy_test}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:}
+  flyway:
+    clean-disabled: false
+
+stockeasy:
+  jwt:
+    segredo: segredo-de-teste-com-pelo-menos-trinta-e-dois-caracteres
+    validade-horas: 1

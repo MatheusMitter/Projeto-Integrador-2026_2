@@ -27,6 +27,12 @@
     "plugins": [
       "expo-font",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "O StockEasy usa a câmera para ler o código de barras do produto."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#F7F9FB",
@@ -41,7 +47,15 @@
         }
       ],
       "./plugins/assinatura-release",
-      "./plugins/cor-de-destaque"
+      "./plugins/cor-de-destaque",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notificacao.png",
+          "color": "#2450D6"
+        }
+      ]
     ]
   }
 }

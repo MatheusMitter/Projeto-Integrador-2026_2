@@ -25,6 +25,7 @@ import {
   RolagemDeFormulario,
   Segmentado,
 } from "../components/base";
+import { LeitorCodigo } from "../components/LeitorCodigo";
 import {
   type ProdutoVisivel,
   ROTULO_SITUACAO,
@@ -55,6 +56,9 @@ export default function MovimentacaoScreen({
   const [salvando, setSalvando] = useState(false);
   const [trocandoProduto, setTrocandoProduto] = useState(false);
   const [busca, setBusca] = useState("");
+  const [leitorAberto, setLeitorAberto] = useState(false);
+  // código lido pela câmera que não está no cadastro
+  const [codigoDesconhecido, setCodigoDesconhecido] = useState<string | null>(null);
   const rolagem = useRef<ScrollView>(null);
 
   const carregar = useCallback(async () => {
@@ -133,6 +137,19 @@ export default function MovimentacaoScreen({
     setTrocandoProduto(false);
     setBusca("");
     setErroGravacao(null);
+    setCodigoDesconhecido(null);
+  }
+
+  // Código lido pela câmera: seleciona o produto se ele existir; se não,
+  // oferece o cadastro já com o código preenchido.
+  function aoLerCodigo(codigo: string) {
+    setLeitorAberto(false);
+    const achado = (produtos ?? []).find((p) => p.codigoBarras === codigo);
+    if (achado) escolherProduto(achado.id);
+    else {
+      setBusca(codigo);
+      setCodigoDesconhecido(codigo);
+    }
   }
 
   function ajustar(delta: number) {
@@ -252,9 +269,40 @@ export default function MovimentacaoScreen({
         <View style={{ marginBottom: espaco.md }}>
           <CampoBusca
             valor={busca}
-            onChangeText={setBusca}
+            onChangeText={(t) => {
+              setBusca(t);
+              setCodigoDesconhecido(null);
+            }}
             placeholder="Buscar produto por nome ou código"
             rotuloAcessivel="Buscar produto para movimentar"
+            acao={{
+              icone: "barcode-outline",
+              rotulo: "Ler código de barras com a câmera",
+              onPress: () => setLeitorAberto(true),
+            }}
+          />
+          {!!codigoDesconhecido && (
+            <View style={{ marginTop: espaco.sm }}>
+              <Aviso
+                tipo="info"
+                texto={`Nenhum produto com o código ${codigoDesconhecido}. Cadastre o produto para movimentar.`}
+              />
+              <Botao
+                titulo="Cadastrar produto"
+                variante="contorno"
+                onPress={() =>
+                  navigation.navigate("Produtos", {
+                    screen: "ProdutoForm",
+                    params: { codigoBarras: codigoDesconhecido },
+                  })
+                }
+              />
+            </View>
+          )}
+          <LeitorCodigo
+            aberto={leitorAberto}
+            onCancelar={() => setLeitorAberto(false)}
+            onLer={aoLerCodigo}
           />
           <View style={e.resultados}>
             {encontrados.length === 0 ? (

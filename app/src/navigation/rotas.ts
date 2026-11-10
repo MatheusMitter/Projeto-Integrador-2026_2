@@ -12,7 +12,7 @@ export type FiltroProdutos = "TODOS" | "CRITICO" | "BAIXO" | "VENCENDO";
 
 export type RotasProdutos = {
   ProdutosLista: { filtro?: FiltroProdutos } | undefined;
-  ProdutoForm: { id?: number } | undefined;
+  ProdutoForm: { id?: number; codigoBarras?: string } | undefined;
   ProdutoDetalhes: { id: number };
 };
 

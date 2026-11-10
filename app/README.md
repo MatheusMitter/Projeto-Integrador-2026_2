@@ -60,15 +60,17 @@ As credenciais não são exibidas na interface nem pré-preenchidas no formulár
 ```bash
 npm run verificar          # tipos e testes, em sequência
 npm run verificar-tipos    # compilação TypeScript em modo estrito
-npm test                   # 100 testes: 72 das regras e 28 do banco
+npm test                   # 151 testes: 81 das regras, 31 do banco, 33 da sincronização e do serviço externo, 6 das notificações
 ```
 
 Os testes rodam em Node 22.18 ou superior, sem emulador.
 
 - **Regras** (`tests/regras.test.mjs`): importam `src/services/regras.ts` diretamente, e não uma cópia das funções. Rodam sem banco, porque a camada de negócio não depende de tela nem de persistência — é o efeito prático da separação em camadas.
 - **Banco** (`tests/estoque`, `produto`, `cadastro`, `relatorio` e `migracao.test.mjs`): rodam os serviços e repositórios de verdade, com o mesmo esquema e a mesma carga inicial do aplicativo, num SQLite em memória. O `expo-sqlite` só existe no aparelho; nos testes, ele é trocado por um adaptador sobre o SQLite que vem no Node (`tests/apoio/expo-sqlite-node.mjs`). Cada arquivo começa com um banco novo. O de migração monta um banco no formato antigo e confere que a migração preserva os dados.
+- **Sincronização e serviço externo** (`tests/sincronizacao`, `autenticacao-remota` e `produto-externo.test.mjs`): uma retaguarda simulada ocupa o lugar do `fetch` (`tests/apoio/servidor-falso.mjs`). Conferem o lote em ordem, o que o servidor devolve, a alteração local que não pode ser sobrescrita, as falhas de rede e o login remoto.
+- **Notificações** (`tests/notificacoes.test.mjs`): um substituto do `expo-notifications` guarda o que o aplicativo agendou, para conferir o aviso de estoque crítico, o resumo das 9h e o efeito do interruptor.
 
-O hook em `tests/resolucao-ts.mjs` faz as duas coisas: completa a extensão `.ts` dos imports, que o aplicativo omite como o Metro espera, e aponta o `expo-sqlite` para o adaptador. Como o Node apaga os tipos sem consultar o compilador, import só de tipo precisa da palavra `type`; o `verbatimModuleSyntax` do `tsconfig.json` cobra isso.
+O hook em `tests/resolucao-ts.mjs` faz as duas coisas: completa a extensão `.ts` dos imports, que o aplicativo omite como o Metro espera, e aponta os módulos nativos (`expo-sqlite`, `expo-crypto`, `expo-secure-store`, `expo-network` e `expo-notifications`) para os substitutos em `tests/apoio/`. Como o Node apaga os tipos sem consultar o compilador, import só de tipo precisa da palavra `type`; o `verbatimModuleSyntax` do `tsconfig.json` cobra isso.
 
 ---
 
@@ -83,7 +85,7 @@ O hook em `tests/resolucao-ts.mjs` faz as duas coisas: completa a extensão `.ts
 
 O fluxo e as funções vêm do protótipo navegável (`prototipo/`). A identidade visual (paleta, raios, espaçamentos e desenho dos componentes) segue o Figma da equipe e está concentrada em `src/theme/tema.ts`. Três desvios do Figma, todos por acessibilidade: a escala de fonte foi ampliada (o corpo do Figma tem 12px); verde, âmbar e vermelho ganharam um tom escuro para texto e badge, porque os originais não chegam a 4,5:1; e a borda dos campos de texto é mais escura que a dos cards, para atingir 3:1.
 
-Recuperar senha valida o e-mail e responde de forma neutra, mas o envio do link depende do servidor (Ciclo 3) — a tela diz isso em vez de simular um envio.
+Recuperar senha valida o e-mail e responde de forma neutra, mas o envio do link ainda não existe, porque a retaguarda não envia e-mail. A tela diz isso em vez de simular um envio.
 
 ---
 
@@ -110,11 +112,16 @@ A dependência aponta sempre para dentro: a tela chama o serviço, o serviço ch
 | `services/cadastroService.ts`      | Categorias e fornecedores: permissão, RN13 e desativação (RN12)       |
 | `services/estoqueService.ts`       | A transação da movimentação                                           |
 | `services/relatorioService.ts`     | Relatórios e ranking, com o valor em reais só para o proprietário     |
-| `services/authService.ts`          | Autenticação e sessão                                                 |
-| `services/sincronizacaoService.ts` | Registros ainda não enviados ao servidor                              |
+| `services/authService.ts`          | Autenticação e sessão, pela retaguarda quando há internet             |
+| `services/sincronizacaoService.ts` | Fila de envio, download do que mudou e estado para as telas (R6)      |
+| `services/apiClient.ts`, `rede.ts`, `sessaoRemota.ts` | Chamada à retaguarda com limite de tempo, conferência de internet e token no armazenamento seguro |
+| `services/produtoExternoService.ts` | Consulta ao Open Food Facts pelo código de barras (R7)               |
+| `services/notificacoesService.ts`  | Notificações locais: estoque crítico e resumo de vencimento (R8)      |
+| `services/preferenciaService.ts`   | Preferências do aparelho: notificações e prazo do vencimento          |
 | `repositories/`                    | SQL parametrizado, um repositório por assunto; nenhum decide regra    |
 | `database/esquema.ts`              | Esquema do SQLite, espelhando o PostgreSQL                            |
 | `database/migracoes.ts`            | Versão do banco do aparelho e migração de tabela que já existe        |
+| `database/cripto.ts`               | Identificador no formato padrão e resumo da senha com sal             |
 
 ---
 
@@ -133,7 +140,7 @@ A sequência dentro da transação:
 
 As escritas passam pelos repositórios (`produtoRepository.gravarSaldo` e `movimentacaoRepository.inserir`), dentro da transação aberta por `emTransacao`, em `database/conexao.ts`. O cadastro de produto usa a mesma sequência: o produto e a entrada da quantidade inicial são gravados na mesma transação.
 
-No servidor, o passo 1 usará `SELECT ... FOR UPDATE` para bloquear a linha, impedindo que duas movimentações simultâneas leiam o mesmo saldo. O SQLite serializa escritas por natureza, então aqui a transação já produz o mesmo efeito.
+No servidor (`api/`, `SincronizacaoService`), o passo 1 usa `SELECT ... FOR UPDATE` para bloquear a linha, impedindo que duas movimentações simultâneas leiam o mesmo saldo. O SQLite serializa escritas por natureza, então aqui a transação já produz o mesmo efeito.
 
 ---
 
@@ -163,13 +170,16 @@ No servidor, o passo 1 usará `SELECT ... FOR UPDATE` para bloquear a linha, imp
 | R2  | Atendido | Login, cadastro, logout e dois perfis com permissões distintas |
 | R3  | Atendido | Produto e fornecedor completos; manutenção de categoria (RF17, desejável) pendente |
 | R4  | Atendido | RN01, RN06, RN07, RN12 e RN13 implementadas e verificáveis     |
-| R5  | Atendido | SQLite, com marcação de pendência de sincronização             |
+| R5  | Atendido | SQLite, com fila de pendentes da sincronização                 |
+| R6  | Atendido | Login e cadastro pela retaguarda, fila, envio e download automáticos e botão "Sincronizar agora" |
+| R7  | Atendido | Open Food Facts preenche o cadastro pelo código de barras      |
+| R8  | Atendido | Câmera no código de barras; notificações de estoque crítico e de vencimento |
 | R9  | Atendido | Busca, filtro por situação, painel e relatórios por período    |
 | R10 | Atendido | Erro explicado, lista vazia com ação, estado de carregamento   |
 | R11 | Atendido | Contraste AA, alvo de 48dp, rótulos acessíveis                 |
 | R12 | Atendido | Três camadas com dependência em sentido único                  |
 
-Ainda não implementados, previstos para os Ciclos 3 e 4: persistência remota e sincronização (R6), serviço externo (R7), câmera e notificações (R8), pacote instalável (R14).
+Ainda não comprovado: o pacote instalável em aparelho físico (R14), previsto para o Ciclo 4. Até aqui, o APK de release foi conferido no emulador.
 
 ---
 
@@ -177,15 +187,25 @@ Ainda não implementados, previstos para os Ciclos 3 e 4: persistência remota e
 
 **Não roda no navegador.** O `expo-sqlite` não implementa a interface de banco para web. A aplicação precisa de celular ou emulador. É consequência direta da escolha de banco local, que por sua vez é exigência do ambiente de uso: o depósito da loja é onde o sinal falha.
 
-**A senha é comparada em texto puro.** O requisito RNF11 exige resumo criptográfico com BCrypt. A verificação de senha passa a acontecer no servidor no Ciclo 3, e é lá que o resumo será aplicado. Está sinalizado no próprio `authService.ts`. A coluna se chama `senha_hash` desde já para não exigir migração depois, mas hoje o conteúdo não é um resumo.
+**No aparelho, a senha é um resumo SHA-256 com sal, não BCrypt.** O BCrypt do RNF11 fica na retaguarda, onde a conta é criada e conferida com internet. No aparelho, o resumo com sal serve ao login sem rede (DA11); a migração 2 do banco converteu as senhas que estavam em texto.
 
-**A RN01 vale até a camada de negócio, não até o arquivo.** Para o operador, os serviços entregam o produto sem o custo e o resumo sem o valor do estoque, e as telas omitem esses campos. Mas o arquivo do banco está no aparelho de quem usa, com todos os dados: num banco local isso é inevitável. A restrição passa a valer também no transporte quando a consulta virar chamada à API e o servidor decidir o que enviar por perfil.
+**A RN01 vale até a camada de negócio, não até o arquivo.** Para o operador, os serviços entregam o produto sem o custo e o resumo sem o valor do estoque, e as telas omitem esses campos. Mas o arquivo do banco está no aparelho de quem usa, com todos os dados: num banco local isso é inevitável. A retaguarda também envia o custo no download, porque o token do aparelho é o da conta que o ligou; filtrar por perfil no servidor fica para quando houver contas de operador lá.
 
 **Produto cadastrado pelo operador fica com custo zero.** O operador não vê nem informa o custo (RN01). Até o proprietário editar o produto e informar o custo, a margem e o valor do estoque consideram custo zero. Quando o operador edita um produto, o custo gravado é mantido.
 
-**Não há sincronização.** Os dados existem apenas no aparelho. As colunas de controle já existem no esquema desde agora, porque acrescentá-las depois exigiria migração do banco de quem já estivesse usando. O contador de registros não sincronizados no painel, por consequência, só cresce: nada marca `sincronizado = 1` porque não há para onde enviar.
+**Um aparelho guarda uma loja só.** A loja do aparelho se liga à do servidor na primeira conta criada ou confirmada com internet, e conta de outra loja é recusada. Uma conta criada depois, num aparelho já ligado, fica só nele, como operador, até a administração de usuários na retaguarda. Por isso, no servidor, a movimentação feita por uma conta que só existe no aparelho fica no nome da conta que ligou o aparelho.
 
-**O perfil não é escolhido no cadastro.** O primeiro usuário de uma loja é o proprietário; as contas criadas depois entram como operador. Sem isso, qualquer operador contornaria a RN01 criando uma segunda conta. Promover alguém a proprietário é operação de administração de usuários, prevista para o servidor. Como a carga de exemplo já cria um proprietário, toda conta nova entra como operador. O RF01 foi alinhado a essa regra na versão 1.3 do documento de projeto, como alteração de escopo. Continua diferente do registro descrito em `docs/03-arquitetura.md` (seção 5.1), em que criar conta cria uma loja nova com seu proprietário. Isso será revisto com a retaguarda.
+**Recuperar os dados num celular novo ainda não é automático.** O que foi sincronizado fica guardado no servidor. Mas um celular recém-instalado já vem com a carga de exemplo, pendente de envio. Ao entrar com uma conta cuja loja já tem dados no servidor, esses exemplos colidem com os cadastros da loja (mesmo nome de categoria e mesmo código de barras), o servidor recusa o envio e a sincronização para antes de baixar os dados da loja. A correção prevista para o Ciclo 4: quando um aparelho novo se liga a uma loja que já tem dados no servidor, os dados do aparelho dão lugar aos da loja.
+
+**As contas da carga inicial não sincronizam.** Elas só existem no aparelho: entram sem rede, mas sincronizar pede uma conta criada com internet.
+
+**Saldo negativo do servidor vira 0 no aparelho.** Se vendas de aparelhos diferentes passarem do estoque, o servidor registra a divergência (DA09). No aparelho, onde a RN06 vale, o saldo fica 0, e o Painel mostra o valor do servidor até a sincronização seguinte.
+
+**A hospedagem gratuita dorme.** Depois de 15 minutos sem uso, a primeira chamada leva cerca de 1 minuto. O login não espera mais de 8 segundos e segue pelo aparelho; a sincronização tenta de novo depois. Criar conta com internet espera até 30 segundos e, sem resposta, pede nova tentativa, em vez de criar a conta só no aparelho: o servidor pode ter criado a conta mesmo sem responder a tempo.
+
+**O resumo das 9h usa a contagem da última atualização.** Ele é refeito ao abrir o aplicativo, ao salvar produto, ao sincronizar e ao trocar o prazo. Com o aplicativo fechado por dias, um produto que entrou no prazo nesse meio tempo só aparece no resumo depois da próxima abertura.
+
+**O perfil não é escolhido no cadastro.** O primeiro usuário de uma loja é o proprietário; as contas criadas depois entram como operador. Sem isso, qualquer operador contornaria a RN01 criando uma segunda conta. Promover alguém a proprietário é operação de administração de usuários, prevista para o servidor. Como a carga de exemplo já cria um proprietário, toda conta nova entra como operador. O RF01 foi alinhado a essa regra na versão 1.3 do documento de projeto, como alteração de escopo. Com a retaguarda, criar conta com internet num aparelho ainda sem loja no servidor segue o `docs/03-arquitetura.md` (seção 5.1): cria a loja lá, e a conta é a proprietária dela.
 
 **A carga de exemplo só roda com o banco vazio.** Um aparelho que já tinha o banco de uma versão anterior mantém os dados antigos, como o nome "Marlene Proprietária" no lugar de "Proprietário". Para ver a carga atual é preciso reinstalar o aplicativo.
 
@@ -196,6 +216,6 @@ Ainda não implementados, previstos para os Ciclos 3 e 4: persistência remota e
 
 Forçar essas versões quebraria as ferramentas do Expo. Quando o Expo publicar versões com as correções, rode `npx expo install --fix` e depois `npm audit fix`. **Não rodar `npm audit fix --force`**: ele troca o Expo de versão maior e quebra o projeto.
 
-**A loja é fixa.** Todo registro pertence à loja de identificador 1, criada na carga inicial. O cadastro de loja entra junto com a autenticação no servidor.
+**A loja do aparelho é a de identificador 1.** Todo registro pertence a ela, criada na carga inicial; quando o aparelho é ligado ao servidor, ela passa a ter o identificador da loja de lá.
 
 **O relatório de mais vendidos usa o preço atual.** Se o preço mudou no período, o valor fica distorcido. A correção prevista é gravar o preço praticado em cada movimentação.

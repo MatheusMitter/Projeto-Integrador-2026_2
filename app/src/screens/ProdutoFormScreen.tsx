@@ -17,7 +17,10 @@ import {
   listarCategorias,
   listarFornecedores,
 } from "../services/cadastroService";
+import { prazoVencimento } from "../services/preferenciaService";
 import { buscarProduto, salvarProduto } from "../services/produtoService";
+import { buscarPorCodigo, casarCategoria } from "../services/produtoExternoService";
+import { LeitorCodigo } from "../components/LeitorCodigo";
 import {
   avisoPreco,
   calcularMargem,
@@ -41,7 +44,8 @@ export default function ProdutoFormScreen({
   const editando = id !== undefined;
 
   const [nome, setNome] = useState("");
-  const [codigoBarras, setCodigoBarras] = useState("");
+  // vindo da movimentação, o código lido pela câmera já chega preenchido
+  const [codigoBarras, setCodigoBarras] = useState(route.params?.codigoBarras ?? "");
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
   const [fornecedorId, setFornecedorId] = useState<number | null>(null);
   const [precoCusto, setPrecoCusto] = useState("");
@@ -56,6 +60,20 @@ export default function ProdutoFormScreen({
   const [erroCarga, setErroCarga] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
+  // consulta ao serviço externo pelo código (RF41/RF42)
+  const [buscandoCodigo, setBuscandoCodigo] = useState(false);
+  const [avisoCodigo, setAvisoCodigo] = useState<string | null>(null);
+  const [ultimoCodigoBuscado, setUltimoCodigoBuscado] = useState("");
+  // a categoria pré-selecionada não conta como escolha do usuário
+  const [categoriaEscolhida, setCategoriaEscolhida] = useState(false);
+  const [leitorAberto, setLeitorAberto] = useState(false);
+  // o texto de ajuda cita o prazo escolhido em Ajustes (US14)
+  const [prazo, setPrazo] = useState<number>(DIAS_ALERTA_VENCIMENTO);
+  useEffect(() => {
+    prazoVencimento()
+      .then(setPrazo)
+      .catch(() => undefined);
+  }, []);
 
   // RN01 na interface: o operador não vê nem informa o custo
   const verFinanceiro = podeVerFinanceiro(
@@ -98,6 +116,29 @@ export default function ProdutoFormScreen({
   useEffect(() => {
     carregar();
   }, [carregar]);
+
+  // Sugere nome e categoria a partir do código, sem apagar o que o usuário
+  // já digitou. Falha, demora ou código desconhecido só mostram um aviso.
+  async function consultarCodigo(valor = codigoBarras) {
+    const codigo = valor.replace(/\D/g, "");
+    if (codigo.length < 8 || codigo === ultimoCodigoBuscado) return;
+    setUltimoCodigoBuscado(codigo);
+    setAvisoCodigo(null);
+    setBuscandoCodigo(true);
+    try {
+      const externo = await buscarPorCodigo(codigo);
+      if (!externo) {
+        setAvisoCodigo("Produto não encontrado na base externa. Preencha os dados.");
+        return;
+      }
+      setNome((atual) => (atual.trim() ? atual : externo.nome));
+      const categoria = casarCategoria(externo.categoria, categorias);
+      if (categoria && !categoriaEscolhida) setCategoriaId(categoria.id);
+      setAvisoCodigo("Dados sugeridos pela base externa. Confira antes de salvar.");
+    } finally {
+      setBuscandoCodigo(false);
+    }
+  }
 
   const custo = lerValor(precoCusto) ?? 0;
   const venda = lerValor(precoVenda) ?? 0;
@@ -159,10 +200,31 @@ export default function ProdutoFormScreen({
       <Campo
         rotulo="Código de barras"
         valor={codigoBarras}
-        onChangeText={setCodigoBarras}
+        onChangeText={(t) => {
+          setCodigoBarras(t);
+          setAvisoCodigo(null);
+        }}
+        onDesfocar={() => consultarCodigo()}
         tipoTeclado="numeric"
         icone="barcode-outline"
-        ajuda="Opcional. Nesta versão o código é digitado."
+        onPressIcone={() => setLeitorAberto(true)}
+        rotuloIcone="Ler código de barras com a câmera"
+        ajuda={
+          buscandoCodigo
+            ? "Buscando na base externa..."
+            : "Opcional. Ao sair do campo, o nome é sugerido pela base externa."
+        }
+      />
+      {!!avisoCodigo && <Aviso tipo="info" texto={avisoCodigo} />}
+      <LeitorCodigo
+        aberto={leitorAberto}
+        onCancelar={() => setLeitorAberto(false)}
+        onLer={(codigo) => {
+          setLeitorAberto(false);
+          setCodigoBarras(codigo);
+          setAvisoCodigo(null);
+          consultarCodigo(codigo);
+        }}
       />
 
       {/* RN01: preço de custo e margem só para o proprietário */}
@@ -229,7 +291,7 @@ export default function ProdutoFormScreen({
       </View>
       <Text style={e.ajuda}>
         Você é avisado quando o estoque chegar ao mínimo e quando faltarem{" "}
-        {DIAS_ALERTA_VENCIMENTO} dias ou menos para a validade, que é opcional.
+        {prazo} dias ou menos para a validade, que é opcional.
       </Text>
 
       {!editando && (
@@ -250,7 +312,10 @@ export default function ProdutoFormScreen({
             key={c.id}
             rotulo={c.nome}
             ativo={categoriaId === c.id}
-            onPress={() => setCategoriaId(c.id)}
+            onPress={() => {
+              setCategoriaId(c.id);
+              setCategoriaEscolhida(true);
+            }}
           />
         ))}
       </View>

@@ -169,20 +169,22 @@ export async function desativar(id: number): Promise<void> {
 // Saldo de produto ativo, lido dentro da transação da movimentação
 export async function lerSaldo(
   id: number,
-): Promise<{ estoqueAtual: number; estoqueMinimo: number } | null> {
+): Promise<{ nome: string; estoqueAtual: number; estoqueMinimo: number } | null> {
   const db = await obterBanco();
-  const l = await db.getFirstAsync<{ estoque_atual: number; estoque_minimo: number }>(
-    "SELECT estoque_atual, estoque_minimo FROM produto WHERE id = ? AND ativo = 1",
+  const l = await db.getFirstAsync<{ nome: string; estoque_atual: number; estoque_minimo: number }>(
+    "SELECT nome, estoque_atual, estoque_minimo FROM produto WHERE id = ? AND ativo = 1",
     [id],
   );
-  return l ? { estoqueAtual: l.estoque_atual, estoqueMinimo: l.estoque_minimo } : null;
+  return l ? { nome: l.nome, estoqueAtual: l.estoque_atual, estoqueMinimo: l.estoque_minimo } : null;
 }
 
+// O saldo não marca o produto como pendente: ele não vai ao servidor, que o
+// recalcula pelas movimentações (DA10). Quem vai é a movimentação.
 export async function gravarSaldo(id: number, saldo: number): Promise<void> {
   const db = await obterBanco();
   await db.runAsync(
     `UPDATE produto
-        SET estoque_atual = ?, atualizado_em = datetime('now'), sincronizado = 0
+        SET estoque_atual = ?, atualizado_em = datetime('now')
       WHERE id = ?`,
     [saldo, id],
   );

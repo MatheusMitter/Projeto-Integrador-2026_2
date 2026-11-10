@@ -46,6 +46,8 @@ interface BotaoProps {
   variante?: VarianteBotao;
   icone?: NomeIcone;
   carregando?: boolean;
+  // texto ao lado do indicador enquanto carrega; sem ele, só o indicador
+  textoCarregando?: string;
   desabilitado?: boolean;
   estilo?: ViewStyle;
 }
@@ -93,6 +95,7 @@ export function Botao({
   variante = "primario",
   icone,
   carregando = false,
+  textoCarregando,
   desabilitado = false,
   estilo,
 }: BotaoProps) {
@@ -104,7 +107,7 @@ export function Botao({
       onPress={onPress}
       disabled={inativo}
       accessibilityRole="button"
-      accessibilityLabel={titulo}
+      accessibilityLabel={carregando && textoCarregando ? textoCarregando : titulo}
       accessibilityState={{ disabled: inativo, busy: carregando }}
       style={({ pressed }) => [
         e.botao,
@@ -119,7 +122,12 @@ export function Botao({
         estilo,
       ]}
     >
-      {carregando ? (
+      {carregando && textoCarregando ? (
+        <View style={e.botaoConteudo}>
+          <ActivityIndicator color={v.texto} />
+          <Text style={[e.botaoTexto, { color: v.texto }]}>{textoCarregando}</Text>
+        </View>
+      ) : carregando ? (
         <ActivityIndicator color={v.texto} />
       ) : (
         <View style={e.botaoConteudo}>
@@ -194,8 +202,13 @@ interface CampoProps {
   erro?: string | null;
   multilinha?: boolean;
   icone?: NomeIcone;
-  // a tela pode reagir ao foco, por exemplo rolando até o botão
+  // a tela pode reagir ao foco (rolar até o botão) e à saída do campo
+  // (consultar um serviço com o valor digitado)
   onFocar?: () => void;
+  onDesfocar?: () => void;
+  // com ação, o ícone vira botão (ex.: abrir a câmera) e precisa de rótulo
+  onPressIcone?: () => void;
+  rotuloIcone?: string;
 }
 
 export function Campo({
@@ -211,6 +224,9 @@ export function Campo({
   multilinha = false,
   icone,
   onFocar,
+  onDesfocar,
+  onPressIcone,
+  rotuloIcone,
 }: CampoProps) {
   const [focado, setFocado] = React.useState(false);
 
@@ -235,7 +251,10 @@ export function Campo({
             setFocado(true);
             onFocar?.();
           }}
-          onBlur={() => setFocado(false)}
+          onBlur={() => {
+            setFocado(false);
+            onDesfocar?.();
+          }}
           placeholder={placeholder}
           placeholderTextColor={cores.textoSuave}
           keyboardType={tipoTeclado}
@@ -251,14 +270,26 @@ export function Campo({
             multilinha && { textAlignVertical: "top", paddingTop: 12 },
           ]}
         />
-        {!!icone && (
-          <Ionicons
-            name={icone}
-            size={20}
-            color={cores.textoSuave}
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-          />
+        {!!icone && onPressIcone ? (
+          <Pressable
+            onPress={onPressIcone}
+            accessibilityRole="button"
+            accessibilityLabel={rotuloIcone ?? "Ação do campo"}
+            hitSlop={12}
+            style={({ pressed }) => [e.campoBotaoIcone, pressed && { opacity: 0.6 }]}
+          >
+            <Ionicons name={icone} size={22} color={cores.primaria} />
+          </Pressable>
+        ) : (
+          !!icone && (
+            <Ionicons
+              name={icone}
+              size={20}
+              color={cores.textoSuave}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            />
+          )
         )}
       </View>
       {erro ? (
@@ -277,11 +308,14 @@ export function CampoBusca({
   onChangeText,
   placeholder,
   rotuloAcessivel,
+  acao,
 }: {
   valor: string;
   onChangeText: (t: string) => void;
   placeholder: string;
   rotuloAcessivel: string;
+  // botão à direita, como a câmera para ler o código
+  acao?: { icone: NomeIcone; rotulo: string; onPress: () => void };
 }) {
   return (
     <View style={e.busca}>
@@ -294,6 +328,17 @@ export function CampoBusca({
         accessibilityLabel={rotuloAcessivel}
         style={e.buscaTexto}
       />
+      {acao && (
+        <Pressable
+          onPress={acao.onPress}
+          accessibilityRole="button"
+          accessibilityLabel={acao.rotulo}
+          hitSlop={12}
+          style={({ pressed }) => [e.campoBotaoIcone, pressed && { opacity: 0.6 }]}
+        >
+          <Ionicons name={acao.icone} size={22} color={cores.primaria} />
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -571,6 +616,8 @@ const e = StyleSheet.create({
     fontSize: fonte.corpo,
     color: cores.texto,
   },
+  // área de toque do ícone-botão dentro do campo
+  campoBotaoIcone: { minWidth: 36, minHeight: 36, alignItems: "center", justifyContent: "center" },
   campoAjuda: {
     fontSize: fonte.legenda - 1,
     color: cores.textoSuave,

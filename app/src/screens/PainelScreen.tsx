@@ -20,14 +20,23 @@ import type { FiltroProdutos, TelaAba } from "../navigation/rotas";
 import { sessaoAtual } from "../services/authService";
 import { resumoDoEstoque } from "../services/produtoService";
 import { type ItemRanking, maisVendidos } from "../services/relatorioService";
+import { prazoVencimento } from "../services/preferenciaService";
 import { DIAS_ALERTA_VENCIMENTO, formatarReais } from "../services/regras";
-import { registrosNaoSincronizados } from "../services/sincronizacaoService";
+import {
+  aoTerminarSincronizacao,
+  avisoDoPainel,
+  estadoDaSincronizacao,
+  type AvisoDeTela,
+} from "../services/sincronizacaoService";
 import { cores, espaco, fonte, raio } from "../theme/tema";
 
 export default function PainelScreen({ navigation }: TelaAba<"Início">) {
   const [resumo, setResumo] = useState<ResumoEstoque | null>(null);
   const [ranking, setRanking] = useState<ItemRanking[]>([]);
-  const [pendentes, setPendentes] = useState(0);
+  // desenho aprovado em 05/11 (item 02): um aviso de sincronização por vez
+  const [avisoSincronizacao, setAvisoSincronizacao] = useState<AvisoDeTela | null>(null);
+  // prazo escolhido em Ajustes, o mesmo usado na contagem (US14)
+  const [prazo, setPrazo] = useState<number>(DIAS_ALERTA_VENCIMENTO);
   const [atualizando, setAtualizando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -35,25 +44,31 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
 
   const carregar = useCallback(async () => {
     try {
-      const [r, m, p] = await Promise.all([
+      const [r, m, s, dias] = await Promise.all([
         resumoDoEstoque(),
         maisVendidos(5),
-        registrosNaoSincronizados(),
+        estadoDaSincronizacao(),
+        prazoVencimento(),
       ]);
       setResumo(r);
       setRanking(m);
-      setPendentes(p);
+      setAvisoSincronizacao(avisoDoPainel(s));
+      setPrazo(dias);
       setErro(null);
     } catch {
       setErro("Não foi possível carregar o resumo do estoque.");
     }
   }, []);
 
-  // Recarrega ao voltar para a aba: uma movimentação em outra tela muda
-  // esses números.
+  // Recarrega ao voltar para a aba, porque uma movimentação em outra tela
+  // muda esses números, e quando uma sincronização termina, porque o saldo
+  // pode ter vindo do servidor.
   useFocusEffect(
     useCallback(() => {
       carregar();
+      return aoTerminarSincronizacao(() => {
+        void carregar();
+      });
     }, [carregar]),
   );
 
@@ -144,20 +159,14 @@ export default function PainelScreen({ navigation }: TelaAba<"Início">) {
         />
         <Indicador
           valor={resumo.produtosVencendo}
-          rotulo={`Vencendo em ${DIAS_ALERTA_VENCIMENTO} dias`}
+          rotulo={`Vencendo em ${prazo} dias`}
           cor={resumo.produtosVencendo > 0 ? cores.aviso : cores.texto}
           onPress={() => abrirProdutos("VENCENDO")}
         />
       </View>
 
-      {pendentes > 0 && (
-        <Aviso
-          tipo="atencao"
-          texto={
-            `${pendentes} registro(s) gravados só neste aparelho. O envio ` +
-            "ao servidor ainda não está disponível nesta versão."
-          }
-        />
+      {avisoSincronizacao && (
+        <Aviso tipo={avisoSincronizacao.tipo} texto={avisoSincronizacao.texto} />
       )}
 
       <Cartao>
