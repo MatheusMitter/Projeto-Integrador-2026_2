@@ -69,8 +69,7 @@ CREATE TABLE IF NOT EXISTS produto (
   ativo          INTEGER NOT NULL DEFAULT 1,
   criado_em      TEXT    NOT NULL DEFAULT (datetime('now')),
   atualizado_em  TEXT    NOT NULL DEFAULT (datetime('now')),
-  sincronizado   INTEGER NOT NULL DEFAULT 0,
-  UNIQUE (loja_id, codigo_barras)
+  sincronizado   INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS movimentacao (
@@ -90,6 +89,11 @@ CREATE TABLE IF NOT EXISTS movimentacao (
   sincronizado  INTEGER NOT NULL DEFAULT 0
 );
 
+-- RN04: o código de barras não se repete entre os produtos ativos da loja.
+-- O desativado (RN12) fica fora, senão o código ficaria preso a um produto
+-- que não aparece em lugar nenhum
+CREATE UNIQUE INDEX IF NOT EXISTS uq_produto_loja_codigo
+  ON produto(loja_id, codigo_barras) WHERE ativo = 1;
 CREATE INDEX IF NOT EXISTS idx_produto_loja      ON produto(loja_id);
 CREATE INDEX IF NOT EXISTS idx_produto_categoria ON produto(categoria_id);
 CREATE INDEX IF NOT EXISTS idx_mov_produto_data  ON movimentacao(produto_id, data_hora DESC);
@@ -97,14 +101,15 @@ CREATE INDEX IF NOT EXISTS idx_mov_pendente      ON movimentacao(sincronizado);
 `;
 
 // Carga inicial. Produtos entram com saldo zero: o saldo é construído
-// pelas movimentações, senão o histórico não fecha.
+// pelas movimentações, senão o histórico não fecha. A validade é relativa
+// ao dia da instalação: o Sabonete sempre aparece vencendo em 12 dias.
 export const CARGA_INICIAL = `
 INSERT INTO loja (uuid, nome, documento) VALUES
   ('loja-0001', 'Mercearia Modelo', '12.345.678/0001-90');
 
 INSERT INTO usuario (uuid, loja_id, nome, email, senha_hash, tipo_perfil) VALUES
-  ('user-0001', 1, 'Marlene Proprietária', 'proprietario@stockeasy.com', 'admin123', 'PROPRIETARIO'),
-  ('user-0002', 1, 'Júnior Operador',      'operador@stockeasy.com',     'admin123', 'OPERADOR');
+  ('user-0001', 1, 'Proprietário',    'proprietario@stockeasy.com', 'admin123', 'PROPRIETARIO'),
+  ('user-0002', 1, 'Júnior Operador', 'operador@stockeasy.com',     'admin123', 'OPERADOR');
 
 INSERT INTO categoria (uuid, loja_id, nome) VALUES
   ('cat-0001', 1, 'Alimentos'),
@@ -116,16 +121,16 @@ INSERT INTO categoria (uuid, loja_id, nome) VALUES
 INSERT INTO fornecedor (uuid, loja_id, nome, telefone, email) VALUES
   ('forn-0001', 1, 'Distribuidora ABC Ltda', '(62) 3333-4444', 'contato@abc.com.br'),
   ('forn-0002', 1, 'Comercial XYZ',          '(62) 3555-6666', 'vendas@xyz.com.br'),
-  ('forn-0003', 1, 'Atacadão Central',       '(62) 3777-8888', 'compras@central.com.br');
+  ('forn-0003', 1, 'Atacadão Central',       '(62) 3777-8888', 'compras@atacadaocentral.com.br');
 
 INSERT INTO produto
   (uuid, loja_id, nome, codigo_barras, categoria_id, fornecedor_id,
    preco_custo, preco_venda, estoque_atual, estoque_minimo, data_validade) VALUES
   ('prod-0001', 1, 'Arroz Tipo 1 5kg',         '7891234567890', 1, 1, 15.00, 22.00, 0, 10, NULL),
   ('prod-0002', 1, 'Feijão Preto 1kg',         '7891234567891', 1, 1,  6.50, 10.00, 0, 15, NULL),
-  ('prod-0003', 1, 'Refrigerante Cola 2L',     '7891234567892', 2, 2,  4.00,  7.50, 0, 20, '2026-11-30'),
+  ('prod-0003', 1, 'Refrigerante Cola 2L',     '7891234567892', 2, 2,  4.00,  7.50, 0, 20, date('now', '+63 days')),
   ('prod-0004', 1, 'Detergente Líquido 500ml', '7891234567893', 3, 2,  1.80,  3.50, 0, 10, NULL),
-  ('prod-0005', 1, 'Sabonete 90g',             '7891234567894', 4, 1,  1.20,  2.50, 0, 15, '2026-10-10');
+  ('prod-0005', 1, 'Sabonete 90g',             '7891234567894', 4, 1,  1.20,  2.50, 0, 15, date('now', '+12 days'));
 `;
 
 // entradas iniciais

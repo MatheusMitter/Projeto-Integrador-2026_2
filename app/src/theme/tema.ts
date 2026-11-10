@@ -1,57 +1,87 @@
-// Mesmos valores do protótipo em prototipo/styles.css.
-// Cores escolhidas para passar no contraste mínimo de 4,5:1 com texto branco.
+// Tokens visuais. Paleta, raios e espaçamentos seguem o Figma da equipe.
+//
+// Três desvios do Figma, todos por acessibilidade (R11):
+// - o verde e o âmbar do Figma não passam com texto branco em fonte
+//   pequena (mínimo de 4,5:1), então badges e textos usam os tons "Texto",
+//   mais escuros; o tom original fica para número grande e elemento não
+//   textual;
+// - a escala de fonte do Figma (corpo 12, rótulo 10, badge 9) foi
+//   ampliada, porque em celular esses tamanhos ficam ilegíveis;
+// - a borda dos campos é mais escura que a dos cards (ver bordaCampo).
 
 export const cores = {
-  primaria: "#2E7D32",
-  primariaEscura: "#1B5E20",
-  primariaClara: "#E8F5E9",
-  secundaria: "#1565C0",
-  secundariaClara: "#E3F2FD",
-  perigo: "#C62828",
-  perigoClaro: "#FFEBEE",
-  aviso: "#E65100",
-  avisoClaro: "#FFF3E0",
+  primaria: "#2450D6",
+  primariaPressionada: "#1B3FAE",
+  primariaSuave: "#E4EAFC",
+  sobrePrimaria: "#FFFFFF",
 
-  branco: "#FFFFFF",
-  cinza100: "#F5F5F5",
-  cinza200: "#EEEEEE",
-  cinza300: "#E0E0E0",
-  cinza400: "#BDBDBD",
-  // cinza600 é o mais claro que dá para usar em texto; acima disso só borda
-  cinza600: "#757575",
-  cinza700: "#616161",
-  cinza800: "#424242",
-  cinza900: "#212121",
+  fundo: "#F3F5F9",
+  superficie: "#FFFFFF",
+  texto: "#111A2E",
+  textoSuave: "#5E6B85",
+  borda: "#DDE3EF",
+  // A borda do Figma tem 1,3:1 sobre o fundo. Serve para card, mas campo
+  // de texto precisa de 3:1 para ser percebido como campo (WCAG 1.4.11).
+  bordaCampo: "#7D8AA3",
+
+  sucesso: "#16915A",
+  sucessoTexto: "#12804F",
+  sucessoSuave: "#E3F4EC",
+  sobreSucessoSuave: "#0D6B41", // texto sobre sucessoSuave, 5,8:1
+  aviso: "#C98208",
+  avisoTexto: "#9F6500",
+  avisoSuave: "#FBF1DD",
+  sobreAvisoSuave: "#7A4D00", // texto sobre avisoSuave, 6,5:1
+  perigo: "#CF3A3A",
+  perigoTexto: "#A12A2A", // o perigo puro dá 4,45:1 sobre o fundo
+  perigoSuave: "#FBE7E7",
+
+  // Identidade de 19/10 (docs/07-identidade-visual.md). Por enquanto só
+  // nas telas de acesso; o resto da paleta entra quando o redesenho
+  // chegar aos componentes.
+  marcaAzul: "#2450D6", // metade de cima do ícone
+  marcaNoite: "#0E1E4A", // metade de baixo do ícone
+  azulNoite: "#002242", // cabeçalho escuro e áreas de marca
+  azulProfundo: "#144774", // botões de acesso: Entrar, Criar conta
+  azulClaro: "#ADD8E6", // texto de apoio sobre o azul
+  whiteLilac: "#F7F9FB", // fundo das telas e do card de acesso
 } as const;
 
 export const espaco = {
   xs: 4,
   sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  md: 14, // margem lateral da tela no Figma
+  lg: 20,
+  xl: 28,
 } as const;
 
 export const fonte = {
-  tituloGrande: 24,
-  tituloMedio: 18,
-  corpo: 14,
-  legenda: 12,
+  destaque: 28,
+  titulo: 22,
+  tituloVoltar: 18,
+  kpi: 24,
+  corpo: 15,
+  botao: 15,
+  rotulo: 13,
+  legenda: 13,
+  badge: 11,
+  aba: 11,
 } as const;
 
 export const raio = {
-  sm: 4,
-  md: 8,
-  lg: 12,
-  completo: 9999,
+  miniatura: 6,
+  padrao: 8,
+  grande: 12, // logo e FAB
+  completo: 999,
 } as const;
 
-// tamanho mínimo de área tocável
-export const ALVO_TOQUE = 44;
+// Área mínima tocável. O Figma desenha botão com ~38px; a diretriz do
+// Android pede 48dp, e o polegar do comerciante agradece.
+export const ALVO_TOQUE = 48;
 
 export const CORES_SITUACAO = {
-  CRITICO: { fundo: cores.perigoClaro, texto: "#B71C1C" },
-  BAIXO: { fundo: cores.avisoClaro, texto: "#BF360C" },
-  NORMAL: { fundo: cores.primariaClara, texto: cores.primariaEscura },
-  EXCESSO: { fundo: cores.secundariaClara, texto: "#0D47A1" },
+  CRITICO: { fundo: cores.perigo, texto: cores.sobrePrimaria },
+  BAIXO: { fundo: cores.avisoTexto, texto: cores.sobrePrimaria },
+  NORMAL: { fundo: cores.sucessoTexto, texto: cores.sobrePrimaria },
+  EXCESSO: { fundo: cores.primaria, texto: cores.sobrePrimaria },
 } as const;

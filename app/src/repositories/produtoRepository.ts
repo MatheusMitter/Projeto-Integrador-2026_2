@@ -1,7 +1,7 @@
 // Acesso a dados de produto. Consultas sempre parametrizadas.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
-import { Produto, ResumoEstoque } from "../domain/tipos";
+import type { Produto } from "../domain/tipos";
 
 interface LinhaProduto {
   id: number;
@@ -54,23 +54,25 @@ const SELECAO = `
 `;
 
 // ativo = 1 por causa da RN12: desativado sai da lista mas fica no banco
-export async function listar(termo = ""): Promise<Produto[]> {
+export async function listar(termo = "", lojaId = 1): Promise<Produto[]> {
   const db = await obterBanco();
   const busca = termo.trim();
 
   if (busca.length === 0) {
     const linhas = await db.getAllAsync<LinhaProduto>(
-      `${SELECAO} WHERE p.ativo = 1 ORDER BY p.nome COLLATE NOCASE`,
+      `${SELECAO} WHERE p.ativo = 1 AND p.loja_id = ?
+        ORDER BY p.nome COLLATE NOCASE`,
+      [lojaId],
     );
     return linhas.map(paraProduto);
   }
 
   const linhas = await db.getAllAsync<LinhaProduto>(
     `${SELECAO}
-      WHERE p.ativo = 1
+      WHERE p.ativo = 1 AND p.loja_id = ?
         AND (p.nome LIKE ? COLLATE NOCASE OR p.codigo_barras LIKE ?)
       ORDER BY p.nome COLLATE NOCASE`,
-    [`%${busca}%`, `%${busca}%`],
+    [lojaId, `%${busca}%`, `%${busca}%`],
   );
   return linhas.map(paraProduto);
 }
@@ -89,13 +91,15 @@ export interface DadosProduto {
   codigoBarras: string | null;
   categoriaId: number;
   fornecedorId: number | null;
-  precoCusto: number;
+  // nulo quando quem grava não informa custo (operador, RN01)
+  precoCusto: number | null;
   precoVenda: number;
   estoqueMinimo: number;
   dataValidade: string | null;
 }
 
-// entra com saldo zero; a quantidade inicial vem por movimentação
+// Entra com saldo zero; a quantidade inicial vem por movimentação. Sem
+// custo informado, o custo fica zero até o proprietário completar.
 export async function inserir(
   dados: DadosProduto,
   lojaId = 1,
@@ -109,11 +113,11 @@ export async function inserir(
     [
       gerarUuid(),
       lojaId,
-      dados.nome.trim(),
-      dados.codigoBarras?.trim() || null,
+      dados.nome,
+      dados.codigoBarras,
       dados.categoriaId,
       dados.fornecedorId,
-      dados.precoCusto,
+      dados.precoCusto ?? 0,
       dados.precoVenda,
       dados.estoqueMinimo,
       dados.dataValidade,
@@ -128,17 +132,18 @@ export async function atualizar(
 ): Promise<void> {
   const db = await obterBanco();
   // O saldo não é alterado por aqui de propósito: mudança de estoque só
-  // acontece por movimentação, senão o histórico deixa de fechar.
+  // acontece por movimentação, senão o histórico deixa de fechar. Custo
+  // nulo mantém o que está gravado.
   await db.runAsync(
     `UPDATE produto
         SET nome = ?, codigo_barras = ?, categoria_id = ?, fornecedor_id = ?,
-            preco_custo = ?, preco_venda = ?, estoque_minimo = ?,
-            data_validade = ?, atualizado_em = datetime('now'),
-            sincronizado = 0
+            preco_custo = COALESCE(?, preco_custo), preco_venda = ?,
+            estoque_minimo = ?, data_validade = ?,
+            atualizado_em = datetime('now'), sincronizado = 0
       WHERE id = ?`,
     [
-      dados.nome.trim(),
-      dados.codigoBarras?.trim() || null,
+      dados.nome,
+      dados.codigoBarras,
       dados.categoriaId,
       dados.fornecedorId,
       dados.precoCusto,
@@ -161,47 +166,24 @@ export async function desativar(id: number): Promise<void> {
   );
 }
 
-// indicadores do painel, numa consulta só
-export async function resumo(lojaId = 1): Promise<ResumoEstoque> {
+// Saldo de produto ativo, lido dentro da transação da movimentação
+export async function lerSaldo(
+  id: number,
+): Promise<{ estoqueAtual: number; estoqueMinimo: number } | null> {
   const db = await obterBanco();
-  const l = await db.getFirstAsync<{
-    total: number;
-    valor: number | null;
-    criticos: number;
-    vencendo: number;
-  }>(
-    `SELECT COUNT(*) AS total,
-            SUM(estoque_atual * preco_custo) AS valor,
-            SUM(CASE WHEN estoque_atual <= estoque_minimo THEN 1 ELSE 0 END) AS criticos,
-            SUM(CASE WHEN data_validade IS NOT NULL
-                      AND date(data_validade) <= date('now', '+15 days')
-                     THEN 1 ELSE 0 END) AS vencendo
-       FROM produto
-      WHERE ativo = 1 AND loja_id = ?`,
-    [lojaId],
+  const l = await db.getFirstAsync<{ estoque_atual: number; estoque_minimo: number }>(
+    "SELECT estoque_atual, estoque_minimo FROM produto WHERE id = ? AND ativo = 1",
+    [id],
   );
-
-  return {
-    totalProdutos: l?.total ?? 0,
-    valorTotalEstoque: l?.valor ?? 0,
-    produtosCriticos: l?.criticos ?? 0,
-    produtosVencendo: l?.vencendo ?? 0,
-  };
+  return l ? { estoqueAtual: l.estoque_atual, estoqueMinimo: l.estoque_minimo } : null;
 }
 
-// ranking de mais vendidos
-export async function maisVendidos(
-  limite = 5,
-): Promise<{ nome: string; total: number }[]> {
+export async function gravarSaldo(id: number, saldo: number): Promise<void> {
   const db = await obterBanco();
-  return db.getAllAsync<{ nome: string; total: number }>(
-    `SELECT p.nome, SUM(m.quantidade) AS total
-       FROM movimentacao m
-       JOIN produto p ON p.id = m.produto_id
-      WHERE m.tipo = 'VENDA'
-      GROUP BY p.id, p.nome
-      ORDER BY total DESC
-      LIMIT ?`,
-    [limite],
+  await db.runAsync(
+    `UPDATE produto
+        SET estoque_atual = ?, atualizado_em = datetime('now'), sincronizado = 0
+      WHERE id = ?`,
+    [saldo, id],
   );
 }

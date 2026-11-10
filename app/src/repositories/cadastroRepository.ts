@@ -1,7 +1,7 @@
 // Acesso a dados de categoria e fornecedor.
 
 import { obterBanco, gerarUuid } from "../database/conexao";
-import { Categoria, Fornecedor } from "../domain/tipos";
+import type { Categoria, Fornecedor } from "../domain/tipos";
 
 // ---------------------------------------------------------------- categoria
 
@@ -57,7 +57,7 @@ export async function listarFornecedores(lojaId = 1): Promise<Fornecedor[]> {
   return linhas.map(paraFornecedor);
 }
 
-// usado pela RN13
+// produtos ativos vinculados, usado pela RN13
 export async function contarProdutosDoFornecedor(
   fornecedorId: number,
 ): Promise<number> {
@@ -69,67 +69,59 @@ export async function contarProdutosDoFornecedor(
   return l?.total ?? 0;
 }
 
+// a mesma contagem para a lista inteira, numa consulta só
+export async function contarProdutosPorFornecedor(
+  lojaId = 1,
+): Promise<Record<number, number>> {
+  const db = await obterBanco();
+  const linhas = await db.getAllAsync<{ fornecedor_id: number; total: number }>(
+    `SELECT fornecedor_id, COUNT(*) AS total FROM produto
+      WHERE fornecedor_id IS NOT NULL AND ativo = 1 AND loja_id = ?
+      GROUP BY fornecedor_id`,
+    [lojaId],
+  );
+  const mapa: Record<number, number> = {};
+  for (const l of linhas) mapa[l.fornecedor_id] = l.total;
+  return mapa;
+}
+
+export interface DadosFornecedor {
+  nome: string;
+  telefone: string | null;
+  email: string | null;
+}
+
 export async function inserirFornecedor(
-  dados: { nome: string; telefone?: string; email?: string },
+  dados: DadosFornecedor,
   lojaId = 1,
 ): Promise<number> {
   const db = await obterBanco();
   const r = await db.runAsync(
     `INSERT INTO fornecedor (uuid, loja_id, nome, telefone, email)
      VALUES (?, ?, ?, ?, ?)`,
-    [
-      gerarUuid(),
-      lojaId,
-      dados.nome.trim(),
-      dados.telefone?.trim() || null,
-      dados.email?.trim() || null,
-    ],
+    [gerarUuid(), lojaId, dados.nome, dados.telefone, dados.email],
   );
   return r.lastInsertRowId;
 }
 
 export async function atualizarFornecedor(
   id: number,
-  dados: { nome: string; telefone?: string; email?: string },
+  dados: DadosFornecedor,
 ): Promise<void> {
   const db = await obterBanco();
   await db.runAsync(
     `UPDATE fornecedor
         SET nome = ?, telefone = ?, email = ?, sincronizado = 0
       WHERE id = ?`,
-    [
-      dados.nome.trim(),
-      dados.telefone?.trim() || null,
-      dados.email?.trim() || null,
-      id,
-    ],
+    [dados.nome, dados.telefone, dados.email, id],
   );
 }
 
-// RN13. Checa aqui para dar mensagem melhor, mas a chave estrangeira
-// no banco também impede.
-export async function excluirFornecedor(
-  id: number,
-): Promise<{ sucesso: boolean; mensagem?: string }> {
-  const vinculados = await contarProdutosDoFornecedor(id);
-  if (vinculados > 0) {
-    return {
-      sucesso: false,
-      mensagem:
-        `Não é possível excluir: ${vinculados} produto(s) ainda estão ` +
-        `vinculados a este fornecedor. Reatribua ou desative esses ` +
-        `produtos antes de excluí-lo. Regra RN13.`,
-    };
-  }
-
+// RN12: fornecedor não é apagado, é desativado e sai das listas
+export async function desativarFornecedor(id: number): Promise<void> {
   const db = await obterBanco();
-  try {
-    await db.runAsync("DELETE FROM fornecedor WHERE id = ?", [id]);
-    return { sucesso: true };
-  } catch {
-    return {
-      sucesso: false,
-      mensagem: "O fornecedor está referenciado por outros registros.",
-    };
-  }
+  await db.runAsync(
+    "UPDATE fornecedor SET ativo = 0, sincronizado = 0 WHERE id = ?",
+    [id],
+  );
 }

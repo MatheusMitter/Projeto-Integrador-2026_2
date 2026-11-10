@@ -152,6 +152,42 @@ Registro conforme a Seção 6.1: o que foi concluído, o que foi replanejado e q
 
 ---
 
+## 7.1 Registro do Ciclo 2 (13 a 23/10)
+
+Registro feito em 02/11/2026 a partir do histórico do repositório e de [`99-historico-de-revisao.md`](99-historico-de-revisao.md).
+
+### Concluído no ciclo
+
+| Entrega                                              | Situação                                                                                                                       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Acesso (US03, US04)                                  | Concluído — criação de conta, login com os dois perfis e recuperação de senha com resposta neutra                                |
+| Produtos (US08, US09)                                | Concluído — edição e desativação de produto, com confirmação que explica o efeito                                               |
+| Fornecedores (US15, US16)                            | Concluído — cadastro, edição e desativação; fornecedor com produto vinculado não é removido                                      |
+| Alertas e consultas (US13, US17, US18, US19)         | Concluído — situação por produto, busca e filtro por situação, painel com indicadores e ranking, relatórios por período          |
+| Histórico (US12)                                     | Concluído — últimas movimentações por produto, com saldo e responsável                                                           |
+| Categorias (US30)                                    | Parcial — categoria é entidade no modelo e no aplicativo, com lista fixa; criar e renomear categoria ficou para o Ciclo 3        |
+| Revisão antes do Checkpoint 2 (12 e 14/10)           | Concluída — camadas reorganizadas (tela → serviço → repositório), RN01 e RN12 aplicadas no serviço, banco alinhado, 100 testes   |
+| Atualização do Expo SDK 51 para o 57 (14/10)         | Concluída — projeto compilando no SDK 57, APK de release assinado, documentação de execução refeita                             |
+
+Requisitos fechados no ciclo, conforme o planejamento: R2, R3, R4 e R9.
+
+### Replanejado no ciclo
+
+| Item                                   | De      | Para    | Motivo                                                                                                   |
+| -------------------------------------- | ------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| Criar e renomear categoria (US30)      | Ciclo 2 | Ciclo 3 | A lista fixa atende o cadastro de produto; a manutenção depende da tela de configurações                 |
+| Identidade visual própria (logo e paleta) | —    | Ciclo 3 | O protótipo e o aplicativo usavam a identidade provisória do Figma; a definitiva foi definida em 19/10 ([`07-identidade-visual.md`](07-identidade-visual.md)) e ainda não está aplicada nas telas |
+
+### Impedimentos identificados
+
+| Impedimento                                                                                   | Encaminhamento                                                                                        |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Telas acessavam os repositórios direto, contra a arquitetura definida                          | Camada de serviço criada para produto, cadastro, relatório e sincronização; registro no `99`, seção 10 |
+| O Expo Go das lojas deixou de abrir o projeto no SDK 51                                        | Atualização para o SDK 57 e build de desenvolvimento própria, sem depender do Expo Go                  |
+| Alertas do `npm audit` em ferramentas do Expo, sem correção compatível com o SDK                | Conferido que nenhum pacote afetado entra no APK; registro no `99`, seções 12 e 13                     |
+
+---
+
 ## 8. Planejamento dos ciclos seguintes
 
 ### Ciclo 2 — 13 a 23/10
@@ -218,3 +254,4 @@ Correção dos defeitos priorizados, refinamento de acessibilidade e tratamento 
 | Versão | Data       | Alterações                                | Responsável      |
 | ------ | ---------- | ----------------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial, com o registro do Ciclo 1 | Equipe StockEasy |
+| 1.1    | 02/11/2026 | Registro do Ciclo 2 (seção 7.1), a partir do histórico do repositório e do `99` | Equipe StockEasy |

@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -7,32 +8,45 @@ import {
   View,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { Cartao, Carregando } from "../components/base";
-import { ResumoEstoque } from "../domain/tipos";
-import * as produtoRepo from "../repositories/produtoRepository";
+import {
+  Aviso,
+  Botao,
+  Cartao,
+  Carregando,
+  TituloSecao,
+} from "../components/base";
+import type { ResumoEstoque } from "../domain/tipos";
+import type { FiltroProdutos, TelaAba } from "../navigation/rotas";
 import { sessaoAtual } from "../services/authService";
-import { formatarReais, podeVerFinanceiro } from "../services/regras";
-import { registrosNaoSincronizados } from "../services/estoqueService";
+import { resumoDoEstoque } from "../services/produtoService";
+import { type ItemRanking, maisVendidos } from "../services/relatorioService";
+import { DIAS_ALERTA_VENCIMENTO, formatarReais } from "../services/regras";
+import { registrosNaoSincronizados } from "../services/sincronizacaoService";
 import { cores, espaco, fonte, raio } from "../theme/tema";
 
-export default function PainelScreen() {
+export default function PainelScreen({ navigation }: TelaAba<"Início">) {
   const [resumo, setResumo] = useState<ResumoEstoque | null>(null);
-  const [ranking, setRanking] = useState<{ nome: string; total: number }[]>([]);
+  const [ranking, setRanking] = useState<ItemRanking[]>([]);
   const [pendentes, setPendentes] = useState(0);
   const [atualizando, setAtualizando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   const usuario = sessaoAtual();
-  const verFinanceiro = podeVerFinanceiro(usuario?.tipoPerfil ?? "OPERADOR");
 
   const carregar = useCallback(async () => {
-    const [r, m, p] = await Promise.all([
-      produtoRepo.resumo(),
-      produtoRepo.maisVendidos(5),
-      registrosNaoSincronizados(),
-    ]);
-    setResumo(r);
-    setRanking(m);
-    setPendentes(p);
+    try {
+      const [r, m, p] = await Promise.all([
+        resumoDoEstoque(),
+        maisVendidos(5),
+        registrosNaoSincronizados(),
+      ]);
+      setResumo(r);
+      setRanking(m);
+      setPendentes(p);
+      setErro(null);
+    } catch {
+      setErro("Não foi possível carregar o resumo do estoque.");
+    }
   }, []);
 
   // Recarrega ao voltar para a aba: uma movimentação em outra tela muda
@@ -43,17 +57,46 @@ export default function PainelScreen() {
     }, [carregar]),
   );
 
-  if (!resumo) return <Carregando texto="Carregando o resumo do estoque..." />;
+  if (!resumo) {
+    if (!erro) return <Carregando texto="Carregando o resumo do estoque..." />;
+    return (
+      <View style={[e.tela, e.conteudo]}>
+        <Aviso tipo="erro" texto={erro} />
+        <Botao titulo="Tentar novamente" onPress={carregar} />
+      </View>
+    );
+  }
 
   const maior = ranking.length > 0 ? ranking[0].total : 1;
+
+  const primeiroNome = usuario?.nome.split(" ")[0] ?? "usuário";
+  const perfil =
+    usuario?.tipoPerfil === "PROPRIETARIO" ? "Proprietário" : "Operador";
+  // conta cujo nome já é o perfil não repete a palavra
+  const saudacao =
+    primeiroNome === perfil
+      ? `Olá, ${primeiroNome}`
+      : `Olá, ${primeiroNome} · ${perfil}`;
+
+  // RN01: o valor do estoque já chega nulo da camada de negócio para o
+  // operador; a tela só decide o que mostrar no lugar
+  const valor = resumo.valorTotalEstoque;
+
+  function abrirProdutos(filtro: FiltroProdutos) {
+    navigation.navigate("Produtos", {
+      screen: "ProdutosLista",
+      params: { filtro },
+    });
+  }
 
   return (
     <ScrollView
       style={e.tela}
-      contentContainerStyle={{ padding: espaco.md }}
+      contentContainerStyle={e.conteudo}
       refreshControl={
         <RefreshControl
           refreshing={atualizando}
+          colors={[cores.primaria]}
           onRefresh={async () => {
             setAtualizando(true);
             await carregar();
@@ -62,52 +105,63 @@ export default function PainelScreen() {
         />
       }
     >
-      <Text style={e.saudacao}>
-        Olá, {usuario?.nome.split(" ")[0] ?? "usuário"}
-      </Text>
-      <Text style={e.perfil}>
-        {usuario?.tipoPerfil === "PROPRIETARIO" ? "Proprietário" : "Operador"}
-      </Text>
+      <Text style={e.saudacao}>{saudacao}</Text>
 
-      {pendentes > 0 && (
-        <View style={e.faixaPendente}>
-          <Text style={e.faixaTexto}>
-            {pendentes} registro(s) gravados somente neste aparelho. A
-            sincronização com o servidor entra no Ciclo 3; até lá nada é
-            enviado, e nada se perde.
-          </Text>
-        </View>
-      )}
+      {!!erro && <Aviso tipo="erro" texto={erro} />}
+
+      <View
+        style={e.destaque}
+        accessible
+        accessibilityLabel={
+          valor !== null
+            ? `Valor total do estoque: ${formatarReais(valor)}. ${resumo.totalProdutos} produtos ativos.`
+            : `${resumo.totalProdutos} produtos ativos.`
+        }
+      >
+        {valor !== null ? (
+          <>
+            <Text style={e.destaqueRotulo}>Valor total do estoque</Text>
+            <Text style={e.destaqueValor}>{formatarReais(valor)}</Text>
+            <Text style={e.destaqueRodape}>
+              {resumo.totalProdutos} produtos ativos · pelo preço de custo
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text style={e.destaqueRotulo}>Produtos ativos</Text>
+            <Text style={e.destaqueValor}>{resumo.totalProdutos}</Text>
+            <Text style={e.destaqueRodape}>no estoque desta loja</Text>
+          </>
+        )}
+      </View>
 
       <View style={e.grade}>
         <Indicador
-          valor={String(resumo.totalProdutos)}
-          rotulo="produtos cadastrados"
-        />
-
-        {/* RN01: valor do estoque é informação financeira, restrita ao
-            proprietário. Quem decide é a camada de negócio. */}
-        {verFinanceiro && (
-          <Indicador
-            valor={formatarReais(resumo.valorTotalEstoque)}
-            rotulo="valor em estoque"
-          />
-        )}
-
-        <Indicador
-          valor={String(resumo.produtosCriticos)}
-          rotulo="produtos críticos"
-          cor={resumo.produtosCriticos > 0 ? cores.perigo : undefined}
+          valor={resumo.produtosCriticos}
+          rotulo="No mínimo ou abaixo"
+          cor={resumo.produtosCriticos > 0 ? cores.perigo : cores.texto}
+          onPress={() => abrirProdutos("CRITICO")}
         />
         <Indicador
-          valor={String(resumo.produtosVencendo)}
-          rotulo="próximos ao vencimento"
-          cor={resumo.produtosVencendo > 0 ? cores.aviso : undefined}
+          valor={resumo.produtosVencendo}
+          rotulo={`Vencendo em ${DIAS_ALERTA_VENCIMENTO} dias`}
+          cor={resumo.produtosVencendo > 0 ? cores.aviso : cores.texto}
+          onPress={() => abrirProdutos("VENCENDO")}
         />
       </View>
 
-      <Text style={e.secao}>Produtos mais vendidos</Text>
+      {pendentes > 0 && (
+        <Aviso
+          tipo="atencao"
+          texto={
+            `${pendentes} registro(s) gravados só neste aparelho. O envio ` +
+            "ao servidor ainda não está disponível nesta versão."
+          }
+        />
+      )}
+
       <Cartao>
+        <TituloSecao texto="Mais vendidos" />
         {ranking.length === 0 ? (
           <Text style={e.vazio}>
             Nenhuma venda registrada ainda. Registre uma saída do tipo Venda
@@ -115,19 +169,25 @@ export default function PainelScreen() {
           </Text>
         ) : (
           ranking.map((item) => (
-            <View key={item.nome} style={e.barraLinha}>
-              <Text style={e.barraRotulo} numberOfLines={1}>
-                {item.nome}
-              </Text>
+            <View
+              key={item.produtoId}
+              style={e.barraLinha}
+              accessible
+              accessibilityLabel={`${item.nome}: ${item.total} unidades vendidas`}
+            >
+              <View style={e.barraCabecalho}>
+                <Text style={e.barraRotulo} numberOfLines={1}>
+                  {item.nome}
+                </Text>
+                <Text style={e.barraValor}>{item.total} un</Text>
+              </View>
               <View style={e.barraTrilha}>
                 <View
                   style={[
                     e.barra,
-                    { width: `${Math.max(12, (item.total / maior) * 100)}%` },
+                    { width: `${Math.max(6, (item.total / maior) * 100)}%` },
                   ]}
-                >
-                  <Text style={e.barraValor}>{item.total} un</Text>
-                </View>
+                />
               </View>
             </View>
           ))
@@ -141,86 +201,87 @@ function Indicador({
   valor,
   rotulo,
   cor,
+  onPress,
 }: {
-  valor: string;
+  valor: number;
   rotulo: string;
-  cor?: string;
+  cor: string;
+  onPress: () => void;
 }) {
   return (
-    <View
-      style={e.indicador}
-      accessible
-      accessibilityLabel={`${valor} ${rotulo}`}
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [e.indicador, pressed && { opacity: 0.8 }]}
+      accessibilityRole="button"
+      accessibilityLabel={`${valor} produtos: ${rotulo}`}
+      accessibilityHint="Abre a lista de produtos com este filtro"
     >
-      <Text style={[e.indicadorValor, !!cor && { color: cor }]}>{valor}</Text>
+      <Text style={[e.indicadorValor, { color: cor }]}>{valor}</Text>
       <Text style={e.indicadorRotulo}>{rotulo}</Text>
-    </View>
+    </Pressable>
   );
 }
 
 const e = StyleSheet.create({
-  tela: { flex: 1, backgroundColor: cores.cinza100 },
+  tela: { flex: 1, backgroundColor: cores.fundo },
+  conteudo: { padding: espaco.md, paddingTop: 0 },
   saudacao: {
-    fontSize: fonte.tituloMedio,
-    fontWeight: "700",
-    color: cores.cinza900,
-  },
-  perfil: {
     fontSize: fonte.legenda,
-    color: cores.cinza600,
+    color: cores.textoSuave,
     marginBottom: espaco.md,
   },
-  faixaPendente: {
-    backgroundColor: cores.avisoClaro,
-    borderLeftWidth: 4,
-    borderLeftColor: cores.aviso,
-    padding: espaco.md,
-    borderRadius: raio.md,
-    marginBottom: espaco.md,
-  },
-  faixaTexto: { fontSize: fonte.legenda, color: "#BF360C" },
-  grade: { flexDirection: "row", flexWrap: "wrap", gap: espaco.md },
-  indicador: {
-    flexGrow: 1,
-    flexBasis: "45%",
-    backgroundColor: cores.branco,
-    borderRadius: raio.md,
-    padding: espaco.md,
-    borderWidth: 1,
-    borderColor: cores.cinza200,
-  },
-  indicadorValor: { fontSize: 26, fontWeight: "700", color: cores.cinza900 },
-  indicadorRotulo: {
-    fontSize: fonte.legenda,
-    color: cores.cinza600,
-    marginTop: espaco.xs,
-  },
-  secao: {
-    fontSize: fonte.tituloMedio,
-    fontWeight: "700",
-    color: cores.cinza900,
-    marginTop: espaco.lg,
-    marginBottom: espaco.md,
-  },
-  vazio: { fontSize: fonte.corpo, color: cores.cinza600 },
-  barraLinha: {
-    flexDirection: "row",
-    alignItems: "center",
+  destaque: {
+    backgroundColor: cores.primaria,
+    borderRadius: raio.padrao,
+    padding: espaco.lg,
     marginBottom: espaco.sm,
   },
-  barraRotulo: { width: 110, fontSize: fonte.legenda, color: cores.cinza700 },
-  barraTrilha: { flex: 1 },
-  barra: {
-    height: 24,
-    backgroundColor: cores.primaria,
-    borderRadius: raio.sm,
-    justifyContent: "center",
-    alignItems: "flex-end",
-    paddingHorizontal: espaco.sm,
+  destaqueRotulo: { color: cores.sobrePrimaria, fontSize: fonte.legenda },
+  destaqueValor: {
+    color: cores.sobrePrimaria,
+    fontSize: fonte.destaque,
+    fontWeight: "800",
+    marginVertical: 2,
   },
-  barraValor: {
-    color: cores.branco,
+  destaqueRodape: { color: cores.sobrePrimaria, fontSize: fonte.legenda - 1 },
+  grade: { flexDirection: "row", gap: espaco.sm, marginBottom: espaco.sm },
+  indicador: {
+    flex: 1,
+    backgroundColor: cores.superficie,
+    borderRadius: raio.padrao,
+    padding: espaco.md,
+    borderWidth: 1,
+    borderColor: cores.borda,
+  },
+  indicadorValor: { fontSize: fonte.kpi, fontWeight: "700" },
+  indicadorRotulo: {
     fontSize: fonte.legenda,
+    color: cores.textoSuave,
+    marginTop: 2,
+  },
+  vazio: { fontSize: fonte.corpo, color: cores.textoSuave },
+  barraLinha: { marginBottom: espaco.md },
+  barraCabecalho: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
+  barraRotulo: { flex: 1, fontSize: fonte.legenda, color: cores.texto },
+  barraValor: {
+    fontSize: fonte.legenda,
+    color: cores.textoSuave,
     fontWeight: "700",
+    marginLeft: espaco.sm,
+  },
+  barraTrilha: {
+    height: 8,
+    backgroundColor: cores.primariaSuave,
+    borderRadius: raio.completo,
+    overflow: "hidden",
+  },
+  barra: {
+    height: 8,
+    backgroundColor: cores.primaria,
+    borderRadius: raio.completo,
   },
 });

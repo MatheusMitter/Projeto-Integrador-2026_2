@@ -1,8 +1,16 @@
-import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
-import { Aviso, Botao, Campo } from "../components/base";
+import { useState } from "react";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Link,
+  RolagemDeFormulario,
+} from "../components/base";
+import { CabecalhoVoltar } from "../components/CabecalhoVoltar";
 import { cadastrar } from "../services/authService";
-import { cores, espaco, fonte } from "../theme/tema";
+import { cores, espaco } from "../theme/tema";
 
 interface Props {
   onCadastrou: () => void;
@@ -24,74 +32,76 @@ export default function CadastroScreen({ onCadastrou, voltar }: Props) {
       const r = await cadastrar({ nome, email, senha, confirmacao });
       if (r.sucesso) onCadastrou();
       else setErro(r.mensagem ?? "Não foi possível criar a conta.");
+    } catch {
+      setErro("Erro ao acessar os dados locais. Tente novamente.");
     } finally {
       setCarregando(false);
     }
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={e.conteudo}
-      keyboardShouldPersistTaps="handled"
-    >
-      <Text style={e.titulo}>Criar conta</Text>
+    <SafeAreaView style={e.tela}>
+      <CabecalhoVoltar titulo="Criar conta" voltar={voltar} />
+      <RolagemDeFormulario
+        contentContainerStyle={e.conteudo}
+      >
+        <Campo
+          rotulo="Nome completo"
+          valor={nome}
+          onChangeText={setNome}
+          obrigatorio
+        />
+        <Campo
+          rotulo="E-mail"
+          valor={email}
+          onChangeText={setEmail}
+          tipoTeclado="email-address"
+          placeholder="seu@email.com"
+          obrigatorio
+        />
+        <Campo
+          rotulo="Senha"
+          valor={senha}
+          onChangeText={setSenha}
+          senha
+          obrigatorio
+          ajuda="No mínimo 8 caracteres, com letras e números."
+        />
+        <Campo
+          rotulo="Confirmar senha"
+          valor={confirmacao}
+          onChangeText={setConfirmacao}
+          senha
+          obrigatorio
+        />
 
-      {!!erro && <Aviso texto={erro} tipo="erro" />}
+        {/* O perfil não é escolhido aqui de propósito: se fosse, bastaria ao
+            operador criar uma conta de proprietário para contornar a RN01.
+            Quem decide é o authService, pela posse da loja. */}
+        <Aviso
+          tipo="info"
+          texto={
+            "O primeiro usuário da loja é o proprietário. As contas criadas " +
+            "depois entram como operador e não veem custo, margem nem valor " +
+            "do estoque."
+          }
+        />
 
-      <Campo
-        rotulo="Nome completo"
-        valor={nome}
-        onChangeText={setNome}
-        obrigatorio
-      />
-      <Campo
-        rotulo="E-mail"
-        valor={email}
-        onChangeText={setEmail}
-        tipoTeclado="email-address"
-        obrigatorio
-      />
-      <Campo
-        rotulo="Senha"
-        valor={senha}
-        onChangeText={setSenha}
-        senha
-        obrigatorio
-        ajuda="No mínimo 8 caracteres, com letras e números."
-      />
-      <Campo
-        rotulo="Confirmar senha"
-        valor={confirmacao}
-        onChangeText={setConfirmacao}
-        senha
-        obrigatorio
-      />
-
-      {/* O perfil não é escolhido aqui de propósito: se fosse, bastaria ao
-          operador criar uma conta de proprietário para contornar a RN01.
-          Quem decide é o authService, pela posse da loja. */}
-      <Aviso
-        tipo="info"
-        texto={
-          "O perfil de acesso não é escolhido no cadastro. O primeiro usuário " +
-          "da loja é o proprietário; as contas criadas depois entram como " +
-          "operador e não veem custo, margem nem valor do estoque. Só um " +
-          "proprietário pode alterar o perfil de outra pessoa."
-        }
-      />
-
-      <Botao titulo="Criar conta" onPress={criar} carregando={carregando} />
-      <Botao titulo="Já tenho conta" variante="secundario" onPress={voltar} />
-    </ScrollView>
+        {!!erro && <Aviso texto={erro} tipo="erro" />}
+        <Botao titulo="Criar conta" onPress={criar} carregando={carregando} />
+        <Link titulo="Já tenho conta" onPress={voltar} />
+      </RolagemDeFormulario>
+    </SafeAreaView>
   );
 }
 
 const e = StyleSheet.create({
-  conteudo: { padding: espaco.lg, backgroundColor: cores.branco, flexGrow: 1 },
-  titulo: {
-    fontSize: fonte.tituloGrande,
-    fontWeight: "700",
-    color: cores.cinza900,
-    marginBottom: espaco.lg,
+  tela: { flex: 1, backgroundColor: cores.fundo },
+  conteudo: {
+    padding: espaco.lg,
+    paddingTop: espaco.sm,
+    width: "100%",
+    maxWidth: 480,
+    alignSelf: "center",
   },
 });

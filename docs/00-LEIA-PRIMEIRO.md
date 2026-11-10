@@ -1,6 +1,6 @@
 # Documentação do projeto StockEasy
 
-Índice da documentação técnica. Sete documentos, na ordem em que fazem sentido ser lidos. Cada um cobre um assunto e não repete o dos outros.
+Índice da documentação técnica. Oito documentos, na ordem em que fazem sentido ser lidos. Cada um cobre um assunto e não repete o dos outros.
 
 ---
 
@@ -14,6 +14,7 @@
 | [`04-prototipo.md`](04-prototipo.md)                       | As telas desenhadas e as decisões de interface                     | Ao criar ou alterar tela                               |
 | [`05-backlog.md`](05-backlog.md)                           | A lista de tarefas, com responsável e prazo                        | Para saber o que fazer em seguida                      |
 | [`06-gestao-do-projeto.md`](06-gestao-do-projeto.md)       | Cronograma, divisão de trabalho e regras de versionamento          | Ao planejar um ciclo                                   |
+| [`07-identidade-visual.md`](07-identidade-visual.md)       | Logo, cores, botões, letras e contraste                            | Ao desenhar ou alterar qualquer tela                   |
 | [`99-historico-de-revisao.md`](99-historico-de-revisao.md) | O que foi corrigido na revisão e por quê                           | Para entender por que algo mudou                       |
 
 ---

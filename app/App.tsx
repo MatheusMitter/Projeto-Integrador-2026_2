@@ -1,23 +1,32 @@
 // Ponto de entrada. Decide entre as telas de acesso e a área autenticada.
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Platform, ScrollView, Text, View } from "react-native";
+import { BackHandler, Platform, ScrollView, Text, View } from "react-native";
 
 import LoginScreen from "./src/screens/LoginScreen";
 import CadastroScreen from "./src/screens/CadastroScreen";
+import RecuperarSenhaScreen from "./src/screens/RecuperarSenhaScreen";
 import Navegacao from "./src/navigation/Navegacao";
 import { Aviso, Botao, Carregando } from "./src/components/base";
 import { obterBanco } from "./src/database/conexao";
 import { encerrarSessao } from "./src/services/authService";
 import { cores, espaco } from "./src/theme/tema";
 
-type Tela = "carregando" | "login" | "cadastro" | "app" | "falha" | "semBanco";
+type Tela =
+  | "carregando"
+  | "login"
+  | "cadastro"
+  | "recuperar"
+  | "app"
+  | "falha"
+  | "semBanco";
 
 export default function App() {
   const [tela, setTela] = useState<Tela>("carregando");
   const [erro, setErro] = useState<string | null>(null);
+  const [tentativa, setTentativa] = useState(0);
 
   // abrir o banco cria o esquema e a carga inicial na primeira vez
   useEffect(() => {
@@ -44,7 +53,18 @@ export default function App() {
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [tentativa]);
+
+  // botão voltar do Android: nas telas de acesso volta ao login, em vez
+  // de fechar o aplicativo
+  useEffect(() => {
+    if (tela !== "cadastro" && tela !== "recuperar") return;
+    const assinatura = BackHandler.addEventListener("hardwareBackPress", () => {
+      setTela("login");
+      return true;
+    });
+    return () => assinatura.remove();
+  }, [tela]);
 
   function sair() {
     encerrarSessao();
@@ -64,7 +84,7 @@ export default function App() {
             flexGrow: 1,
             justifyContent: "center",
             padding: espaco.lg,
-            backgroundColor: cores.branco,
+            backgroundColor: cores.fundo,
             maxWidth: 560,
             alignSelf: "center",
           }}
@@ -72,8 +92,8 @@ export default function App() {
           <Text
             style={{
               fontSize: 24,
-              fontWeight: "700",
-              color: cores.cinza900,
+              fontWeight: "800",
+              color: cores.texto,
               marginBottom: espaco.md,
             }}
           >
@@ -90,7 +110,7 @@ export default function App() {
           <Text
             style={{
               fontSize: 14,
-              color: cores.cinza800,
+              color: cores.texto,
               lineHeight: 22,
               marginBottom: espaco.md,
             }}
@@ -101,7 +121,7 @@ export default function App() {
             Expo CLI instalar a versão do Expo Go compatível com este SDK. O
             celular e o computador precisam estar na mesma rede.
           </Text>
-          <Text style={{ fontSize: 14, color: cores.cinza800, lineHeight: 22 }}>
+          <Text style={{ fontSize: 14, color: cores.texto, lineHeight: 22 }}>
             A escolha do SQLite está justificada em{" "}
             <Text style={{ fontWeight: "700" }}>docs/03-arquitetura.md</Text>: o
             banco local é o que permite operar sem conexão, requisito do
@@ -116,7 +136,7 @@ export default function App() {
             flex: 1,
             justifyContent: "center",
             padding: espaco.lg,
-            backgroundColor: cores.branco,
+            backgroundColor: cores.fundo,
           }}
         >
           <Aviso
@@ -125,7 +145,11 @@ export default function App() {
           />
           <Botao
             titulo="Tentar novamente"
-            onPress={() => setTela("carregando")}
+            onPress={() => {
+              setErro(null);
+              setTela("carregando");
+              setTentativa((t) => t + 1);
+            }}
           />
         </View>
       )}
@@ -134,6 +158,7 @@ export default function App() {
         <LoginScreen
           onEntrou={() => setTela("app")}
           irParaCadastro={() => setTela("cadastro")}
+          irParaRecuperar={() => setTela("recuperar")}
         />
       )}
 
@@ -142,6 +167,10 @@ export default function App() {
           onCadastrou={() => setTela("app")}
           voltar={() => setTela("login")}
         />
+      )}
+
+      {tela === "recuperar" && (
+        <RecuperarSenhaScreen voltar={() => setTela("login")} />
       )}
 
       {tela === "app" && <Navegacao onSair={sair} />}

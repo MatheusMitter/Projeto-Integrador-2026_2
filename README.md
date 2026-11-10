@@ -14,6 +14,8 @@ Pequenos comerciantes — mercearias, minimercados, padarias, lojas de conveniê
 
 O StockEasy resolve isso com registro de movimentações no celular, alerta automático de estoque mínimo e de vencimento, e visões consolidadas que mostram para onde o dinheiro do estoque está indo.
 
+A apresentação do produto, sem jargão técnico — o que é, para quem é e o que já faz —, está em [`SOBRE-O-STOCKEASY.md`](SOBRE-O-STOCKEASY.md).
+
 ---
 
 ## Equipe e atribuições
@@ -47,6 +49,8 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 
 ```
 .
+├── README.md                               # Este arquivo: visão técnica e como executar
+├── SOBRE-O-STOCKEASY.md                    # O produto explicado para quem não é da área
 ├── app/                                    # Aplicação móvel (React Native com Expo)
 │   ├── src/
 │   │   ├── screens/                         # Apresentação: telas
@@ -57,7 +61,7 @@ A justificativa completa, com as alternativas avaliadas e descartadas, está em 
 │   │   ├── database/                        # Persistência: esquema e conexão
 │   │   ├── domain/                          # Domínio: tipos das entidades
 │   │   └── theme/                           # Design system
-│   ├── tests/                               # Testes das regras de negócio
+│   ├── tests/                               # Testes das regras e do banco
 │   └── README.md
 ├── banco/                                  # Scripts SQL do banco remoto (PostgreSQL)
 │   ├── 01-esquema.sql                       # Tabelas, índices, funções e gatilhos
@@ -116,18 +120,15 @@ O aplicativo não depende desse banco: ele cria o próprio esquema em SQLite na 
 
 ### Aplicação móvel
 
-Requer Node 18 ou superior. Os testes exigem Node 22.18 ou superior, porque importam TypeScript diretamente.
+Requer Node 22.18 ou superior. O projeto está no Expo SDK 57, com React Native 0.86.
 
 ```bash
 cd app
 npm install
-npx expo start     # abra o projeto pelo terminal, não pelo Expo Go da loja
-npm run android    # alternativa: emulador Android
+npm run android    # gera e instala a build de desenvolvimento no emulador ou celular Android
 ```
 
-A aplicação exige celular ou emulador: o módulo de banco local não tem implementação para navegador.
-
-O projeto está no Expo SDK 51, e o Expo Go publicado nas lojas suporta apenas o SDK mais recente. Abrir o projeto pelo terminal faz o Expo CLI instalar a versão compatível no aparelho Android ou no emulador. Em iPhone físico, use um _development build_.
+A aplicação exige celular ou emulador: o módulo de banco local não tem implementação para navegador. O Expo Go das lojas também abre o projeto (`npx expo start`), mas só enquanto o SDK 57 for o mais recente; a build de desenvolvimento não depende disso. Detalhes, Android Studio e geração do APK em [`app/README.md`](app/README.md).
 
 Credenciais de teste, criadas pela carga inicial:
 
@@ -142,10 +143,10 @@ Verificação:
 cd app
 npm run verificar          # tipos e testes, em sequência
 npm run verificar-tipos    # compilação TypeScript em modo estrito
-npm test                   # 38 testes das regras de negócio
+npm test                   # 100 testes: 72 das regras e 28 do banco
 ```
 
-Os testes importam `app/src/services/regras.ts` diretamente, e não uma cópia das funções: uma mudança de regra sem ajuste de teste quebra a suíte.
+Os testes importam `app/src/services/regras.ts` diretamente, e não uma cópia das funções: uma mudança de regra sem ajuste de teste quebra a suíte. Os testes de banco rodam serviços e repositórios de verdade num SQLite em memória, com o esquema e a carga inicial do aplicativo; detalhes em [`app/README.md`](app/README.md#verificação).
 
 Detalhes de organização, camadas e limitações em [`app/README.md`](app/README.md).
 
@@ -161,24 +162,24 @@ As contas de acesso da carga inicial são de exemplo e valem apenas no banco loc
 
 ## Requisitos mínimos de complexidade técnica
 
-Situação em 28/09/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
+Situação em 02/11/2026, conforme a Seção 5 do documento norteador. A verificação de conformidade completa será anexada à entrega da N2 (Apêndice C).
 
 | Req | Descrição                                  | Situação     | Onde é verificável                                         |
 | --- | ------------------------------------------ | ------------ | ---------------------------------------------------------- |
-| R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — 8 telas em abas e pilha; protótipo com 11         |
-| R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`, com logout no cabeçalho |
+| R1  | Mínimo de 6 telas com navegação            | Implementado | `app/` — 11 telas em abas e pilha; protótipo com 11        |
+| R2  | Autenticação com 2 perfis                  | Implementado | `app/src/services/authService.ts`, com logout em Ajustes   |
 | R3  | Manutenção completa de 2+ entidades        | Implementado | Produto e Fornecedor no aplicativo                         |
-| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | 5 regras em `app/src/services/regras.ts`, com 38 testes    |
+| R4  | Mínimo de 3 regras de negócio não triviais | Implementado | RN01, RN06, RN07, RN12 e RN13 em `app/src/services/`, com 100 testes |
 | R5  | Persistência local                         | Implementado | SQLite em `app/src/database/`                              |
 | R6  | Persistência remota com sincronização      | Ciclo 3      | Spring Boot e PostgreSQL                                   |
 | R7  | Consumo de serviço externo                 | Ciclo 3      | Open Food Facts                                            |
 | R8  | Recurso nativo do dispositivo              | Ciclo 3      | Câmera e notificações                                      |
-| R9  | Filtro, busca e visão consolidada          | Parcial      | Busca e painel prontos; relatórios no Ciclo 2              |
+| R9  | Filtro, busca e visão consolidada          | Implementado | Busca, filtro por situação, painel e relatórios por período |
 | R10 | Tratamento de erros e estados              | Implementado | Erro explicado, lista vazia com ação, carregamento         |
-| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 44px, rótulos acessíveis             |
+| R11 | Usabilidade e acessibilidade               | Implementado | Contraste AA, alvo de 48dp, rótulos acessíveis             |
 | R12 | Organização do código em camadas           | Implementado | Três camadas em `app/src/`                                 |
 | R13 | Versionamento com histórico distribuído    | Em andamento | Histórico do repositório                                   |
-| R14 | Pacote instalável em dispositivo físico    | Ciclo 4      | Até 27/11                                                  |
+| R14 | Pacote instalável em dispositivo físico    | Em andamento | APK de release assinado e gerado (`app/README.md`); comprovação em aparelho até 27/11 |
 
 ---
 
@@ -187,7 +188,7 @@ Situação em 28/09/2026, conforme a Seção 5 do documento norteador. A verific
 | Marco                     | Data               | Situação      |
 | ------------------------- | ------------------ | ------------- |
 | Checkpoint 1              | 11/09/2026         | Entregue      |
-| Entrega e apresentação N1 | 29/09 a 02/10/2026 | Em preparação |
+| Entrega e apresentação N1 | 29/09 a 02/10/2026 | Entregue      |
 | Checkpoint 2              | 06/11/2026         | Planejado     |
 | Testes com usuários       | 09 a 13/11/2026    | Planejado     |
 | Congelamento de escopo    | 27/11/2026         | Planejado     |

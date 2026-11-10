@@ -3,10 +3,10 @@
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": false,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "skipLibCheck": true
+    // Import só de tipo precisa dizer "type". Os testes carregam o código
+    // no Node, que apaga os tipos sem consultar o compilador.
+    "verbatimModuleSyntax": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "tests"]
+  "exclude": ["node_modules", "tests", "android", "ios"]
 }

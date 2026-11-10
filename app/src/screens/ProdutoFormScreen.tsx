@@ -1,31 +1,44 @@
 // Cadastro e edição de produto.
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Aviso, Botao, Campo } from "../components/base";
-import { Categoria, Fornecedor } from "../domain/tipos";
-import * as cadastroRepo from "../repositories/cadastroRepository";
-import * as produtoRepo from "../repositories/produtoRepository";
+import { useCallback, useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import {
+  Aviso,
+  Botao,
+  Campo,
+  Carregando,
+  Chip,
+  RolagemDeFormulario,
+} from "../components/base";
+import type { Categoria, Fornecedor } from "../domain/tipos";
+import type { TelaProdutos } from "../navigation/rotas";
 import { sessaoAtual } from "../services/authService";
-import { registrarMovimentacao } from "../services/estoqueService";
+import {
+  listarCategorias,
+  listarFornecedores,
+} from "../services/cadastroService";
+import { buscarProduto, salvarProduto } from "../services/produtoService";
 import {
   avisoPreco,
   calcularMargem,
+  DIAS_ALERTA_VENCIMENTO,
+  formatarPercentual,
+  formatarReais,
+  lerValor,
   paraDataBr,
-  paraDataIso,
   podeVerFinanceiro,
-  validarDataValidade,
 } from "../services/regras";
-import { ALVO_TOQUE, cores, espaco, fonte, raio } from "../theme/tema";
+import { cores, espaco, fonte } from "../theme/tema";
 
-interface Props {
-  route?: { params?: { id?: number } };
-  navigation: { goBack: () => void };
-}
+// 6.5 → "6,50": o campo mostra o valor como o comerciante digita
+const paraCampo = (valor: number) => valor.toFixed(2).replace(".", ",");
 
-export default function ProdutoFormScreen({ route, navigation }: Props) {
-  const id = route?.params?.id;
-  const editando = typeof id === "number";
+export default function ProdutoFormScreen({
+  route,
+  navigation,
+}: TelaProdutos<"ProdutoForm">) {
+  const id = route.params?.id;
+  const editando = id !== undefined;
 
   const [nome, setNome] = useState("");
   const [codigoBarras, setCodigoBarras] = useState("");
@@ -39,119 +52,108 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erroCarga, setErroCarga] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
+  // RN01 na interface: o operador não vê nem informa o custo
   const verFinanceiro = podeVerFinanceiro(
     sessaoAtual()?.tipoPerfil ?? "OPERADOR",
   );
 
   const carregar = useCallback(async () => {
-    const [cats, forns] = await Promise.all([
-      cadastroRepo.listarCategorias(),
-      cadastroRepo.listarFornecedores(),
-    ]);
-    setCategorias(cats);
-    setFornecedores(forns);
-    if (cats.length > 0 && categoriaId === null) setCategoriaId(cats[0].id);
+    setCarregando(true);
+    setErroCarga(null);
+    try {
+      const [cats, { fornecedores: forns }, produto] = await Promise.all([
+        listarCategorias(),
+        listarFornecedores(),
+        id === undefined ? Promise.resolve(null) : buscarProduto(id),
+      ]);
+      setCategorias(cats);
+      setFornecedores(forns);
 
-    if (editando && typeof id === "number") {
-      const p = await produtoRepo.buscarPorId(id);
-      if (p) {
-        setNome(p.nome);
-        setCodigoBarras(p.codigoBarras ?? "");
-        setCategoriaId(p.categoriaId);
-        setFornecedorId(p.fornecedorId);
-        setPrecoCusto(String(p.precoCusto));
-        setPrecoVenda(String(p.precoVenda));
-        setEstoqueMinimo(String(p.estoqueMinimo));
-        setDataValidade(paraDataBr(p.dataValidade));
+      if (id === undefined) {
+        setCategoriaId((atual) => atual ?? cats[0]?.id ?? null);
+      } else if (produto) {
+        setNome(produto.nome);
+        setCodigoBarras(produto.codigoBarras ?? "");
+        setCategoriaId(produto.categoriaId);
+        setFornecedorId(produto.fornecedorId);
+        setPrecoCusto(produto.precoCusto === null ? "" : paraCampo(produto.precoCusto));
+        setPrecoVenda(paraCampo(produto.precoVenda));
+        setEstoqueMinimo(String(produto.estoqueMinimo));
+        setDataValidade(paraDataBr(produto.dataValidade));
+      } else {
+        setErroCarga("Produto não encontrado. Ele pode ter sido desativado.");
       }
+    } catch {
+      setErroCarga("Não foi possível carregar o formulário.");
+    } finally {
+      setCarregando(false);
     }
-  }, [editando, id, categoriaId]);
+  }, [id]);
 
   useEffect(() => {
     carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [carregar]);
 
-  const custo = parseFloat(precoCusto.replace(",", ".")) || 0;
-  const venda = parseFloat(precoVenda.replace(",", ".")) || 0;
+  const custo = lerValor(precoCusto) ?? 0;
+  const venda = lerValor(precoVenda) ?? 0;
   const margem = calcularMargem(custo, venda);
   const alertaPreco = avisoPreco(custo, venda);
 
-  function validar(): string | null {
-    if (nome.trim().length < 2) return "Informe o nome do produto.";
-    if (categoriaId === null) return "Selecione a categoria.";
-    if (custo < 0 || venda < 0) return "Os preços não podem ser negativos.";
-    const minimo = parseInt(estoqueMinimo, 10);
-    if (Number.isNaN(minimo) || minimo < 0)
-      return "Informe o estoque mínimo (zero ou mais).";
-    const inicial = parseInt(quantidadeInicial, 10);
-    if (!editando && (Number.isNaN(inicial) || inicial < 0))
-      return "Informe a quantidade inicial (zero ou mais).";
-    return validarDataValidade(dataValidade);
-  }
-
   async function salvar() {
-    const problema = validar();
-    if (problema) {
-      setErro(problema);
-      return;
-    }
     setErro(null);
     setSalvando(true);
-
     try {
-      const dados = {
-        nome,
-        codigoBarras: codigoBarras.trim() || null,
-        categoriaId: categoriaId as number,
-        fornecedorId,
-        precoCusto: custo,
-        precoVenda: venda,
-        estoqueMinimo: parseInt(estoqueMinimo, 10),
-        dataValidade: paraDataIso(dataValidade),
-      };
-
-      if (editando && typeof id === "number") {
-        await produtoRepo.atualizar(id, dados);
-      } else {
-        const novoId = await produtoRepo.inserir(dados);
-        const inicial = parseInt(quantidadeInicial, 10);
-        // entra como movimentação para o histórico ficar coerente
-        if (inicial > 0) {
-          await registrarMovimentacao({
-            produtoId: novoId,
-            usuarioId: sessaoAtual()?.id ?? 1,
-            tipo: "COMPRA",
-            quantidade: inicial,
-            observacoes: "Estoque inicial do cadastro",
-          });
-        }
-      }
-      navigation.goBack();
-    } catch {
-      setErro(
-        "Não foi possível salvar. Verifique se o código de barras já está em uso.",
+      const r = await salvarProduto(
+        {
+          nome,
+          codigoBarras,
+          categoriaId,
+          fornecedorId,
+          precoCusto,
+          precoVenda,
+          estoqueMinimo,
+          quantidadeInicial,
+          dataValidade,
+        },
+        id,
       );
+      if (r.sucesso) navigation.goBack();
+      else setErro(r.mensagem ?? "Não foi possível salvar o produto.");
     } finally {
       setSalvando(false);
     }
   }
 
-  return (
-    <ScrollView
-      style={e.tela}
-      contentContainerStyle={{ padding: espaco.md }}
-      keyboardShouldPersistTaps="handled"
-    >
-      {!!erro && <Aviso texto={erro} tipo="erro" />}
+  if (carregando) return <Carregando texto="Carregando o formulário..." />;
 
+  if (erroCarga) {
+    return (
+      <View style={[e.tela, e.conteudo]}>
+        <Aviso tipo="erro" texto={erroCarga} />
+        {editando ? (
+          <Botao titulo="Voltar" onPress={() => navigation.goBack()} />
+        ) : (
+          <Botao titulo="Tentar novamente" onPress={carregar} />
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <RolagemDeFormulario
+      style={e.tela}
+      contentContainerStyle={e.conteudo}
+    >
       <Campo
-        rotulo="Nome do produto"
+        rotulo="Nome"
         valor={nome}
         onChangeText={setNome}
+        placeholder="Ex.: Leite Integral 1L"
         obrigatorio
       />
       <Campo
@@ -159,90 +161,76 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
         valor={codigoBarras}
         onChangeText={setCodigoBarras}
         tipoTeclado="numeric"
-        ajuda="Opcional nesta versão. A leitura pela câmera entra no Ciclo 3."
+        icone="barcode-outline"
+        ajuda="Opcional. Nesta versão o código é digitado."
       />
-
-      <Text style={e.rotulo}>Categoria *</Text>
-      <View style={e.opcoes}>
-        {categorias.map((c) => {
-          const ativo = categoriaId === c.id;
-          return (
-            <Pressable
-              key={c.id}
-              onPress={() => setCategoriaId(c.id)}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: ativo }}
-              style={[e.chip, ativo && e.chipAtivo]}
-            >
-              <Text style={[e.chipTexto, ativo && e.chipTextoAtivo]}>
-                {ativo ? "\u25CF " : ""}
-                {c.nome}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      <Text style={e.rotulo}>Fornecedor</Text>
-      <View style={e.opcoes}>
-        <Pressable
-          onPress={() => setFornecedorId(null)}
-          accessibilityRole="radio"
-          accessibilityState={{ selected: fornecedorId === null }}
-          style={[e.chip, fornecedorId === null && e.chipAtivo]}
-        >
-          <Text
-            style={[e.chipTexto, fornecedorId === null && e.chipTextoAtivo]}
-          >
-            {fornecedorId === null ? "\u25CF " : ""}Sem fornecedor
-          </Text>
-        </Pressable>
-        {fornecedores.map((f) => {
-          const ativo = fornecedorId === f.id;
-          return (
-            <Pressable
-              key={f.id}
-              onPress={() => setFornecedorId(f.id)}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: ativo }}
-              style={[e.chip, ativo && e.chipAtivo]}
-            >
-              <Text style={[e.chipTexto, ativo && e.chipTextoAtivo]}>
-                {ativo ? "\u25CF " : ""}
-                {f.nome}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
 
       {/* RN01: preço de custo e margem só para o proprietário */}
-      {verFinanceiro && (
-        <Campo
-          rotulo="Preço de custo"
-          valor={precoCusto}
-          onChangeText={setPrecoCusto}
-          tipoTeclado="decimal-pad"
-          placeholder="0,00"
-        />
-      )}
-      <Campo
-        rotulo="Preço de venda"
-        valor={precoVenda}
-        onChangeText={setPrecoVenda}
-        tipoTeclado="decimal-pad"
-        placeholder="0,00"
-      />
+      <View style={e.linha}>
+        {verFinanceiro && (
+          <View style={e.coluna}>
+            <Campo
+              rotulo="Custo (R$)"
+              valor={precoCusto}
+              onChangeText={setPrecoCusto}
+              tipoTeclado="decimal-pad"
+              placeholder="0,00"
+              obrigatorio
+            />
+          </View>
+        )}
+        <View style={e.coluna}>
+          <Campo
+            rotulo="Venda (R$)"
+            valor={precoVenda}
+            onChangeText={setPrecoVenda}
+            tipoTeclado="decimal-pad"
+            placeholder="0,00"
+            obrigatorio
+            ajuda={
+              verFinanceiro
+                ? undefined
+                : "O preço de custo é informado pelo proprietário."
+            }
+          />
+        </View>
+      </View>
 
-      {verFinanceiro && margem && (
+      {verFinanceiro && custo > 0 && margem && (
         <Aviso
           tipo={alertaPreco ? "atencao" : "sucesso"}
           texto={
             alertaPreco ??
-            `Margem de lucro: R$ ${margem.valor.toFixed(2)} (${margem.percentual.toFixed(1)}%)`
+            `Margem de lucro: ${formatarReais(margem.valor)} (${formatarPercentual(margem.percentual)})`
           }
         />
       )}
+
+      <View style={e.linha}>
+        <View style={e.coluna}>
+          <Campo
+            rotulo="Estoque mínimo"
+            valor={estoqueMinimo}
+            onChangeText={setEstoqueMinimo}
+            tipoTeclado="numeric"
+            placeholder="0"
+            obrigatorio
+          />
+        </View>
+        <View style={e.coluna}>
+          <Campo
+            rotulo="Validade"
+            valor={dataValidade}
+            onChangeText={setDataValidade}
+            placeholder="DD/MM/AAAA"
+            tipoTeclado="numeric"
+          />
+        </View>
+      </View>
+      <Text style={e.ajuda}>
+        Você é avisado quando o estoque chegar ao mínimo e quando faltarem{" "}
+        {DIAS_ALERTA_VENCIMENTO} dias ou menos para a validade, que é opcional.
+      </Text>
 
       {!editando && (
         <Campo
@@ -255,64 +243,74 @@ export default function ProdutoFormScreen({ route, navigation }: Props) {
         />
       )}
 
-      <Campo
-        rotulo="Estoque mínimo"
-        valor={estoqueMinimo}
-        onChangeText={setEstoqueMinimo}
-        tipoTeclado="numeric"
-        obrigatorio
-        ajuda="Você é avisado quando o estoque ficar neste valor ou abaixo dele."
-      />
+      <Text style={e.rotulo}>Categoria *</Text>
+      <View style={e.opcoes} accessibilityRole="radiogroup">
+        {categorias.map((c) => (
+          <Chip
+            key={c.id}
+            rotulo={c.nome}
+            ativo={categoriaId === c.id}
+            onPress={() => setCategoriaId(c.id)}
+          />
+        ))}
+      </View>
 
-      <Campo
-        rotulo="Data de validade"
-        valor={dataValidade}
-        onChangeText={setDataValidade}
-        placeholder="DD/MM/AAAA"
-        tipoTeclado="numeric"
-        ajuda="Opcional. Produtos a 15 dias ou menos do vencimento aparecem no painel."
-      />
+      <Text style={e.rotulo}>Fornecedor</Text>
+      <View style={e.opcoes} accessibilityRole="radiogroup">
+        <Chip
+          rotulo="Sem fornecedor"
+          ativo={fornecedorId === null}
+          onPress={() => setFornecedorId(null)}
+        />
+        {fornecedores.map((f) => (
+          <Chip
+            key={f.id}
+            rotulo={f.nome}
+            ativo={fornecedorId === f.id}
+            onPress={() => setFornecedorId(f.id)}
+          />
+        ))}
+      </View>
+
+      {/* perto do botão, onde o olho está ao salvar; no topo de um
+          formulário longo a mensagem ficaria fora da tela */}
+      {!!erro && <Aviso texto={erro} tipo="erro" />}
 
       <Botao
-        titulo={editando ? "Salvar alterações" : "Cadastrar produto"}
+        titulo={editando ? "Salvar alterações" : "Salvar produto"}
         onPress={salvar}
         carregando={salvando}
       />
       <Botao
         titulo="Cancelar"
-        variante="secundario"
-        onPress={navigation.goBack}
+        variante="contorno"
+        onPress={() => navigation.goBack()}
       />
-    </ScrollView>
+    </RolagemDeFormulario>
   );
 }
 
 const e = StyleSheet.create({
-  tela: { flex: 1, backgroundColor: cores.cinza100 },
+  tela: { flex: 1, backgroundColor: cores.fundo },
+  conteudo: { padding: espaco.md, paddingTop: espaco.xs, paddingBottom: espaco.xl },
+  linha: { flexDirection: "row", gap: espaco.sm },
+  coluna: { flex: 1 },
+  ajuda: {
+    fontSize: fonte.legenda - 1,
+    color: cores.textoSuave,
+    marginTop: -espaco.sm,
+    marginBottom: espaco.md,
+  },
   rotulo: {
-    fontSize: fonte.legenda,
-    fontWeight: "600",
-    color: cores.cinza700,
+    fontSize: fonte.rotulo,
+    fontWeight: "700",
+    color: cores.texto,
     marginBottom: espaco.sm,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
   opcoes: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: espaco.sm,
-    marginBottom: espaco.md,
+    marginBottom: espaco.lg,
   },
-  chip: {
-    minHeight: ALVO_TOQUE,
-    justifyContent: "center",
-    paddingHorizontal: espaco.md,
-    borderRadius: raio.completo,
-    backgroundColor: cores.branco,
-    borderWidth: 1,
-    borderColor: cores.cinza300,
-  },
-  chipAtivo: { backgroundColor: cores.primaria, borderColor: cores.primaria },
-  chipTexto: { fontSize: fonte.legenda, color: cores.cinza800 },
-  chipTextoAtivo: { color: cores.branco, fontWeight: "700" },
 });

@@ -8,8 +8,17 @@
 //
 // Isso existe só para o teste conseguir importar as regras de verdade, em
 // vez de manter uma cópia delas.
+//
+// O expo-sqlite só roda no aparelho. Nos testes, ele é trocado por um
+// adaptador sobre o SQLite do Node, para os repositórios e serviços rodarem
+// o SQL de verdade.
+
+const EXPO_SQLITE_NO_NODE = new URL("./apoio/expo-sqlite-node.mjs", import.meta.url).href;
 
 export async function resolve(especificador, contexto, proximaResolucao) {
+  if (especificador === "expo-sqlite") {
+    return { url: EXPO_SQLITE_NO_NODE, shortCircuit: true };
+  }
   try {
     return await proximaResolucao(especificador, contexto);
   } catch (erro) {

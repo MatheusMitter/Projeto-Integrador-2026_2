@@ -34,7 +34,7 @@ Para aproximar ainda mais da experiência de aplicativo, o protótipo declara um
 | ---------------- | ------------------------------------- | ---------------------------------------- |
 | Modo de exibição | Autônomo                              | Abre sem a interface do navegador        |
 | Orientação       | Retrato                               | Trava na orientação de uso do aplicativo |
-| Cor de tema      | `#2E7D32`                             | Barra de status assume a cor primária    |
+| Cor de tema      | `#2450D6`                             | Barra de status assume a cor primária    |
 | Ícones           | 192px e 512px, mais versão recortável | Aparece entre os aplicativos do aparelho |
 
 Isso resolve uma limitação real das ferramentas de prototipação: nelas, a visualização no aparelho exige um aplicativo intermediário e a tela aparece dentro de uma moldura, com a interface da ferramenta em volta. Aqui o protótipo é a tela.
@@ -178,6 +178,24 @@ Na escala de cinzas, `#9E9E9E` estava sendo usado como cor de texto para preços
 
 Para fundos suaves foram criadas variações claras — `#E8F5E9`, `#E3F2FD`, `#FFEBEE`, `#FFF3E0` — sempre combinadas com texto no tom escuro correspondente da mesma família.
 
+### 4.1.1 Segunda revisão: identidade visual do Figma
+
+Em outubro de 2026 o protótipo e o aplicativo adotaram a paleta desenhada no Figma da equipe, com navegação inferior de cinco destinos (Início, Produtos, Movimentar, Relatórios, Ajustes). O fluxo e as funções continuaram os do protótipo.
+
+Em 19/10/2026 a identidade visual foi redefinida: logo novo, azuis em tons de aço e ciano, fundo White Lilac e cards em tom próprio. A identidade vigente está em [`07-identidade-visual.md`](07-identidade-visual.md) e está em aplicação nas telas. As medições abaixo registram as correções de contraste feitas sobre a paleta do Figma.
+
+A paleta do Figma foi medida antes de entrar, pelo mesmo critério da revisão anterior. Quatro combinações não passavam e foram ajustadas:
+
+| Uso                                    | Cor do Figma | Contraste | Cor adotada | Novo contraste |
+| -------------------------------------- | ------------ | --------- | ----------- | -------------- |
+| Texto branco sobre botão primário      | `#2450D6`    | 6,58:1    | mantida     | 6,58:1         |
+| Badge "OK" e entradas (+), texto       | `#16915A`    | 4,01:1    | `#12804F`   | 4,97:1         |
+| Badge "Baixo"/"Vence", texto âmbar     | `#C98208`    | 3,14:1    | `#9F6500`   | 4,84:1         |
+| Mensagem de erro sobre o fundo         | `#CF3A3A`    | 4,45:1    | `#A12A2A`   | 6,68:1         |
+| Borda de campo de texto (mínimo 3:1)   | `#DDE3EF`    | 1,29:1    | `#7D8AA3`   | 3,48:1         |
+
+Os tons originais continuam onde o critério permite: o âmbar em número de destaque de 24px em negrito (texto grande pede 3:1), o verde em elemento não textual, a borda clara nos cartões, que não são controles. A escala de fonte do Figma (corpo de 12px, rótulo de 10px, badge de 9px) foi ampliada para corpo de 14 a 15px, rótulo de 13px e badge de 11px, e a área de toque mínima passou de 44px para 48dp, a diretriz do Android.
+
 ### 4.2 Não depender apenas de cor
 
 A WCAG exige que a informação não seja transmitida somente por cor, o que atinge diretamente um aplicativo de estoque, onde o estado do produto é naturalmente representado por semáforo.
@@ -284,3 +302,4 @@ Os valores de cor, espaçamento e área de toque são transportados sem alteraç
 | Versão | Data       | Alterações                          | Responsável      |
 | ------ | ---------- | ----------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
+| 1.1    | 19/10/2026 | Seção 4.1.1: a identidade visual do Figma registrada como segunda revisão, com as tabelas de contraste; o parágrafo sobre o logotipo passa a referir o logo definido em [`07-identidade-visual.md`](07-identidade-visual.md) | Equipe StockEasy |

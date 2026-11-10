@@ -45,6 +45,14 @@ export interface Produto {
   fornecedorNome?: string | null;
 }
 
+/**
+ * Produto como a camada de negócio entrega à tela. Para o operador o custo
+ * vem nulo: a RN01 é aplicada antes de o dado chegar à interface.
+ */
+export interface ProdutoVisivel extends Omit<Produto, "precoCusto"> {
+  precoCusto: number | null;
+}
+
 /** Tipos de entrada e de saída, conforme a restrição CHECK do banco. */
 export const TIPOS_ENTRADA = [
   "COMPRA",
@@ -83,7 +91,8 @@ export type SituacaoEstoque = "CRITICO" | "BAIXO" | "NORMAL" | "EXCESSO";
 
 export interface ResumoEstoque {
   totalProdutos: number;
-  valorTotalEstoque: number;
+  // nulo para o operador (RN01)
+  valorTotalEstoque: number | null;
   produtosCriticos: number;
   produtosVencendo: number;
 }
@@ -105,4 +114,12 @@ export const ROTULO_SITUACAO: Record<SituacaoEstoque, string> = {
   BAIXO: "Estoque baixo",
   NORMAL: "Estoque normal",
   EXCESSO: "Estoque em excesso",
+};
+
+/** Versão curta, para o badge. O leitor de tela lê a versão longa. */
+export const ROTULO_SITUACAO_CURTO: Record<SituacaoEstoque, string> = {
+  CRITICO: "Crítico",
+  BAIXO: "Baixo",
+  NORMAL: "OK",
+  EXCESSO: "Excesso",
 };

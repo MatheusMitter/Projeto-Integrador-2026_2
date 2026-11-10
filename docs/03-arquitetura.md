@@ -3,7 +3,7 @@
 **Projeto Integrador · ADS 2026/2 · PUC Goiás**
 Disciplina ADS1253 — Programação Orientada a Objeto com Banco de Dados
 **Equipe:** StockEasy · **Entrega:** N1 — 29/09 a 02/10/2026
-**Versão:** 1.0 — 28/09/2026
+**Versão:** 1.1 — 14/10/2026
 
 Atende ao item 2 da composição da N1: modelagem de dados e definição arquitetural, com justificativa da pilha tecnológica adotada.
 
@@ -30,7 +30,7 @@ O padrão principal é o de camadas. Os outros três descrevem, respectivamente,
 
 **Porque é exigência do projeto.** O requisito R12 pede "separação de responsabilidades em camadas". Não é escolha livre.
 
-**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 38 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
+**Porque permite testar a regra sem abrir o aplicativo.** Este é o argumento prático mais forte. Os 72 testes das regras de negócio rodam em Node puro, sem emulador e sem banco de dados; outros 28 testam serviços, repositórios e migrações num banco em memória, também sem emulador. Isso só é possível porque a camada de negócio não depende das outras duas: as funções recebem números e devolvem decisão. Se a regra estivesse dentro do componente de tela, testar exigiria montar a interface inteira.
 
 **Porque isola a mudança.** Trocar de banco de dados afeta apenas a camada de persistência. Nenhuma regra, nenhuma tela e nenhum teste precisariam ser alterados. Isso não é hipótese no nosso caso: já convivemos com dois bancos, SQLite no aparelho e PostgreSQL no servidor, com o mesmo modelo relacional.
 
@@ -120,19 +120,19 @@ A separação em camadas atende ao requisito R12 e reproduz o princípio arquite
 
 Validações como RN06, que impede saída superior ao estoque disponível, existem no aplicativo e no servidor. Não é redundância acidental, mas também não é a lógica inteira duplicada.
 
-No aplicativo, a validação dá resposta imediata e permite operar sem rede. No servidor, ela é a única garantia real: dois aparelhos podem registrar saídas do mesmo produto enquanto estão offline e, somadas, exceder o saldo. O conflito só se manifesta na consolidação.
+No aplicativo, a validação dá resposta imediata e permite operar sem rede. No servidor, ela não pode simplesmente recusar: dois aparelhos podem registrar saídas do mesmo produto enquanto estão offline e, somadas, exceder o saldo. Quando o lote chega, essas saídas já aconteceram no balcão. O servidor registra as movimentações, recalcula o saldo e, se ele ficar negativo, gera um alerta de divergência para o proprietário corrigir com um lançamento de ajuste (seção 7, DA09).
 
 A divisão é esta:
 
-| Responsabilidade                       | Aplicativo | Servidor |
-| -------------------------------------- | ---------- | -------- |
-| Orquestrar a operação e a interface    | Sim        | Não      |
-| Validar a regra no momento da ação     | Sim        | Não      |
-| Revalidar a regra ao consolidar o lote | Não        | Sim      |
-| Resolver conflito entre aparelhos      | Não        | Sim      |
-| Ser a fonte consolidada do dado        | Não        | Sim      |
+| Responsabilidade                                   | Aplicativo | Servidor |
+| -------------------------------------------------- | ---------- | -------- |
+| Orquestrar a operação e a interface                | Sim        | Não      |
+| Validar a regra no momento da ação                 | Sim        | Não      |
+| Recalcular o saldo ao consolidar o lote            | Não        | Sim      |
+| Detectar e sinalizar divergência entre aparelhos   | Não        | Sim      |
+| Ser a fonte consolidada do dado                    | Não        | Sim      |
 
-A validação no aplicativo é conveniência de interface: responde rápido e evita registro errado. A do servidor é a que preserva a integridade quando dois aparelhos divergem. Tratá-las como equivalentes seria erro de projeto, e duplicar toda a orquestração seria desperdício.
+A validação no aplicativo impede o erro no momento da ação. O servidor preserva a integridade quando dois aparelhos divergem: não apaga o que aconteceu, mas torna a divergência visível e corrigível. Tratá-las como equivalentes seria erro de projeto, e duplicar toda a orquestração seria desperdício.
 
 ---
 
@@ -156,8 +156,11 @@ src/
 ├── api/            # cliente HTTP e serviço externo
 ├── database/       # esquema e migrações locais
 ├── domain/         # tipos e entidades
+├── theme/          # tokens visuais: cores, espaços, fontes
 └── utils/          # formatação e validadores
 ```
+
+Na implementação, `api/` e `utils/` ainda não existem: o cliente HTTP entra com a retaguarda, e a formatação e as validações estão em `services/regras.ts`, como funções puras testadas.
 
 ---
 
@@ -181,7 +184,7 @@ com.stockeasy
 └── exception/      # tratamento centralizado de erro
 ```
 
-O acesso a dados usa JDBC com DAO em vez de mapeamento objeto-relacional. A escolha é deliberada: é o mecanismo estudado na ADS1253, mantém o SQL visível e sob controle da equipe, e permite demonstrar na arguição o controle transacional explícito, exigido pelos eixos do Apêndice D do documento norteador.
+O acesso a dados usa JDBC com DAO em vez de mapeamento objeto-relacional. A escolha é deliberada: é o mecanismo estudado na ADS1253, mantém o SQL visível e sob controle da equipe, e permite demonstrar na arguição o controle transacional explícito, conteúdo da própria ADS1253, que trata JDBC, DAO e transações.
 
 Consultas são sempre parametrizadas. Concatenação de valor em SQL fica vedada, tanto por segurança quanto por reaproveitamento de plano de execução.
 
@@ -212,7 +215,7 @@ O primeiro desenho desta arquitetura previa endpoints de manutenção para cada 
 
 A redução de escopo não enfraquece o lado técnico. Ao contrário: concentra no ponto mais interessante.
 
-O endpoint de sincronização recebe um lote com várias movimentações e precisa processá-lo **em uma transação**. Se a terceira movimentação do lote violar o estoque disponível, as duas anteriores precisam ser desfeitas, sob pena de o aparelho e o servidor ficarem com saldos diferentes. É processamento transacional de lote com validação de regra e rollback — exatamente transações, isolamento e concorrência.
+O endpoint de sincronização recebe um lote com várias movimentações e precisa processá-lo **em uma transação**: ou o lote inteiro é gravado, ou nada é, e o aparelho reenvia depois, sem risco de duplicar graças ao identificador universal. Dentro da transação, o servidor bloqueia a linha de cada produto, aplica as movimentações em ordem, recalcula o saldo e, quando saídas de aparelhos diferentes somadas passam do estoque, registra a divergência em vez de recusar uma venda que já aconteceu. É processamento transacional de lote com bloqueio, recálculo e tratamento de concorrência — exatamente transações, isolamento e concorrência.
 
 Um CRUD REST, em comparação, teria uma escrita por requisição e quase nenhuma transação interessante para explicar na arguição.
 
@@ -243,6 +246,8 @@ Sequência dentro de uma única transação:
 
 Qualquer falha entre os passos desfaz tudo. O bloqueio da linha no passo 1 é o que impede que duas movimentações simultâneas leiam o mesmo saldo e produzam resultado incorreto.
 
+No aparelho, o passo 2 bloqueia a saída, como manda a RN06. Na consolidação de um lote no servidor, o passo 2 não recusa: se o saldo ficar negativo, o passo 6 gera o alerta de divergência descrito na seção 7.
+
 Este é o cenário de transações, isolamento e concorrência tratado na disciplina, e é o principal argumento técnico da escolha de retaguarda própria.
 
 ---
@@ -253,9 +258,13 @@ A base local não é cache: é uma réplica funcional com o mesmo modelo relacio
 
 **Escrita.** Toda operação grava no SQLite e entra numa fila de pendências. Com conexão, a fila é enviada em ordem cronológica. Sem conexão, permanece enfileirada e a interface sinaliza a situação.
 
-**Leitura.** Ao abrir o aplicativo e ao sincronizar manualmente, o servidor é consultado pelas alterações posteriores ao último instante sincronizado.
+**Leitura.** Ao abrir o aplicativo e ao sincronizar manualmente, o servidor é consultado pelas alterações posteriores ao último instante sincronizado. Esse instante é o do servidor, devolvido na sincronização anterior, e não o relógio do aparelho.
 
-**Conflito.** Produtos, fornecedores e categorias resolvem por alteração mais recente. Movimentações não conflitam: são imutáveis por RN05, apenas acrescentadas, e o saldo é recomposto pela sequência consolidada.
+**Conflito.** Produtos, fornecedores e categorias resolvem pela alteração mais recente segundo a hora em que o servidor a recebeu. O relógio do aparelho não decide: um celular com a hora errada poderia sobrescrever dados mais novos. Movimentações não conflitam: são imutáveis por RN05, apenas acrescentadas.
+
+**Saldo.** O servidor recalcula o saldo de cada produto, e o saldo resultante de cada movimentação, na ordem em que as movimentações foram consolidadas. Ao baixar, o aparelho substitui os valores locais pelos do servidor; o saldo calculado no aparelho vale até a próxima sincronização.
+
+**Divergência de estoque.** Se saídas de aparelhos diferentes, somadas, passarem do estoque, o servidor aceita as movimentações, porque elas já aconteceram, e gera um alerta de divergência para o proprietário. A correção é um lançamento de ajuste (DA04), nunca a edição ou a exclusão da venda. Consequência para o Ciclo 3: a restrição `estoque_atual >= 0`, hoje presente nos dois bancos, e o bloqueio da RN06 na função do servidor dão lugar a esse alerta quando o saldo vem da consolidação. No aparelho, a RN06 continua bloqueando a saída no momento da ação.
 
 **Idempotência.** Cada registro criado no dispositivo recebe um identificador universal gerado localmente. O servidor usa esse identificador para reconhecer reenvio, o que evita duplicação quando a resposta se perde após a gravação. Sem isso, uma falha de rede no momento errado duplicaria a movimentação.
 
@@ -273,7 +282,7 @@ Admitida explicitamente pela Seção 4 do documento norteador.
 | Velocidade de entrega | Recarga imediata e teste no aparelho pessoal sem cabo, relevante no prazo disponível |
 | Recursos nativos      | `expo-camera` e `expo-notifications` cobrem R8 sem escrever código nativo            |
 | Persistência local    | `expo-sqlite` mantém o mesmo modelo relacional do servidor                           |
-| Distribuição          | EAS Build gera o pacote Android exigido por R14                                      |
+| Distribuição          | O Gradle gera o pacote Android exigido por R14 na própria máquina, assinado pelo plugin do projeto; o EAS Build fica como alternativa |
 
 **Alternativas descartadas**
 
@@ -296,6 +305,8 @@ _Firebase ou Supabase._ Também admitidas pelo norteador e substancialmente mais
 
 _Node.js._ Permitiria uma única linguagem no projeto. Descartada pelo mesmo motivo: não exercita o conteúdo da disciplina.
 
+**Versões:** Java 21, de suporte longo e o mesmo usado para gerar o aplicativo Android, e Spring Boot 4.1, a linha estável atual. Ficam fixadas no arquivo de build da retaguarda.
+
 Registra-se que o documento norteador não impõe Java. A Seção 4 admite Spring Boot, Node.js, FastAPI ou plataforma gerenciada, desde que a escolha seja justificada. A opção por Java é decisão da equipe, motivada pela aderência ao conteúdo avaliado e pelo ganho na arguição — não uma obrigação normativa.
 
 ### 8.3 Banco de dados
@@ -303,6 +314,8 @@ Registra-se que o documento norteador não impõe Java. A Seção 4 admite Sprin
 **PostgreSQL** no servidor: restrições de verificação, gatilhos e integridade referencial permitem que parte das regras seja garantida no próprio banco, e não apenas na aplicação. Também é o banco usado nas aulas.
 
 **SQLite** no dispositivo: embarcado, sem servidor, com o mesmo modelo relacional. Mantém a linguagem de consulta consistente entre os dois lados.
+
+**Migrações com Flyway** no servidor: o esquema evolui por scripts numerados (V1, V2...), aplicados automaticamente quando a retaguarda sobe; o próprio banco registra quais já rodaram. O `banco/01-esquema.sql` vira a V1. Continua sendo SQL escrito pela equipe, sobre JDBC. Evita que alguém esqueça de rodar um script à mão e que o banco de desenvolvimento e o da hospedagem fiquem diferentes.
 
 ### 8.4 Serviço externo — Open Food Facts
 
@@ -327,8 +340,11 @@ Ambos respondem a necessidades das personas, não a demonstração técnica isol
 
 | Aspecto        | Decisão                                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Senha          | Armazenada apenas como resumo criptográfico com BCrypt e fator de custo 10                                                |
+| Senha no servidor | Armazenada apenas como resumo criptográfico com BCrypt e fator de custo 10                                             |
+| Senha no aparelho | Guardada só como resumo criptográfico com sal, para permitir o login sem rede. Hoje ainda é texto puro; a troca entra no Ciclo 3, antes de sincronizar usuários |
 | Sessão         | Token JWT com validade limitada, transmitido no cabeçalho de autorização                                                  |
+| Token no aparelho | No armazenamento seguro do sistema (`expo-secure-store`), nunca no SQLite                                              |
+| Sessão sem rede | O aplicativo funciona com a sessão local; o token só é exigido para sincronizar. Se tiver expirado, o aplicativo pede a senha de novo na sincronização seguinte |
 | Autorização    | Verificada na camada de serviço; RN01 filtra campos financeiros antes da resposta                                         |
 | Transporte     | HTTPS obrigatório                                                                                                         |
 | Injeção de SQL | Consultas exclusivamente parametrizadas                                                                                   |
@@ -361,9 +377,11 @@ Mensagem de autenticação inválida é sempre genérica, para não revelar se u
 
 | Ambiente        | Aplicativo                    | Retaguarda                     | Banco                         |
 | --------------- | ----------------------------- | ------------------------------ | ----------------------------- |
-| Desenvolvimento | Expo Go no aparelho da equipe | Local na porta 8080            | PostgreSQL local em contêiner |
+| Desenvolvimento | Build de desenvolvimento do próprio aplicativo | Local na porta 8080 | PostgreSQL instalado na máquina, sem contêiner |
 | Homologação     | Build de desenvolvimento      | Serviço gratuito de hospedagem | PostgreSQL gerenciado         |
 | Demonstração    | Pacote APK instalado          | Homologação                    | Homologação                   |
+
+O Expo Go das lojas só aceita a versão mais recente do SDK e deixa de servir a cada versão nova do Expo; a build de desenvolvimento não depende disso. O PostgreSQL vai direto na máquina porque um contêiner, somado ao emulador, pesa demais em computador de 8 GB. Hospedagem gratuita costuma suspender o serviço sem uso: a retaguarda deve ser acordada antes da demonstração.
 
 Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Ciclo 3, conforme a Semana 13 do cronograma oficial.
 
@@ -386,7 +404,7 @@ Para a N1, o aplicativo opera apenas com a base local. A retaguarda entra no Cic
 | R11 | Sistema de design do protótipo, descrito no memorial correspondente            |
 | R12 | Separação em camadas descrita nas seções 3 e 4                                 |
 | R13 | Ramo principal com ramos de funcionalidade e incorporação revisada             |
-| R14 | EAS Build para geração do pacote Android                                       |
+| R14 | Build de release local com Gradle e assinatura reaplicada pelo plugin `assinatura-release` |
 
 ---
 
@@ -427,6 +445,24 @@ Motivo: a aplicação é offline-first e nunca chama o servidor no momento da a�
 Custo: a sincronização exige controle de idempotência e de instante de corte, mais complexo que um endpoint de inclusão simples.
 Revisão: decisão tomada na revisão de 29/09/2026, substituindo o desenho anterior de API de manutenção por entidade.
 
+As quatro decisões seguintes foram registradas na revisão de 14/10/2026, antes do Ciclo 3, para fechar pontos da sincronização que causariam erro na implementação.
+
+**DA09 — Divergência de estoque registrada, não recusada.**
+Motivo: uma venda feita sem rede já aconteceu. Recusar o lote travaria a sincronização daquele aparelho e deixaria saldos diferentes sem saída.
+Custo: o saldo consolidado pode ficar negativo até o ajuste, e a restrição `estoque_atual >= 0` dos dois bancos muda no Ciclo 3.
+
+**DA10 — Relógio do servidor define ordem e corte; o servidor recalcula o saldo.**
+Motivo: relógio de aparelho erra, e dois aparelhos sem rede calculam saldos diferentes para o mesmo produto.
+Custo: o saldo mostrado no aparelho é provisório até a sincronização.
+
+**DA11 — Credencial no aparelho só como resumo; token em armazenamento seguro.**
+Motivo: o banco do aparelho pode ser copiado, e o login sem rede não pode depender do servidor.
+Custo: a renovação do token só acontece na sincronização.
+
+**DA12 — Migrações com Flyway; Java 21 e Spring Boot 4.1.**
+Motivo: banco igual em todos os ambientes, sem script aplicado à mão, e versões com suporte vigente.
+Custo: uma dependência a mais na retaguarda.
+
 ---
 
 ## 14. Diagramas e artefatos complementares
@@ -442,3 +478,5 @@ Decisões de interface: [`04-prototipo.md`](04-prototipo.md).
 | Versão | Data       | Alterações                          | Responsável      |
 | ------ | ---------- | ----------------------------------- | ---------------- |
 | 1.0    | 28/09/2026 | Versão inicial para a entrega da N1 | Equipe StockEasy |
+| 1.1    | 14/10/2026 | Regras de sincronização e de credencial no aparelho (seções 3, 5.1, 6, 7, 9; DA09 a DA11); versões da retaguarda e Flyway (8.2, 8.3; DA12); ambientes (11); fonte da justificativa de JDBC corrigida (5); testes de serviço e repositório (1.2); geração do APK pelo Gradle local, não pelo EAS (8.1, 12) | Equipe StockEasy |
+| 1.2    | 02/11/2026 | Contagem dos testes de banco corrigida: 28 (serviços, repositórios e migrações), não 23 (1.2) | Equipe StockEasy |

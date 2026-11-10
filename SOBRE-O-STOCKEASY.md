@@ -54,8 +54,9 @@ Com a rotina alimentada, o painel passa a valer como primeira tela da manhã: qu
 - **Previsão do saldo antes de confirmar**, com bloqueio de saída maior que o estoque disponível.
 - **Situação de estoque por produto**, em quatro faixas (crítico, baixo, normal e excesso), sempre comparada com o mínimo que o dono definiu para aquele item.
 - **Aviso de vencimento**: produtos a quinze dias ou menos da validade entram na contagem do painel.
-- **Busca por nome ou código de barras** na lista de produtos, com o resultado filtrando conforme se digita.
+- **Busca por nome ou código de barras** na lista de produtos, com o resultado filtrando conforme se digita, e filtro pela situação do estoque.
 - **Painel consolidado** com total de produtos, valor em estoque, itens críticos, itens vencendo e ranking dos mais vendidos.
+- **Relatórios por período** de 7, 30 ou 90 dias: os produtos que mais saem, os que estão parados sem venda e a evolução do estoque, com a opção de compartilhar o resumo pelo celular.
 - **Dois níveis de acesso**: o funcionário registra movimentação sem ver custo, margem e valor do estoque; essa informação fica com o proprietário.
 - **Histórico que não se apaga.** Movimentação registrada não é editada nem removida. Erro se corrige com um lançamento de ajuste no sentido contrário, e a trilha fica inteira para auditoria. Produto que sai de linha é desativado, e sai das listagens sem levar o histórico embora.
 - **Funcionamento sem internet.** O registro é gravado no próprio aparelho. O sinal cair no depósito não trava a operação.
@@ -76,15 +77,15 @@ O StockEasy aposta em três escolhas diferentes. O registro acontece no ponto de
 
 O StockEasy está em desenvolvimento, e vale ser preciso sobre o que já roda.
 
-Hoje funciona em celular Android: criação de conta, acesso com os dois perfis, cadastro e edição de produtos, cadastro e manutenção de fornecedores, registro de entradas e saídas com todas as validações descritas acima, histórico por produto, busca na lista, situação de estoque por item e o painel com os indicadores e o ranking de mais vendidos. Tudo isso opera com os dados guardados no próprio aparelho, sem internet.
+Hoje funciona em celular Android: criação de conta, acesso com os dois perfis, cadastro e edição de produtos, cadastro e manutenção de fornecedores, registro de entradas e saídas com todas as validações descritas acima, histórico por produto, busca e filtro por situação na lista, situação de estoque por item, o painel com os indicadores e o ranking de mais vendidos, e os relatórios por período. Tudo isso opera com os dados guardados no próprio aparelho, sem internet.
 
 Está previsto para as próximas etapas, até o fim de 2026:
 
 - **Cópia dos dados em servidor**, para que a troca ou a perda do celular não leve o estoque junto. Hoje os dados existem apenas no aparelho.
 - **Leitura de código de barras pela câmera**, com preenchimento automático do cadastro a partir de uma base pública de produtos. Hoje o código é digitado.
 - **Notificação no celular** para estoque crítico e vencimento próximo, sem precisar abrir o aplicativo.
-- **Filtros e ordenação** na lista de produtos, por categoria, fornecedor e situação.
-- **Relatórios por período**, com os produtos de maior saída e os de baixo giro, e o histórico geral de movimentações com filtro por produto, data e responsável.
+- **Filtros por categoria e por fornecedor, e ordenação** na lista de produtos. O filtro por situação já existe.
+- **Histórico geral de movimentações**, com filtro por produto, data e responsável.
 - **Ajuste do prazo do aviso de vencimento**, hoje fixo em quinze dias.
 - **Versão instalável**, para o comerciante usar sem o ambiente de desenvolvimento.
 

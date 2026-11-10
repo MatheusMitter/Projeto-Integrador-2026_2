@@ -24,7 +24,7 @@ A escolha de HTML/CSS em vez de uma ferramenta de prototipação visual está ju
 2. No menu do navegador, escolha "Adicionar à tela inicial" (Android) ou "Adicionar à Tela de Início" (iOS)
 3. Abra pelo ícone que aparece entre os aplicativos
 
-Aberto assim, o protótipo ocupa a tela inteira, sem barra de endereço, com ícone e nome próprios. A configuração está em `manifest.webmanifest`, com exibição autônoma, orientação retrato e cor de tema `#2E7D32`.
+Aberto assim, o protótipo ocupa a tela inteira, sem barra de endereço, com ícone e nome próprios. A configuração está em `manifest.webmanifest`, com exibição autônoma, orientação retrato e cor de tema `#2450D6`.
 
 Sem instalar, abrir o endereço direto no navegador do celular também funciona: o layout tem largura de referência de 428px e se ajusta à tela.
 
@@ -54,15 +54,15 @@ Sem instalar, abrir o endereço direto no navegador do celular também funciona:
 
 ## Fluxos navegáveis
 
-**1. Primeiro uso** — `index.html` → "Criar nova conta" → `cadastro.html` → `dashboard.html` → FAB → `produto-cadastro.html` → salvar → `produtos.html`
+**1. Primeiro uso** — `index.html` → "Criar conta" → `cadastro.html` → `dashboard.html` → FAB → `produto-cadastro.html` → salvar → `produtos.html`
 
-**2. Registrar venda** — `dashboard.html` → "Movimentação" → aba "Saída" → tipo "Venda" → quantidade → previsão de saldo → confirmar → `dashboard.html`
+**2. Registrar venda** — `dashboard.html` → "Movimentar" → aba "Saída" → tipo "Venda" → quantidade → previsão de saldo → confirmar → `dashboard.html`
 
 **3. Responder a alerta de falta** — `dashboard.html` → card "8 produtos críticos" → `produtos.html` (filtro crítico) → produto → `produto-detalhes.html` → "Registrar Entrada" → `movimentacao.html` → confirmar
 
 **4. Consultar desempenho** — `dashboard.html` → "Relatórios" → `relatorios.html` → selecionar período → mais vendidos, baixo giro, evolução → exportar
 
-**5. Manter fornecedores** — `dashboard.html` → "Mais" → `configuracoes.html` → "Gerenciar fornecedores" → `fornecedores.html` → criar, editar ou excluir
+**5. Manter fornecedores** — `dashboard.html` → "Ajustes" → `configuracoes.html` → "Gerenciar fornecedores" → `fornecedores.html` → criar, editar ou excluir
 
 ---
 
@@ -80,23 +80,23 @@ O protótipo não apenas exibe telas: três regras estão implementadas em JavaS
 
 ## Design System
 
+A identidade visual (paleta, tipografia e componentes) segue o Figma da equipe, com tamanhos de fonte ampliados e cores de status escurecidas para atender ao contraste AA.
+
 ### Cores
 
-A paleta foi ajustada para atender o contraste mínimo de 4,5:1 exigido pela WCAG 2.1 AA. As cores originais reprovavam quando aplicadas com texto branco.
+| Token        | Figma                 | Usado no protótipo                              | Contraste com branco |
+| ------------ | --------------------- | ----------------------------------------------- | -------------------- |
+| `primary`    | `#2450D6`             | `#2450D6` (hover `#1B3FAE`)                     | 6,58:1 ✅            |
+| `success`    | `#16915A` — 4,01:1 ❌ | `#12804F`                                       | 4,97:1 ✅            |
+| `warning`    | `#C98208` — 3,14:1 ❌ | `#9F6500`; `#C98208` só em número grande (24px) | 4,84:1 ✅            |
+| `danger`     | `#CF3A3A`             | `#CF3A3A`                                       | 4,86:1 ✅            |
+| `text-muted` | `#5E6B85`             | `#5E6B85`                                       | 5,36:1 ✅            |
 
-| Token       | Antes                 | Agora     | Contraste com branco |
-| ----------- | --------------------- | --------- | -------------------- |
-| `primary`   | `#4CAF50` — 2,78:1 ❌ | `#2E7D32` | 5,13:1 ✅            |
-| `secondary` | `#2196F3` — 3,13:1 ❌ | `#1565C0` | 5,40:1 ✅            |
-| `danger`    | `#F44336` — 3,58:1 ❌ | `#C62828` | 5,90:1 ✅            |
-| `warning`   | `#FF9800` — 2,16:1 ❌ | `#E65100` | 4,80:1 ✅            |
-| `success`   | `#8BC34A` — 1,87:1 ❌ | `#2E7D32` | 5,13:1 ✅            |
-
-Tokens `*-light` (`#E8F5E9`, `#E3F2FD`, `#FFEBEE`, `#FFF3E0`) são fundos suaves, sempre combinados com texto no tom escuro correspondente. Na escala de cinzas, `--gray-600` (`#757575`, 4,60:1) é o tom mais claro admitido para texto; `--gray-300/400/500` ficam restritos a bordas e divisores.
+Fundo das telas `#F3F5F9`, cards e campos `#FFFFFF`, texto `#111A2E`. Os tons `*-soft` são fundos suaves, sempre com texto no tom escuro correspondente. A borda `#DDE3EF` do Figma fica nos cards; campos e switch desligado usam `#7D8AA3` (3,2:1), porque componentes de interface pedem 3:1 (WCAG 1.4.11).
 
 ### Tipografia e espaçamento
 
-Fonte do sistema (`-apple-system`, `Segoe UI`, `Roboto`). Título grande 24px, título médio 18px, corpo 14px, legenda 12px. Espaçamento em escala de 4px: `xs` 4, `sm` 8, `md` 16, `lg` 24, `xl` 32.
+Fonte do sistema com `Roboto` e `Inter` na frente. Título de tela 22px/800, título com voltar 18px/800, valor de destaque 28px/800, KPI 24px/700, corpo 14px, botão 15px/800, rótulo 13px/700, legenda 12px, badge 11px/700. Raio padrão 8px. Espaçamento em escala de 4px: `xs` 4, `sm` 8, `md` 16, `lg` 24.
 
 ---
 
@@ -178,4 +178,4 @@ O protótipo antecipa a interface dos requisitos abaixo. A implementação funci
 
 ---
 
-**Última atualização:** 28/09/2026
+**Última atualização:** 08/10/2026

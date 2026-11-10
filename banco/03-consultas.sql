@@ -14,13 +14,13 @@
 -- 1. Produtos Críticos (Abaixo do Estoque Mínimo)
 -- ---------------------------------------------------------------
 
-SELECT p.id, p.nome, p.estoque_atual, p.estoque_min,
+SELECT p.id, p.nome, p.estoque_atual, p.estoque_minimo,
        f.nome AS fornecedor, f.telefone
 FROM produto p
 LEFT JOIN fornecedor f ON p.fornecedor_id = f.id
-WHERE p.estoque_atual <= p.estoque_min
+WHERE p.estoque_atual <= p.estoque_minimo
   AND p.ativo = TRUE
-ORDER BY (p.estoque_atual - p.estoque_min) ASC; -- Mais crítico primeiro
+ORDER BY (p.estoque_atual - p.estoque_minimo) ASC; -- Mais crítico primeiro
 
 -- ---------------------------------------------------------------
 -- 2. Produtos Próximos ao Vencimento

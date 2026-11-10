@@ -6,7 +6,7 @@
     <title>StockEasy - Login</title>
     <!-- Instalacao na tela inicial do celular: abre em tela cheia, sem
          barra do navegador. Nao altera o comportamento no computador. -->
-    <meta name="theme-color" content="#2e7d32" />
+    <meta name="theme-color" content="#2450d6" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -28,29 +28,27 @@
   <body>
     <div class="mobile-container">
       <main class="content content-centered">
-        <!-- Logo (decorativo: o nome do app já está no texto ao lado) -->
-        <div class="logo" aria-hidden="true">S</div>
-        <h1 class="logo-text">StockEasy</h1>
-        <p class="text-gray text-center mb-lg">
-          Controle de Estoque Inteligente
-        </p>
+        <div class="auth-panel">
+          <!-- Marca alinhada à esquerda, como no Figma. O logo é decorativo:
+               o nome do app já está no título logo abaixo. -->
+          <div class="logo" aria-hidden="true">SE</div>
+          <h1 class="logo-text">StockEasy</h1>
+          <p class="text-muted mb-lg">Controle de estoque inteligente</p>
 
-        <!-- Formulário de Login -->
-        <div style="width: 100%; max-width: 320px">
-          <!-- Campos pré-preenchidos: é um protótipo de interface, sem
-               autenticação real. As credenciais correspondem à carga de
-               exemplo do banco, documentada na modelagem. -->
+          <!-- Formulário de Login -->
+          <!-- Protótipo de interface, sem autenticação real: Entrar leva
+               direto ao painel. Os campos ficam vazios e sem "name", como no
+               aplicativo, para nenhuma credencial aparecer na página nem na
+               barra de endereço. -->
           <form action="dashboard.html" method="get" novalidate>
             <div class="input-group">
               <label class="input-label" for="login-email">E-mail</label>
               <input
                 type="email"
                 id="login-email"
-                name="email"
                 class="input-field"
                 placeholder="seu@email.com"
                 autocomplete="email"
-                value="proprietario@stockeasy.com"
               />
             </div>
 
@@ -59,27 +57,19 @@
               <input
                 type="password"
                 id="login-senha"
-                name="senha"
                 class="input-field"
                 placeholder="••••••••"
                 autocomplete="current-password"
-                value="admin123"
               />
             </div>
 
+            <a href="recuperar-senha.html" class="link link-end"
+              >Esqueci a senha</a
+            >
             <button type="submit" class="btn btn-primary">Entrar</button>
           </form>
 
-          <a href="recuperar-senha.html" class="link">Esqueci minha senha</a>
-          <a href="cadastro.html" class="link">Criar nova conta</a>
-
-          <p class="alert alert-info mt-md">
-            <strong>Protótipo de interface.</strong> A autenticação não está
-            implementada: qualquer valor acessa o painel. Os dois perfis
-            previstos são <code>proprietario@stockeasy.com</code>, com acesso
-            completo, e <code>operador@stockeasy.com</code>, sem acesso a custo,
-            margem e relatórios financeiros — regra RN01.
-          </p>
+          <a href="cadastro.html" class="link">Não tem conta? Criar conta</a>
         </div>
       </main>
     </div>
